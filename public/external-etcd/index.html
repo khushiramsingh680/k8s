@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.139.3">
+    <meta name="generator" content="Relearn 7.2.1+16d4de84becfa2d2e6bdb2394a2f4fa411bc0007">
+    <meta name="description" content="Topics Set up a Highly Available Kubernetes Cluster using kubeadm and external etcd Follow this documentation to set up a highly available Kubernetes cluster using Ubuntu 24.04 LTS.
+Quorum For N nodes in a cluster Quorum = floor(N/2 &#43; 1)Vagrant Environment Role FQDN IP OS RAM CPU Master etcd1.example.com 172.16.16.221 Ubuntu 24.04 2G 1 Master etcd2.example.com 172.16.16.222 Ubuntu 24.04 2G 1 Worker etcd3.example.com 172.16.16.223 Ubuntu 24.04 2G 1 Password for the root account on all these virtual machines is kubeadmin Perform all the commands as root user unless otherwise specified Pre-requisites If you want to try this in a virtualized environment on your workstation">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="kubeadm-external-etcd :: Kubernetes Documentation">
+    <meta name="twitter:description" content="Topics Set up a Highly Available Kubernetes Cluster using kubeadm and external etcd Follow this documentation to set up a highly available Kubernetes cluster using Ubuntu 24.04 LTS.
+Quorum For N nodes in a cluster Quorum = floor(N/2 &#43; 1)Vagrant Environment Role FQDN IP OS RAM CPU Master etcd1.example.com 172.16.16.221 Ubuntu 24.04 2G 1 Master etcd2.example.com 172.16.16.222 Ubuntu 24.04 2G 1 Worker etcd3.example.com 172.16.16.223 Ubuntu 24.04 2G 1 Password for the root account on all these virtual machines is kubeadmin Perform all the commands as root user unless otherwise specified Pre-requisites If you want to try this in a virtualized environment on your workstation">
+    <meta property="og:url" content="https://khushiramsingh680.github.io/k8s/external-etcd/index.html">
+    <meta property="og:site_name" content="Kubernetes Documentation">
+    <meta property="og:title" content="kubeadm-external-etcd :: Kubernetes Documentation">
+    <meta property="og:description" content="Topics Set up a Highly Available Kubernetes Cluster using kubeadm and external etcd Follow this documentation to set up a highly available Kubernetes cluster using Ubuntu 24.04 LTS.
+Quorum For N nodes in a cluster Quorum = floor(N/2 &#43; 1)Vagrant Environment Role FQDN IP OS RAM CPU Master etcd1.example.com 172.16.16.221 Ubuntu 24.04 2G 1 Master etcd2.example.com 172.16.16.222 Ubuntu 24.04 2G 1 Worker etcd3.example.com 172.16.16.223 Ubuntu 24.04 2G 1 Password for the root account on all these virtual machines is kubeadmin Perform all the commands as root user unless otherwise specified Pre-requisites If you want to try this in a virtualized environment on your workstation">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="/">
+    <meta itemprop="name" content="kubeadm-external-etcd :: Kubernetes Documentation">
+    <meta itemprop="description" content="Topics Set up a Highly Available Kubernetes Cluster using kubeadm and external etcd Follow this documentation to set up a highly available Kubernetes cluster using Ubuntu 24.04 LTS.
+Quorum For N nodes in a cluster Quorum = floor(N/2 &#43; 1)Vagrant Environment Role FQDN IP OS RAM CPU Master etcd1.example.com 172.16.16.221 Ubuntu 24.04 2G 1 Master etcd2.example.com 172.16.16.222 Ubuntu 24.04 2G 1 Worker etcd3.example.com 172.16.16.223 Ubuntu 24.04 2G 1 Password for the root account on all these virtual machines is kubeadmin Perform all the commands as root user unless otherwise specified Pre-requisites If you want to try this in a virtualized environment on your workstation">
+    <meta itemprop="wordCount" content="779">
+    <title>kubeadm-external-etcd :: Kubernetes Documentation</title>
+    <link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet"></noscript>
+    <link href="../css/auto-complete.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1734364594" rel="stylesheet"></noscript>
+    <link href="../css/perfect-scrollbar.min.css?1734364594" rel="stylesheet">
+    <link href="../css/theme.min.css?1734364594" rel="stylesheet">
+    <link href="../css/format-html.min.css?1734364594" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.relBasePath='..';
+      window.relearn.relBaseUri='..';
+      window.relearn.absBaseUri='https:\/\/khushiramsingh680.github.io\/k8s';
+      window.relearn.min = `.min`;
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant");
+        var select = document.querySelector("#R-select-variant");
+        if (select) {
+          select.value = variant;
+        }
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script>
+  </head>
+  <body class="mobile-support html" data-url="../external-etcd/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#topics">Topics</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#quorum">Quorum</a></li>
+    <li><a href="#vagrant-environment">Vagrant Environment</a></li>
+    <li><a href="#pre-requisites">Pre-requisites</a></li>
+    <li><a href="#bring-up-all-the-virtual-machines">Bring up all the virtual machines</a></li>
+    <li><a href="#dowmload-and-insall-etcd-on-all-nodes">Dowmload and Insall etcd on all nodes</a>
+      <ul>
+        <li><a href="#login-to-all-nodes">Login to all nodes</a></li>
+        <li><a href="#make-yourself-root">Make yourself root</a></li>
+        <li><a href="#update-os">Update OS</a></li>
+        <li><a href="#create-systemd-unit-file-for-etcd-service">Create systemd unit file for etcd service</a></li>
+        <li><a href="#enable-and-start-etcd-service">Enable and Start etcd service</a></li>
+        <li><a href="#verify-etcd-cluster-status">Verify Etcd cluster status</a></li>
+      </ul>
+    </li>
+    <li><a href="#etcd-with-tls">ETCD with tls</a></li>
+    <li><a href="#on-your-local-workstation-linux">On your local workstation (Linux)</a>
+      <ul>
+        <li></li>
+        <li><a href="#provision-kubernetes-cluster-with-kubeadm-using-external-etcd-cluster">Provision Kubernetes cluster with kubeadm using external Etcd cluster</a></li>
+        <li><a href="#copy-tls-certificates-to-kubernetes-master-node">Copy TLS certificates to kubernetes master node</a></li>
+        <li><a href="#copy-etcd-certificates-to-a-standard-location">Copy etcd certificates to a standard location</a></li>
+        <li><a href="#create-cluster-configuration">Create Cluster Configuration</a></li>
+        <li><a href="#initialize-kubernetes-cluster">Initialize Kubernetes Cluster</a></li>
+        <li><a href="#deploy-calico-network">Deploy Calico network</a></li>
+        <li><a href="#cluster-join-command">Cluster join command</a></li>
+        <li><a href="#use-default-admin-kubernetes-file">Use default admin kubernetes file</a></li>
+        <li><a href="#how-to-write-and-get-values-to-and-from-etcd">How to write and get values to and from etcd</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">/</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">kubeadm-external-etcd</span><meta itemprop="position" content="2"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../imp/index.html" title="Imp Commands  (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../kubernetes-rbac/index.html" title="Kubernetes RBAC (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable page" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+
+<h1 id="kubeadm-external-etcd">kubeadm-external-etcd</h1>
+
+<h2 id="topics">Topics</h2>
+<h1 id="set-up-a-highly-available-kubernetes-cluster-using-kubeadm-and-external-etcd">Set up a Highly Available Kubernetes Cluster using kubeadm and external etcd</h1>
+<p>Follow this documentation to set up a highly available Kubernetes cluster using <strong>Ubuntu 24.04 LTS</strong>.</p>
+<h2 id="quorum">Quorum</h2>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>For N nodes in a cluster
+</span></span><span style="display:flex;"><span>Quorum <span style="color:#f92672">=</span> floor<span style="color:#f92672">(</span>N/2 + 1<span style="color:#f92672">)</span></span></span></code></pre></div>
+<h2 id="vagrant-environment">Vagrant Environment</h2>
+<table>
+  <thead>
+      <tr>
+          <th>Role</th>
+          <th>FQDN</th>
+          <th>IP</th>
+          <th>OS</th>
+          <th>RAM</th>
+          <th>CPU</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Master</td>
+          <td>etcd1.example.com</td>
+          <td>172.16.16.221</td>
+          <td>Ubuntu 24.04</td>
+          <td>2G</td>
+          <td>1</td>
+      </tr>
+      <tr>
+          <td>Master</td>
+          <td>etcd2.example.com</td>
+          <td>172.16.16.222</td>
+          <td>Ubuntu 24.04</td>
+          <td>2G</td>
+          <td>1</td>
+      </tr>
+      <tr>
+          <td>Worker</td>
+          <td>etcd3.example.com</td>
+          <td>172.16.16.223</td>
+          <td>Ubuntu 24.04</td>
+          <td>2G</td>
+          <td>1</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>Password for the <strong>root</strong> account on all these virtual machines is <strong>kubeadmin</strong></li>
+<li>Perform all the commands as root user unless otherwise specified</li>
+</ul>
+<h2 id="pre-requisites">Pre-requisites</h2>
+<p>If you want to try this in a virtualized environment on your workstation</p>
+<ul>
+<li>Virtualbox installed</li>
+<li>Vagrant installed</li>
+<li>Host machine has atleast 8 cores</li>
+<li>Host machine has atleast 8G memory</li>
+</ul>
+<h2 id="bring-up-all-the-virtual-machines">Bring up all the virtual machines</h2>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>vagrant up</span></span></code></pre></div>
+<h2 id="dowmload-and-insall-etcd-on-all-nodes">Dowmload and Insall etcd on all nodes</h2>
+<h3 id="login-to-all-nodes">Login to all nodes</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>ssh vagrant@172.16.16.22<span style="color:#f92672">{</span>1..3<span style="color:#f92672">}</span></span></span></code></pre></div>
+<h3 id="make-yourself-root">Make yourself root</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sudo -s</span></span></code></pre></div>
+<h3 id="update-os">Update OS</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>apt update <span style="color:#f92672">&amp;&amp;</span> apt install -y haproxy</span></span></code></pre></div>
+<h4 id="run-the-below-command">Run the below command</h4>
+<p>On all etcd nodes</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span> ETCD_VER<span style="color:#f92672">=</span>v3.5.1
+</span></span><span style="display:flex;"><span>  wget -q --show-progress <span style="color:#e6db74">&#34;https://github.com/etcd-io/etcd/releases/download/</span><span style="color:#e6db74">${</span>ETCD_VER<span style="color:#e6db74">}</span><span style="color:#e6db74">/etcd-</span><span style="color:#e6db74">${</span>ETCD_VER<span style="color:#e6db74">}</span><span style="color:#e6db74">-linux-amd64.tar.gz&#34;</span>
+</span></span><span style="display:flex;"><span>  tar zxf etcd-v3.5.1-linux-amd64.tar.gz
+</span></span><span style="display:flex;"><span>  mv etcd-v3.5.1-linux-amd64/etcd* /usr/local/bin/
+</span></span><span style="display:flex;"><span>  rm -rf etcd*</span></span></code></pre></div>
+<h3 id="create-systemd-unit-file-for-etcd-service">Create systemd unit file for etcd service</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>NODE_IP<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>ip addr show eth1 | grep inet | awk <span style="color:#e6db74">&#39;{print $2}&#39;</span> | cut -d<span style="color:#e6db74">&#39;/&#39;</span> -f1 |head -1<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ETCD_NAME<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>hostname -s<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ETCD1_IP<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;172.16.16.221&#34;</span>
+</span></span><span style="display:flex;"><span>ETCD2_IP<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;172.16.16.222&#34;</span>
+</span></span><span style="display:flex;"><span>ETCD3_IP<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;172.16.16.223&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt;/etc/systemd/system/etcd.service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Unit]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Description=etcd
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Service]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Type=exec
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">ExecStart=/usr/local/bin/etcd \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --name ${ETCD_NAME} \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --initial-advertise-peer-urls http://${NODE_IP}:2380 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --listen-peer-urls http://${NODE_IP}:2380 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --advertise-client-urls http://${NODE_IP}:2379 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --listen-client-urls http://${NODE_IP}:2379,http://127.0.0.1:2379 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --initial-cluster-token etcd-cluster-1 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --initial-cluster etcd1=http://${ETCD1_IP}:2380,etcd2=http://${ETCD2_IP}:2380,etcd3=http://${ETCD3_IP}:2380 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --initial-cluster-state new
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Restart=on-failure
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RestartSec=5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Install]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">WantedBy=multi-user.target
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h3 id="enable-and-start-etcd-service">Enable and Start etcd service</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>  systemctl daemon-reload
+</span></span><span style="display:flex;"><span>  systemctl enable --now etcd</span></span></code></pre></div>
+<h3 id="verify-etcd-cluster-status">Verify Etcd cluster status</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>ETCDCTL_API<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> etcdctl --endpoints<span style="color:#f92672">=</span>http://127.0.0.1:2379 member list</span></span></code></pre></div>
+<h2 id="etcd-with-tls">ETCD with tls</h2>
+<h2 id="on-your-local-workstation-linux">On your local workstation (Linux)</h2>
+<h4 id="generate-tls-certificates">Generate TLS certificates</h4>
+<h5 id="download-required-binaries">Download required binaries</h5>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>  wget -q --show-progress --https-only --timestamping <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  https://github.com/cloudflare/cfssl/releases/download/v1.6.3/cfssl_1.6.3_linux_amd64 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  https://github.com/cloudflare/cfssl/releases/download/v1.6.3/cfssljson_1.6.3_linux_amd64
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  chmod +x cfssl_1.6.3_linux_amd64 cfssljson_1.6.3_linux_amd64
+</span></span><span style="display:flex;"><span>  sudo mv cfssl_1.6.3_linux_amd64 /usr/local/bin/cfssl
+</span></span><span style="display:flex;"><span>  sudo mv cfssljson_1.6.3_linux_amd64 /usr/local/bin/cfssljson</span></span></code></pre></div>
+<h5 id="create-a-certificate-authority-ca">Create a Certificate Authority (CA)</h5>
+<h4 id="we-then-use-this-ca-to-create-other-tls-certificates">We then use this CA to create other TLS certificates</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat &gt; ca-config.json <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">{
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;signing&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        &#34;default&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            &#34;expiry&#34;: &#34;8760h&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        },
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        &#34;profiles&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            &#34;etcd&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                &#34;expiry&#34;: &#34;8760h&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                &#34;usages&#34;: [&#34;signing&#34;,&#34;key encipherment&#34;,&#34;server auth&#34;,&#34;client auth&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>cat &gt; ca-csr.json <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">{
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;CN&#34;: &#34;etcd cluster&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;key&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;algo&#34;: &#34;rsa&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;size&#34;: 2048
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  },
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;names&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;C&#34;: &#34;GB&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;L&#34;: &#34;England&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;O&#34;: &#34;Kubernetes&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;OU&#34;: &#34;ETCD-CA&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;ST&#34;: &#34;Cambridge&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cfssl gencert -initca ca-csr.json | cfssljson -bare ca</span></span></code></pre></div>
+<h5 id="create-tls-certificates">Create TLS certificates</h5>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>ETCD1_IP<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;172.16.16.221&#34;</span>
+</span></span><span style="display:flex;"><span>ETCD2_IP<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;172.16.16.222&#34;</span>
+</span></span><span style="display:flex;"><span>ETCD3_IP<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;172.16.16.223&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat &gt; etcd-csr.json <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">{
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;CN&#34;: &#34;etcd&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;hosts&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;localhost&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;127.0.0.1&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;${ETCD1_IP}&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;${ETCD2_IP}&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;${ETCD3_IP}&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ],
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;key&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;algo&#34;: &#34;rsa&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;size&#34;: 2048
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  },
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;names&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;C&#34;: &#34;GB&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;L&#34;: &#34;England&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;O&#34;: &#34;Kubernetes&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;OU&#34;: &#34;etcd&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;ST&#34;: &#34;Cambridge&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cfssl gencert -ca<span style="color:#f92672">=</span>ca.pem -ca-key<span style="color:#f92672">=</span>ca-key.pem -config<span style="color:#f92672">=</span>ca-config.json -profile<span style="color:#f92672">=</span>etcd etcd-csr.json | cfssljson -bare etcd</span></span></code></pre></div>
+<h5 id="copy-the-certificates-to-etcd-nodes">Copy the certificates to etcd nodes</h5>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>declare -a NODES<span style="color:#f92672">=(</span>172.16.16.221 172.16.16.222 172.16.16.223<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> node in <span style="color:#e6db74">${</span>NODES[@]<span style="color:#e6db74">}</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>  scp ca.pem etcd.pem etcd-key.pem root@$node: 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span></span></span></code></pre></div>
+<h5 id="copy-the-certificates-to-a-standard-location-on-all-etcd-nodes">Copy the certificates to a standard location on all etcd nodes</h5>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span> mkdir -p /etc/etcd/pki
+</span></span><span style="display:flex;"><span> mv ca.pem etcd.pem etcd-key.pem /etc/etcd/pki/</span></span></code></pre></div>
+<h5 id="create-systemd-unit-file-for-etcd-service-1">Create systemd unit file for etcd service</h5>
+<p>Set NODE_IP to the correct IP of the machine where you are running this</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>NODE_IP<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>ip addr show eth1 | grep inet | awk <span style="color:#e6db74">&#39;{print $2}&#39;</span> | cut -d<span style="color:#e6db74">&#39;/&#39;</span> -f1 |head -1<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ETCD_NAME<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>hostname -s<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ETCD1_IP<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;172.16.16.221&#34;</span>
+</span></span><span style="display:flex;"><span>ETCD2_IP<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;172.16.16.222&#34;</span>
+</span></span><span style="display:flex;"><span>ETCD3_IP<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;172.16.16.223&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt;/etc/systemd/system/etcd.service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Unit]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Description=etcd
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Service]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Type=notify
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">ExecStart=/usr/local/bin/etcd \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --name ${ETCD_NAME} \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --cert-file=/etc/etcd/pki/etcd.pem \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --key-file=/etc/etcd/pki/etcd-key.pem \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --peer-cert-file=/etc/etcd/pki/etcd.pem \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --peer-key-file=/etc/etcd/pki/etcd-key.pem \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --trusted-ca-file=/etc/etcd/pki/ca.pem \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --peer-trusted-ca-file=/etc/etcd/pki/ca.pem \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --peer-client-cert-auth \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --client-cert-auth \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --initial-advertise-peer-urls https://${NODE_IP}:2380 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --listen-peer-urls https://${NODE_IP}:2380 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --advertise-client-urls https://${NODE_IP}:2379 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --listen-client-urls https://${NODE_IP}:2379,https://127.0.0.1:2379 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --initial-cluster-token etcd-cluster-1 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --initial-cluster etcd1=https://${ETCD1_IP}:2380,etcd2=https://${ETCD2_IP}:2380,etcd3=https://${ETCD3_IP}:2380 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --initial-cluster-state new
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Restart=on-failure
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RestartSec=5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Install]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">WantedBy=multi-user.target
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h5 id="enable-and-start-etcd-service-1">Enable and Start etcd service</h5>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>  systemctl daemon-reload
+</span></span><span style="display:flex;"><span>  systemctl enable --now etcd</span></span></code></pre></div>
+<h5 id="verify-etcd-cluster-status-1">Verify Etcd cluster status</h5>
+<p>In any one of the etcd nodes</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>ETCDCTL_API<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> etcdctl <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --endpoints<span style="color:#f92672">=</span>https://127.0.0.1:2379 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --cacert<span style="color:#f92672">=</span>/etc/etcd/pki/ca.pem <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --cert<span style="color:#f92672">=</span>/etc/etcd/pki/etcd.pem <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --key<span style="color:#f92672">=</span>/etc/etcd/pki/etcd-key.pem <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  member list</span></span></code></pre></div>
+<h4 id="you-can-alos-user-below">You can alos user below</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>export ETCDCTL_API<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> 
+</span></span><span style="display:flex;"><span>export ETCDCTL_ENDPOINTS<span style="color:#f92672">=</span>https://172.16.16.221:2379,https://172.16.16.222:2379,https://172.16.16.223:2379
+</span></span><span style="display:flex;"><span>export ETCDCTL_CACERT<span style="color:#f92672">=</span>/etc/etcd/pki/ca.pem
+</span></span><span style="display:flex;"><span>export ETCDCTL_CERT<span style="color:#f92672">=</span>/etc/etcd/pki/etcd.pem
+</span></span><span style="display:flex;"><span>export ETCDCTL_KEY<span style="color:#f92672">=</span>/etc/etcd/pki/etcd-key.pem</span></span></code></pre></div>
+<p>And now its a lot easier</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>etcdctl member list
+</span></span><span style="display:flex;"><span>etcdctl endpoint status
+</span></span><span style="display:flex;"><span>etcdctl endpoint health</span></span></code></pre></div>
+<h3 id="provision-kubernetes-cluster-with-kubeadm-using-external-etcd-cluster">Provision Kubernetes cluster with kubeadm using external Etcd cluster</h3>
+<h3 id="copy-tls-certificates-to-kubernetes-master-node">Copy TLS certificates to kubernetes master node</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span> scp /etc/etcd/pki/ca.pem /etc/etcd/pki/etcd.pem /etc/etcd/pki/etcd-key.pem root@172.16.16.100:</span></span></code></pre></div>
+<h3 id="copy-etcd-certificates-to-a-standard-location">Copy etcd certificates to a standard location</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span> mkdir -p /etc/kubernetes/pki/etcd
+</span></span><span style="display:flex;"><span> mv ca.pem etcd.pem etcd-key.pem /etc/kubernetes/pki/etcd/</span></span></code></pre></div>
+<h3 id="create-cluster-configuration">Create Cluster Configuration</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>ETCD1_IP<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;172.16.16.221&#34;</span>
+</span></span><span style="display:flex;"><span>ETCD2_IP<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;172.16.16.222&#34;</span>
+</span></span><span style="display:flex;"><span>ETCD3_IP<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;172.16.16.223&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; kubeadm-config.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: kubeadm.k8s.io/v1beta3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ClusterConfiguration
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">networking:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">podSubnet: &#34;192.168.0.0/16&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">etcd:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">external:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  endpoints:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - https://172.16.16.221:2379
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - https://172.16.16.222:2379
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - https://172.16.16.223:2379
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  caFile: /etc/kubernetes/pki/etcd/ca.pem
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  certFile: /etc/kubernetes/pki/etcd/etcd.pem
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  keyFile: /etc/kubernetes/pki/etcd/etcd-key.pem
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: kubeadm.k8s.io/v1beta3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: InitConfiguration
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">localAPIEndpoint:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">advertiseAddress: &#34;172.16.16.100&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h3 id="initialize-kubernetes-cluster">Initialize Kubernetes Cluster</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubeadm init --config kubeadm-config.yaml --ignore-preflight-errors<span style="color:#f92672">=</span>all</span></span></code></pre></div>
+<h3 id="deploy-calico-network">Deploy Calico network</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl --kubeconfig<span style="color:#f92672">=</span>/etc/kubernetes/admin.conf create -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml</span></span></code></pre></div>
+<h3 id="cluster-join-command">Cluster join command</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubeadm token create --print-join-command</span></span></code></pre></div>
+<h3 id="use-default-admin-kubernetes-file">Use default admin kubernetes file</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mkdir -p $HOME/.kube
+</span></span><span style="display:flex;"><span>sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+</span></span><span style="display:flex;"><span>sudo chown <span style="color:#66d9ef">$(</span>id -u<span style="color:#66d9ef">)</span>:<span style="color:#66d9ef">$(</span>id -g<span style="color:#66d9ef">)</span> $HOME/.kube/config</span></span></code></pre></div>
+<h3 id="how-to-write-and-get-values-to-and-from-etcd">How to write and get values to and from etcd</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>etcdctl --endpoints<span style="color:#f92672">=</span>127.0.0.1:2379  put foo <span style="color:#e6db74">&#34;Hello World!&#34;</span>
+</span></span><span style="display:flex;"><span>etcdctl --endpoints<span style="color:#f92672">=</span>127.0.0.1:2379  get foo</span></span></code></pre></div>
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+          <a id="R-logo" class="R-default" href="../index.html">
+Kubernetes Documentation
+          </a>
+        </div>
+        <script>
+          window.index_js_url="../searchindex.en.js?1734364594";
+        </script>
+        <search><form action="../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../js/auto-complete.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.stemmer.support.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.multi.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.en.min.js?1734364594" defer></script>
+        <script src="../js/search.js?1734364594" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation homelinks">
+        <ul>
+          <li><a class="padding" href="../index.html"><i class="fa-fw fas fa-home"></i> Home</a></li>
+        </ul>
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-shortcutmenu-home" class="R-sidebarmenu">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes documentation</a></li>
+            <li class="" data-nav-id="/part01/index.html"><a class="padding" href="../part01/index.html">Part 1</a></li>
+            <li class="" data-nav-id="/part02/index.html"><a class="padding" href="../part02/index.html">Part 2</a></li>
+            <li class="" data-nav-id="/part03/index.html"><a class="padding" href="../part03/index.html">Part 3</a></li>
+            <li class="" data-nav-id="/part04/index.html"><a class="padding" href="../part04/index.html">Part 4</a></li>
+            <li class="" data-nav-id="/part05/index.html"><a class="padding" href="../part05/index.html">Part 5</a></li>
+            <li class="" data-nav-id="/containerbasics/index.html"><a class="padding" href="../containerbasics/index.html">Container Basics</a></li>
+            <li class="" data-nav-id="/helm-overview/index.html"><a class="padding" href="../helm-overview/index.html">Helm Overview</a></li>
+            <li class="" data-nav-id="/imp/index.html"><a class="padding" href="../imp/index.html">Imp Commands </a></li>
+            <li class="active " data-nav-id="/external-etcd/index.html"><a class="padding" href="../external-etcd/index.html">kubeadm-external-etcd</a></li>
+            <li class="" data-nav-id="/kubernetes-rbac/index.html"><a class="padding" href="../kubernetes-rbac/index.html">Kubernetes RBAC</a></li>
+            <li class="" data-nav-id="/kubernetes-on-centos/index.html"><a class="padding" href="../kubernetes-on-centos/index.html">Kubernetes-on-Centos</a></li>
+            <li class="" data-nav-id="/kuberneteshardway/index.html"><a class="padding" href="../kuberneteshardway/index.html">Kubernets Installation From Scatch on rocky 9</a></li>
+            <li class="" data-nav-id="/multimaster/index.html"><a class="padding" href="../multimaster/index.html">Multi Master kubernetes</a></li>
+            <li class="" data-nav-id="/minio/index.html"><a class="padding" href="../minio/index.html">The Object Store for AI Data Infrastructure</a></li>
+            <li class="" data-nav-id="/cks/index.html"><a class="padding" href="../cks/index.html">CKS</a></li>
+            <li class="" data-nav-id="/eks/index.html"><a class="padding" href="../eks/index.html">EKS</a></li>
+            <li class="" data-nav-id="/gke/index.html"><a class="padding" href="../gke/index.html">GKE</a></li>
+            <li class="" data-nav-id="/kuberntes-backup/index.html"><a class="padding" href="../kuberntes-backup/index.html">Kubernetes Data Protection</a></li>
+            <li class="" data-nav-id="/kubernetesloggin-monitoring/index.html"><a class="padding" href="../kubernetesloggin-monitoring/index.html">KUBERNETES LOGGING AND MONITORING</a></li>
+            <li class="" data-nav-id="/neuvector/index.html"><a class="padding" href="../neuvector/index.html">Kubernetes Security</a></li>
+          </ul>
+        </div>
+    
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-language"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = this.querySelector( this.value ).dataset.url;">
+                      <option id="R-select-language-en" value="#R-select-language-en" data-url="../external-etcd/index.html" lang="en-us" selected></option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-paint-brush"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.relearn.changeVariant( this.value );">
+                      <option id="R-select-variant-auto" value="auto" selected>Auto</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.relearn.markVariant();</script>
+              </li>
+              <li class="footerVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-history"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter showFooter">
+        <p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../js/clipboard.min.js?1734364594" defer></script>
+    <script src="../js/perfect-scrollbar.min.js?1734364594" defer></script>
+    <script src="../js/theme.js?1734364594" defer></script>
+  </body>
+</html>

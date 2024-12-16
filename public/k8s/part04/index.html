@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head><script src="/k8s/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=k8s/livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.139.3">
+    <meta name="generator" content="Relearn 7.2.1+16d4de84becfa2d2e6bdb2394a2f4fa411bc0007">
+    <meta name="description" content="Topics Kubernetes Probes Kubernetes Storage Secret ConfigMap emptyDIr hostPath StatefulSet Kubernetes IngressController Kubectl Set Kubectl Patch Probes The kubelet uses liveness probes to know when to restart a container. Liveness probes can be a powerful way to recover from application failures, but they should be used with caution.
+Liveness Probe It checks whether the application running inside the container is still alive and functioning properly. Readiness Probe: It determines whether the application inside the container is ready to accept traffic or requests. When a readiness probe fails, Kubernetes stops sending traffic to the container until it passes the probe. This is useful during application startup or when the application needs some time to initialize before serving traffic.">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Part 4 :: Kubernetes Documentation">
+    <meta name="twitter:description" content="Topics Kubernetes Probes Kubernetes Storage Secret ConfigMap emptyDIr hostPath StatefulSet Kubernetes IngressController Kubectl Set Kubectl Patch Probes The kubelet uses liveness probes to know when to restart a container. Liveness probes can be a powerful way to recover from application failures, but they should be used with caution.
+Liveness Probe It checks whether the application running inside the container is still alive and functioning properly. Readiness Probe: It determines whether the application inside the container is ready to accept traffic or requests. When a readiness probe fails, Kubernetes stops sending traffic to the container until it passes the probe. This is useful during application startup or when the application needs some time to initialize before serving traffic.">
+    <meta property="og:url" content="http://localhost:1313/k8s/k8s/part04/index.html">
+    <meta property="og:site_name" content="Kubernetes Documentation">
+    <meta property="og:title" content="Part 4 :: Kubernetes Documentation">
+    <meta property="og:description" content="Topics Kubernetes Probes Kubernetes Storage Secret ConfigMap emptyDIr hostPath StatefulSet Kubernetes IngressController Kubectl Set Kubectl Patch Probes The kubelet uses liveness probes to know when to restart a container. Liveness probes can be a powerful way to recover from application failures, but they should be used with caution.
+Liveness Probe It checks whether the application running inside the container is still alive and functioning properly. Readiness Probe: It determines whether the application inside the container is ready to accept traffic or requests. When a readiness probe fails, Kubernetes stops sending traffic to the container until it passes the probe. This is useful during application startup or when the application needs some time to initialize before serving traffic.">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="Kubernetes documentation">
+    <meta itemprop="name" content="Part 4 :: Kubernetes Documentation">
+    <meta itemprop="description" content="Topics Kubernetes Probes Kubernetes Storage Secret ConfigMap emptyDIr hostPath StatefulSet Kubernetes IngressController Kubectl Set Kubectl Patch Probes The kubelet uses liveness probes to know when to restart a container. Liveness probes can be a powerful way to recover from application failures, but they should be used with caution.
+Liveness Probe It checks whether the application running inside the container is still alive and functioning properly. Readiness Probe: It determines whether the application inside the container is ready to accept traffic or requests. When a readiness probe fails, Kubernetes stops sending traffic to the container until it passes the probe. This is useful during application startup or when the application needs some time to initialize before serving traffic.">
+    <meta itemprop="wordCount" content="2510">
+    <title>Part 4 :: Kubernetes Documentation</title>
+    <link href="../../css/fontawesome-all.min.css?1734364046" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/fontawesome-all.min.css?1734364046" rel="stylesheet"></noscript>
+    <link href="../../css/auto-complete.css?1734364046" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/auto-complete.css?1734364046" rel="stylesheet"></noscript>
+    <link href="../../css/perfect-scrollbar.min.css?1734364046" rel="stylesheet">
+    <link href="../../css/theme.css?1734364046" rel="stylesheet">
+    <link href="../../css/format-html.css?1734364046" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.relBasePath='..\/..';
+      window.relearn.relBaseUri='..\/..';
+      window.relearn.absBaseUri='http:\/\/localhost:1313\/k8s';
+      window.relearn.min = ``;
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant");
+        var select = document.querySelector("#R-select-variant");
+        if (select) {
+          select.value = variant;
+        }
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script>
+  </head>
+  <body class="mobile-support html" data-url="../../k8s/part04/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#topics">Topics</a></li>
+    <li><a href="#probes">Probes</a>
+      <ul>
+        <li><a href="#liveness-probe">Liveness Probe</a></li>
+        <li><a href="#readiness-probe">Readiness Probe:</a></li>
+        <li><a href="#startup-probe-introduced-in-kubernetes-116">Startup Probe (introduced in Kubernetes 1.16):</a></li>
+        <li><a href="#a-pod-with--startup-probe">A pod with  Startup Probe</a></li>
+        <li><a href="#a-pod-with-liveness-probe">A Pod with Liveness probe</a></li>
+        <li><a href="#a-pod-with-readiness-probe">A Pod with Readiness probe</a></li>
+        <li><a href="#key-points-about-kubernetes-probes">Key Points about kubernetes Probes</a></li>
+      </ul>
+    </li>
+    <li><a href="#kubernetes-storage">Kubernetes Storage</a>
+      <ul>
+        <li></li>
+        <li><a href="#emptydir">emptyDir</a></li>
+        <li><a href="#hostpath">hostPath:</a></li>
+        <li><a href="#persistentvolumeclaim">PersistentVolumeClaim</a></li>
+      </ul>
+    </li>
+    <li><a href="#kubernetes-objects">Kubernetes Objects</a>
+      <ul>
+        <li><a href="#secret">Secret</a></li>
+        <li><a href="#configmap">Configmap</a></li>
+      </ul>
+    </li>
+    <li><a href="#ingresscontroller">IngressController</a>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+    <li><a href="#kubernetes-patch-command">Kubernetes Patch command</a>
+      <ul>
+        <li><a href="#description">Description</a></li>
+        <li><a href="#examples-using-kubectl-patch">Examples using <code>kubectl patch</code></a></li>
+        <li><a href="#statefulsets">StatefulSets</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../index.html"><span itemprop="name">/</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../k8s/index.html"><span itemprop="name">Kubernetes documentation</span></a><meta itemprop="position" content="2">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Part 4</span><meta itemprop="position" content="3"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../k8s/part03/index.html" title="Part 3 (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../k8s/part05/index.html" title="Part 5 (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable k8s" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+
+<h1 id="part-4">Part 4</h1>
+
+<h2 id="topics">Topics</h2>
+<ul>
+<li>Kubernetes Probes</li>
+<li>Kubernetes Storage
+<ul>
+<li>Secret</li>
+<li>ConfigMap</li>
+<li>emptyDIr</li>
+<li>hostPath</li>
+</ul>
+</li>
+<li>StatefulSet</li>
+<li>Kubernetes IngressController</li>
+<li>Kubectl Set</li>
+<li>Kubectl Patch</li>
+</ul>
+<h2 id="probes">Probes</h2>
+<p>The kubelet uses liveness probes to know when to restart a container.<!-- raw HTML omitted -->
+Liveness probes can be a powerful way to recover from application failures, but they should be used with caution.</p>
+<h3 id="liveness-probe">Liveness Probe</h3>
+<ul>
+<li>It checks whether the application running inside the container is still alive and functioning properly.</li>
+</ul>
+<h3 id="readiness-probe">Readiness Probe:</h3>
+<p>It determines whether the application inside the container is ready to accept traffic or requests. When a readiness probe fails, Kubernetes stops sending traffic to the container until it passes the probe. This is useful during application startup or when the application needs some time to initialize before serving traffic.</p>
+<h3 id="startup-probe-introduced-in-kubernetes-116">Startup Probe (introduced in Kubernetes 1.16):</h3>
+<p>It is similar to a readiness probe, but it only runs during the initial startup of a container. The purpose of the startup probe is to differentiate between a container that&rsquo;s starting up and one that&rsquo;s in a crashed state. Once the startup probe succeeds, it is disabled, and the readiness probe takes over.</p>
+<ul>
+<li>Create a pod with startup probe</li>
+<li>Make a test and monitor the pods and logs as well</li>
+<li>Create a pod with liveness prode</li>
+<li>Create a pod with readiness probe</li>
+</ul>
+<p>Probes have a number of fields that you can use to more precisely control the behavior of startup, liveness and readiness checks:</p>
+<ul>
+<li><strong>initialDelaySeconds:</strong> Number of seconds after the container has started before startup, liveness or readiness probes are initiated. Defaults to 0 seconds. Minimum value is 0.</li>
+<li><strong>periodSeconds:</strong> How often (in seconds) to perform the probe. Default to 10 seconds. The minimum value is 1.</li>
+<li><strong>timeoutSeconds:</strong> Number of seconds after which the probe times out. Defaults to 1 second. Minimum value is 1.</li>
+<li><strong>successThreshold:</strong> Minimum consecutive successes for the probe to be considered successful after having failed. Defaults to 1. Must be 1 for liveness and startup Probes. Minimum value is 1.</li>
+<li><strong>failureThreshold:</strong> After a probe fails failureThreshold times in a row,</li>
+<li><strong>terminationGracePeriodSeconds:</strong> configure a grace period for the kubelet to wait between triggering a shut down of the failed container, and then forcing the container runtime to stop that container. The default is to inherit the Pod-level value for terminationGracePeriodSeconds (30 seconds if not specified), and the minimum value is 1. See probe-level terminationGracePeriodSeconds for more detail.</li>
+</ul>
+<h3 id="a-pod-with--startup-probe">A pod with  Startup Probe</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-startup-probe
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: nginx-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    startupProbe:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      httpGet:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        path: /
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        port: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      initialDelaySeconds: 20
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      periodSeconds: 5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h3 id="a-pod-with-liveness-probe">A Pod with Liveness probe</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-liveness-probe
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: nginx-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    livenessProbe:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      httpGet:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        path: /
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        port: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      initialDelaySeconds: 10
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      periodSeconds: 5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h3 id="a-pod-with-readiness-probe">A Pod with Readiness probe</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-readiness-probe
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: nginx-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    readinessProbe:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      httpGet:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        path: /
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        port: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      initialDelaySeconds: 15
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      periodSeconds: 5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h3 id="key-points-about-kubernetes-probes">Key Points about kubernetes Probes</h3>
+<ul>
+<li>initialDelaySeconds 60 seconds specifies the delay before the probe starts executing after the container starts.</li>
+<li>periodSeconds 10 seconds means that the probe will be executed every 10 seconds.</li>
+<li>failureThreshold 3 indicates that the container will be marked as unhealthy after three consecutive failed probes.</li>
+</ul>
+<h2 id="kubernetes-storage">Kubernetes Storage</h2>
+<ul>
+<li>Set up NFS storage</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>git clone https:<span style="color:#e6db74">//gi</span>tlab<span style="color:#f92672">.</span>com<span style="color:#e6db74">/container-and-kubernetes/</span>kubernetes<span style="color:#f92672">-</span><span style="color:#ae81ff">2024</span><span style="color:#f92672">.</span>git
+</span></span><span style="display:flex;"><span>cd kubernetes<span style="color:#f92672">-</span><span style="color:#ae81ff">2024</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>subdir<span style="color:#f92672">-</span>external<span style="color:#f92672">-</span>provisioner</span></span></code></pre></div>
+<ul>
+<li>Run the script on all nodes</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>export DEBIAN_FRONTEND<span style="color:#f92672">=</span>noninteractive
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>readonly NFS_SHARE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/srv/nfs/kubedata&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;[TASK 1] apt update&#34;</span>
+</span></span><span style="display:flex;"><span>sudo apt-get update -qq &gt;/dev/null
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $HOSTNAME <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;kmaster&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;[TASK 2] install nfs server&#34;</span>
+</span></span><span style="display:flex;"><span>  sudo -E apt-get install -y -qq nfs-kernel-server &gt;/dev/null
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;[TASK 3] creating nfs exports&#34;</span>
+</span></span><span style="display:flex;"><span>  sudo mkdir -p $NFS_SHARE
+</span></span><span style="display:flex;"><span>  sudo chown nobody:nogroup $NFS_SHARE
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;</span>$NFS_SHARE<span style="color:#e6db74"> *(rw,sync,no_subtree_check)&#34;</span> | sudo tee /etc/exports &gt;/dev/null
+</span></span><span style="display:flex;"><span>  sudo systemctl restart nfs-kernel-server
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;[TASK 2] install nfs common&#34;</span>
+</span></span><span style="display:flex;"><span>  sudo -E apt-get install -y -qq nfs-common &gt;/dev/null
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span></span></span></code></pre></div>
+<ul>
+<li>Now apply nfs on kubernetes</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl apply <span style="color:#f92672">-</span>f <span style="color:#ae81ff">01</span><span style="color:#f92672">-</span>setup<span style="color:#f92672">-</span>nfs<span style="color:#f92672">-</span>provisioner<span style="color:#f92672">.</span>yaml</span></span></code></pre></div>
+<ul>
+<li>Create a pvc using 02-test-claim.yaml</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl apply <span style="color:#f92672">-</span>f <span style="color:#ae81ff">02</span><span style="color:#f92672">-</span>test<span style="color:#f92672">-</span>claim<span style="color:#f92672">.</span>yaml</span></span></code></pre></div>
+<ul>
+<li>Check newly created pvc</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get pvc</span></span></code></pre></div>
+<h4 id="storage-classes">Storage Classes</h4>
+<ul>
+<li>A StorageClass provides a way for administrators to describe the classes of storage they offer.</li>
+<li>Different classes might map to quality-of-service levels, or to backup policies, or to arbitrary policies determined by the cluster administrators.</li>
+<li>You can define default storageclass</li>
+<li>You can also decide whether the pvc can be expanded.</li>
+</ul>
+<p>Example of storage class</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>apiVersion: storage<span style="color:#f92672">.</span>k8s<span style="color:#f92672">.</span>io<span style="color:#f92672">/</span>v1
+</span></span><span style="display:flex;"><span>kind: StorageClass
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: managed<span style="color:#f92672">-</span>nfs<span style="color:#f92672">-</span>storage
+</span></span><span style="display:flex;"><span>  annotations:
+</span></span><span style="display:flex;"><span>    storageclass<span style="color:#f92672">.</span>kubernetes<span style="color:#f92672">.</span>io<span style="color:#f92672">/</span>is<span style="color:#f92672">-</span>default<span style="color:#f92672">-</span>class: <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>provisioner: k8s<span style="color:#f92672">-</span>sigs<span style="color:#f92672">.</span>io<span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>subdir<span style="color:#f92672">-</span>external<span style="color:#f92672">-</span>provisioner
+</span></span><span style="display:flex;"><span>parameters:
+</span></span><span style="display:flex;"><span>  archiveOnDelete: <span style="color:#e6db74">&#34;false&#34;</span></span></span></code></pre></div>
+<ul>
+<li>Check available storageClass</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span> kubectl get sc</span></span></code></pre></div>
+<ul>
+<li>Enable Expansion of pvc</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>query<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{.items[?(@.metadata.annotations.storageclass\.kubernetes\.io/is-default-class==&#34;true&#34;)].metadata.name}&#39;</span>
+</span></span><span style="display:flex;"><span>default_sc<span style="color:#f92672">=</span>$<span style="color:#960050;background-color:#1e0010">(</span>kubectl get sc <span style="color:#f92672">-</span>o<span style="color:#f92672">=</span>jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;$query&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo patching storage class <span style="color:#e6db74">&#34;[$default_sc]&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl patch storageclass $default_sc <span style="color:#f92672">-</span>p <span style="color:#e6db74">&#39;{&#34;allowVolumeExpansion&#34;: true}&#39;</span></span></span></code></pre></div>
+<h4 id="a-persistentvolume">A PersistentVolume</h4>
+<ul>
+<li>A PersistentVolume (PV) is a piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using Storage Classes.</li>
+<li>It is a resource in the cluster just like a node is a cluster resource.</li>
+</ul>
+<h4 id="a-persistentvolumeclaim-pvc">A PersistentVolumeClaim (PVC)</h4>
+<ul>
+<li>A PersistentVolumeClaim (PVC) is a request for storage by a user.</li>
+<li>It is similar to a Pod. Pods consume node resources and PVCs consume PV resources.</li>
+</ul>
+<h4 id="lifecycle-of-a-volume-and-claim">Lifecycle of a volume and claim</h4>
+<ul>
+<li>PVs are resources in the cluster.</li>
+<li>PVCs are requests for those resources and also act as claim checks to the resource. The interaction between PVs and PVCs follows this lifecycle:</li>
+</ul>
+<h4 id="provisioning">Provisioning</h4>
+<p>There are two ways PVs may be provisioned: statically or dynamically.</p>
+<h5 id="static">Static</h5>
+<p>A cluster administrator creates a number of PVs. They carry the details of the real storage, which is available for use by cluster users. They exist in the Kubernetes API and are available for consumption.</p>
+<h5 id="dynamic">Dynamic</h5>
+<ul>
+<li>When none of the static PVs the administrator created match a user&rsquo;s PersistentVolumeClaim, the cluster may try to dynamically provision a volume specially for the PVC.</li>
+<li>This provisioning is based on StorageClasses: the PVC must request a storage class</li>
+<li>The administrator must have created and configured that class for dynamic provisioning to occur</li>
+</ul>
+<h4 id="access-modes">Access Modes</h4>
+<h5 id="the-access-modes-are">The access modes are:</h5>
+<h5 id="readwriteonce">ReadWriteOnce</h5>
+<p>the volume can be mounted as read-write by a single node. ReadWriteOnce access mode still can allow multiple pods to access the volume when the pods are running on the same node. For single pod access, please see ReadWriteOncePod.</p>
+<h5 id="readonlymany">ReadOnlyMany</h5>
+<p>the volume can be mounted as read-only by many nodes.</p>
+<h5 id="readwritemany">ReadWriteMany</h5>
+<p>the volume can be mounted as read-write by many nodes.</p>
+<h5 id="readwriteoncepod">ReadWriteOncePod</h5>
+<p>the volume can be mounted as read-write by a single Pod. Use ReadWriteOncePod access mode if you want to ensure that only one pod across the whole cluster can read that PVC or write to it.</p>
+<h4 id="in-the-cli-the-access-modes-are-abbreviated-to">In the CLI, the access modes are abbreviated to:</h4>
+<ul>
+<li>
+<p>RWO - ReadWriteOnce</p>
+</li>
+<li>
+<p>ROX - ReadOnlyMany</p>
+</li>
+<li>
+<p>RWX - ReadWriteMany</p>
+</li>
+<li>
+<p>RWOP - ReadWriteOncePod</p>
+</li>
+<li>
+<p><strong>Example of a pvc</strong></p>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: PersistentVolumeClaim
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: task-pv-claim
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  storageClassName: manual
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  accessModes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - ReadWriteOnce
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    requests:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      storage: 3Gi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Create a pod and use the pvc there</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">task-pv-pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">task-pv-storage</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">persistentVolumeClaim</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">claimName</span>: <span style="color:#ae81ff">task-pv-claim</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">task-pv-container</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#e6db74">&#34;http-server&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">mountPath</span>: <span style="color:#e6db74">&#34;/usr/share/nginx/html&#34;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">task-pv-storage</span></span></span></code></pre></div>
+<ul>
+<li>Test pod and pvc</li>
+<li>Also check the storage class</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get sc</span></span></code></pre></div>
+<h3 id="emptydir">emptyDir</h3>
+<ul>
+<li>emptyDir are volumes that get created empty when a Pod is created.</li>
+<li>While a Pod is running its emptyDir exists. If a container in a Pod crashes the emptyDir content is unaffected. Deleting a Pod deletes all its emptyDirs.
+An emptyDir volume is first created when a Pod is assigned to a Node and initially its empty</li>
+<li>A Volume of type emptyDir that lasts for the life of the Pod, even if the Container terminates and restarts.</li>
+<li>If a container in a Pod crashes the emptyDir content is unaffected.</li>
+<li>All containers in a Pod share use of the emptyDir volume .</li>
+<li>Each container can independently mount the emptyDir at the same / or different path.</li>
+<li>Using emptyDir, The Kubelet will create the directory in the container, but not mount any storage.</li>
+<li>Containers in the Pod can all read/write the same files in the emptyDir volume, though that volume can be mounted at the same or different paths in each Container.</li>
+<li>When a Pod is removed from a node for any reason, the data in the emptyDir is deleted forever along with the container.</li>
+<li>A Container crashing does NOT remove a Pod from a node, so the data in an emptyDir volume is safe across Container crashes.</li>
+<li>By default, emptyDir volumes are stored on whatever medium is backing the node – that might be disk or SSD or network storage.</li>
+<li>You can set the emptyDir.medium field to “Memory” to tell Kubernetes to mount a tmpfs (RAM-backed filesystem) for you instead.</li>
+<li>The location should of emptyDir should be in /var/lib/kubelet/pods/{podid}/volumes/kubernetes.io~empty-dir/ on the given node where your pod is running.</li>
+<li>Example:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Pod
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: test<span style="color:#f92672">-</span>pd
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  containers:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">-</span> image: nginx
+</span></span><span style="display:flex;"><span>    name: test<span style="color:#f92672">-</span>container
+</span></span><span style="display:flex;"><span>    volumeMounts:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">-</span> mountPath: <span style="color:#f92672">/</span>cache
+</span></span><span style="display:flex;"><span>      name: cache<span style="color:#f92672">-</span>volume
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">-</span> image: redis
+</span></span><span style="display:flex;"><span>    name: redis
+</span></span><span style="display:flex;"><span>    volumeMounts:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">-</span> mountPath: <span style="color:#f92672">/</span>data
+</span></span><span style="display:flex;"><span>      name: cache<span style="color:#f92672">-</span>volume
+</span></span><span style="display:flex;"><span>  volumes:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">-</span> name: cache<span style="color:#f92672">-</span>volume
+</span></span><span style="display:flex;"><span>    emptyDir: {}</span></span></code></pre></div>
+<h3 id="hostpath">hostPath:</h3>
+<ul>
+<li>The hostPath volume mounts a resource from the host node filesystem. the resources could be directory, file socket, character, or block device. These resources mu</li>
+<li>A hostPath volume mounts a file or directory from the host node’s filesystem into your pod.</li>
+<li>A hostPath PersistentVolume must be used only in a single-node cluster. Kubernetes does not support hostPath on a multi-node cluster currently.</li>
+<li>The directories created on the underlying hosts are only writable by root. You either need to run your process as root in a privileged container or modify the file permissions on the host to be able to write to a hostPath volume</li>
+<li>Example:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Pod
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: test<span style="color:#f92672">-</span>pd
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  containers:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">-</span> image: k8s<span style="color:#f92672">.</span>gcr<span style="color:#f92672">.</span>io<span style="color:#f92672">/</span>test<span style="color:#f92672">-</span>webserver
+</span></span><span style="display:flex;"><span>    name: test<span style="color:#f92672">-</span>container
+</span></span><span style="display:flex;"><span>    volumeMounts:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">-</span> mountPath: <span style="color:#f92672">/</span>test<span style="color:#f92672">-</span>pd
+</span></span><span style="display:flex;"><span>      name: test<span style="color:#f92672">-</span>volume
+</span></span><span style="display:flex;"><span>  volumes:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">-</span> name: test<span style="color:#f92672">-</span>volume
+</span></span><span style="display:flex;"><span>    hostPath:
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># directory location on host</span>
+</span></span><span style="display:flex;"><span>      path: <span style="color:#f92672">/</span>data
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># this field is optional</span>
+</span></span><span style="display:flex;"><span>      type: DirectoryOrCreate</span></span></code></pre></div>
+<h3 id="persistentvolumeclaim">PersistentVolumeClaim</h3>
+<p><a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/" rel="external" target="_blank">https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/</a></p>
+<h2 id="kubernetes-objects">Kubernetes Objects</h2>
+<h3 id="secret">Secret</h3>
+<ul>
+<li>Creating a secret</li>
+<li>Checking the value of a secret</li>
+<li>Use jsonpath to fetch the value</li>
+<li>Use secret in pod an environment value</li>
+<li>Use secret as a file in pod</li>
+<li>Creating a secret of type tls</li>
+</ul>
+<h3 id="configmap">Configmap</h3>
+<ul>
+<li>Create a config map</li>
+<li>use cm as a file in pod</li>
+</ul>
+<h4 id="secret-1">Secret</h4>
+<ul>
+<li>To create a secret, you can use the <code>kubectl create secret</code> command.</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create secret generic my-secret --from-literal<span style="color:#f92672">=</span>MYSQL_ROOT_PASSWORD<span style="color:#f92672">=</span>root </span></span></code></pre></div>
+<ul>
+<li>To create secret of type TLS</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>  kubectl create secret tls my-tls-secret --cert<span style="color:#f92672">=</span>path/to/tls.crt --key<span style="color:#f92672">=</span>path/to/tls.key</span></span></code></pre></div>
+<ul>
+<li>Check secret</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>   kubectl get secrets</span></span></code></pre></div>
+<ul>
+<li>use the secret with pod as an environment variable</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Pod
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span> name: mypod
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span> containers:
+</span></span><span style="display:flex;"><span> - name: mycontainer
+</span></span><span style="display:flex;"><span>   image: mysql
+</span></span><span style="display:flex;"><span>   env:
+</span></span><span style="display:flex;"><span>   - name: MYSQL_ROOT_PASSWORD
+</span></span><span style="display:flex;"><span>     valueFrom:
+</span></span><span style="display:flex;"><span>      secretKeyRef:
+</span></span><span style="display:flex;"><span>        name: my-secret
+</span></span><span style="display:flex;"><span>        key: MYSQL_ROOT_PASSWORD   </span></span></code></pre></div>
+<ul>
+<li>Use secret as a file</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Pod
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: mypod
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  containers:
+</span></span><span style="display:flex;"><span>  - name: mycontainer
+</span></span><span style="display:flex;"><span>    image: myimage
+</span></span><span style="display:flex;"><span>    volumeMounts:
+</span></span><span style="display:flex;"><span>    - name: secret-volume
+</span></span><span style="display:flex;"><span>      mountPath: /etc/secrets
+</span></span><span style="display:flex;"><span>  volumes:
+</span></span><span style="display:flex;"><span>  - name: secret-volume
+</span></span><span style="display:flex;"><span>    secret:
+</span></span><span style="display:flex;"><span>      secretName: my-secret</span></span></code></pre></div>
+<ul>
+<li>How to extract the value from a secret</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get secret my-secret -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{.data.username}&#39;</span> | base64 --decode &gt; username.txt
+</span></span><span style="display:flex;"><span>kubectl get secret my-secret -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{.data.password}&#39;</span> | base64 --decode &gt; password.txt</span></span></code></pre></div>
+<h4 id="configmap-1">Configmap</h4>
+<ul>
+<li>Create a configmap</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl create configmap <span style="color:#66d9ef">my</span><span style="color:#f92672">-</span>configmap <span style="color:#f92672">--</span>from<span style="color:#f92672">-</span>literal<span style="color:#f92672">=</span>key1<span style="color:#f92672">=</span>value1</span></span></code></pre></div>
+<ul>
+<li>Create cm with yaml</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: ConfigMap
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: my-configmap
+</span></span><span style="display:flex;"><span>data:
+</span></span><span style="display:flex;"><span>  key1: value1
+</span></span><span style="display:flex;"><span>  key2: value2</span></span></code></pre></div>
+<ul>
+<li>Configmap for a config file</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl create configmap <span style="color:#66d9ef">my</span><span style="color:#f92672">-</span>configmap <span style="color:#f92672">--</span>from<span style="color:#f92672">-</span>file<span style="color:#f92672">=</span>config<span style="color:#f92672">-</span>file<span style="color:#f92672">.</span>txt</span></span></code></pre></div>
+<ul>
+<li>use configmap as a file in a pod</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Pod
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: mypod
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  containers:
+</span></span><span style="display:flex;"><span>  - name: mycontainer
+</span></span><span style="display:flex;"><span>    image: myimage
+</span></span><span style="display:flex;"><span>    envFrom:
+</span></span><span style="display:flex;"><span>    - configMapRef:
+</span></span><span style="display:flex;"><span>        name: my-configmap
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Pod
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: mypod
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  containers:
+</span></span><span style="display:flex;"><span>  - name: mycontainer
+</span></span><span style="display:flex;"><span>    image: myimage
+</span></span><span style="display:flex;"><span>    volumeMounts:
+</span></span><span style="display:flex;"><span>    - name: config-volume
+</span></span><span style="display:flex;"><span>      mountPath: /etc/config
+</span></span><span style="display:flex;"><span>  volumes:
+</span></span><span style="display:flex;"><span>  - name: config-volume
+</span></span><span style="display:flex;"><span>    configMap:
+</span></span><span style="display:flex;"><span>      name: my-configmap</span></span></code></pre></div>
+<h2 id="ingresscontroller">IngressController</h2>
+<h4 id="documentation-referred">Documentation Referred:</h4>
+<p><a href="https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/" rel="external" target="_blank">https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/</a></p>
+<p><a href="https://kubernetes.github.io/ingress-nginx/deploy/" rel="external" target="_blank">https://kubernetes.github.io/ingress-nginx/deploy/</a></p>
+<ul>
+<li>Step 1: Install Nginx Ingress Controller:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace</span></span></code></pre></div>
+<ul>
+<li>Step 2: Verify the Ingress Controller Resource</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>helm list --all-namespaces
+</span></span><span style="display:flex;"><span>kubectl get ingressclass
+</span></span><span style="display:flex;"><span>kubectl get service -n ingress-nginx</span></span></code></pre></div>
+<ul>
+<li>check if the IngressClass is available</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get ingressClassName</span></span></code></pre></div>
+<ul>
+<li>
+<p>Add the Application dns to your hosts in case you are not using DNS service</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>nano /etc/hosts   <span style="color:#66d9ef">for</span> windows it is under C:<span style="color:#ae81ff">\W</span>indows<span style="color:#ae81ff">\S</span>ystem32<span style="color:#ae81ff">\d</span>rivers<span style="color:#ae81ff">\e</span>tc</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>&lt;ADD-LOAD-BALANCER-IP&gt; website01.example.internal website02.example.internal</span></span></code></pre></div>
+</li>
+<li>
+<p>Step 1: Create two Pods</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl run service-pod-1 --image<span style="color:#f92672">=</span>nginx
+</span></span><span style="display:flex;"><span>kubectl run service-pod-2 --image<span style="color:#f92672">=</span>nginx</span></span></code></pre></div>
+</li>
+<li>
+<p>Step 2: Create Service for above created pods</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl expose pod service-pod-1 --name service1 --port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span> --target-port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>kubectl expose pod service-pod-2 --name service2 --port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span> --target-port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>kubectl get services</span></span></code></pre></div>
+</li>
+<li>
+<p>Step 3: Verify Service to POD connectivity</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl run frontend-pod --image<span style="color:#f92672">=</span>ubuntu --command -- sleep <span style="color:#ae81ff">36000</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it frontend-pod -- bash
+</span></span><span style="display:flex;"><span>apt-get update <span style="color:#f92672">&amp;&amp;</span> apt-get -y install curl nano
+</span></span><span style="display:flex;"><span>curl &lt;SERVER-1-IP&gt;
+</span></span><span style="display:flex;"><span>curl &lt;SERVER-1-IP&gt;</span></span></code></pre></div>
+</li>
+<li>
+<p>Check if the application is reachable</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>curl website01.example.internal
+</span></span><span style="display:flex;"><span>curl website02.example.internal</span></span></code></pre></div>
+</li>
+<li>
+<p>Step 5: Change the Default Nginx Page for Each Service</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl exec -it service-pod-1 -- bash
+</span></span><span style="display:flex;"><span>cd /usr/share/nginx/html
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;This is Website 1&#34;</span> &gt; index.html</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl exec -it service-pod-2 -- bash
+</span></span><span style="display:flex;"><span>cd /usr/share/nginx/html
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;This is Website 2&#34;</span> &gt; index.html</span></span></code></pre></div>
+</li>
+<li>
+<p>Step 6: Verification</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl exec -it frontend-pod -- bash
+</span></span><span style="display:flex;"><span>curl website01.example.internal
+</span></span><span style="display:flex;"><span>curl website02.example.internal</span></span></code></pre></div>
+</li>
+</ul>
+<h4 id="documentation-referred-1">Documentation Referred:</h4>
+<p><a href="https://kubernetes.io/docs/concepts/services-networking/ingress/#name-based-virtual-hosting" rel="external" target="_blank"> Lean About name based virtual Hosting</a></p>
+<ul>
+<li>
+<p>Step 7: Create Ingress Resource</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: networking.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Ingress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: name-virtual-host-ingress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ingressClassName: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  rules:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - host: website01.example.internal
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    http:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      paths:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - pathType: Prefix
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        path: &#34;/&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        backend:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          service:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            name: service1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            port:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              number: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - host: website02.example.internal
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    http:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      paths:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - pathType: Prefix
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        path: &#34;/&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        backend:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          service:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            name: service2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            port:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              number: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+</li>
+<li>
+<p>Check newlly created ingress rules</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get ingress</span></span></code></pre></div>
+</li>
+<li>
+<p>Check more information for ingress</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl describe ingress name<span style="color:#f92672">-</span>virtual<span style="color:#f92672">-</span>host<span style="color:#f92672">-</span>ingress created</span></span></code></pre></div>
+</li>
+<li>
+<p>Now check if the application is opening in browser</p>
+</li>
+</ul>
+<h2 id="kubernetes-patch-command">Kubernetes Patch command</h2>
+<h3 id="description">Description</h3>
+<p>Briefly describe the purpose of the issue.</p>
+<h3 id="examples-using-kubectl-patch">Examples using <code>kubectl patch</code></h3>
+<ul>
+<li>Patch a Deployment (Update Replicas)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>  kubectl patch deployment &lt;deployment-name&gt; -p <span style="color:#e6db74">&#39;{&#34;spec&#34;: {&#34;replicas&#34;: 3}}&#39;</span></span></span></code></pre></div>
+<ul>
+<li>Patch a Pod (Update Container Image)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl patch pod <span style="color:#e6db74">&lt;pod-name&gt;</span> <span style="color:#f92672">-</span>p <span style="color:#e6db74">&#39;{&#34;spec&#34;: {&#34;containers&#34;: [{&#34;name&#34;: &#34;container-name&#34;, &#34;image&#34;: &#34;new-image:tag&#34;}]}}&#39;</span></span></span></code></pre></div>
+<ul>
+<li>Update configmap</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl patch configmap &lt;configmap-name&gt; -p <span style="color:#e6db74">&#39;{&#34;data&#34;: {&#34;new-key&#34;: &#34;new-value&#34;}}&#39;</span></span></span></code></pre></div>
+<ul>
+<li>Patch a Service (Update Service Type)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl patch service &lt;service-name&gt; -p <span style="color:#e6db74">&#39;{&#34;spec&#34;: {&#34;type&#34;: &#34;LoadBalancer&#34;}}&#39;</span></span></span></code></pre></div>
+<ul>
+<li>Patch a PVC (Update Storage Size)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl patch pvc <span style="color:#e6db74">&lt;pvc-name&gt;</span> <span style="color:#f92672">-</span>p <span style="color:#e6db74">&#39;{&#34;spec&#34;: {&#34;resources&#34;: {&#34;requests&#34;: {&#34;storage&#34;: &#34;5Gi&#34;}}}}&#39;</span></span></span></code></pre></div>
+<h3 id="statefulsets">StatefulSets</h3>
+<ul>
+<li>StatefulSet is the workload API object used to manage stateful applications.</li>
+<li>Like a Deployment, a StatefulSet manages Pods that are based on an identical container spec.</li>
+<li>Unlike a Deployment, a StatefulSet maintains a sticky identity for each of its Pods.</li>
+</ul>
+<h4 id="using-statefulsets">Using StatefulSets</h4>
+<h5 id="statefulsets-are-valuable-for-applications-that-require-one-or-more-of-the-following">StatefulSets are valuable for applications that require one or more of the following.</h5>
+<ul>
+<li>Stable, unique network identifiers.</li>
+<li>Stable, persistent storage.</li>
+<li>Ordered, graceful deployment and scaling.</li>
+<li>Ordered, automated rolling updates.</li>
+</ul>
+<h4 id="example-of-statefulset">Example of statefulset</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - port: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    name: web
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  clusterIP: None
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: StatefulSet
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: web
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: nginx # has to match .spec.template.metadata.labels
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  serviceName: &#34;nginx&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 3 # by default is 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  minReadySeconds: 10 # by default is 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: nginx # has to match .spec.selector.matchLabels
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      terminationGracePeriodSeconds: 10
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: registry.k8s.io/nginx-slim:0.8
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - containerPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          name: web
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        volumeMounts:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - name: www
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          mountPath: /usr/share/nginx/html
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  volumeClaimTemplates:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      name: www
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      accessModes: [ &#34;ReadWriteOnce&#34; ]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      storageClassName: &#34;my-storage-class&#34; &lt;Change this as per your sc&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        requests:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          storage: 1Gi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  EOF</span></span></span></code></pre></div>
+<ul>
+<li>check statefulset</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl  get sts</span></span></code></pre></div>
+<ul>
+<li>Also check for service type</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get svc</span></span></code></pre></div>
+<ul>
+<li>Check for pvc</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get pvc</span></span></code></pre></div>
+<ul>
+<li>Check pods</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get pods</span></span></code></pre></div>
+<ul>
+<li>Test after deleting a pod if the pod is taking the same name again</li>
+</ul>
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+          <a id="R-logo" class="R-default" href="../../index.html">
+Kubernetes Documentation
+          </a>
+        </div>
+        <script>
+          window.index_js_url="../../searchindex.en.js?1734364046";
+        </script>
+        <search><form action="../../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../../js/auto-complete.js?1734364046" defer></script>
+        <script src="../../js/lunr/lunr.min.js?1734364046" defer></script>
+        <script src="../../js/lunr/lunr.stemmer.support.min.js?1734364046" defer></script>
+        <script src="../../js/lunr/lunr.multi.min.js?1734364046" defer></script>
+        <script src="../../js/lunr/lunr.en.min.js?1734364046" defer></script>
+        <script src="../../js/search.js?1734364046" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation homelinks">
+        <ul>
+          <li><a class="padding" href="../../index.html"><i class="fa-fw fas fa-home"></i> Home</a></li>
+        </ul>
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-shortcutmenu-home" class="R-sidebarmenu">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="parent " data-nav-id="/k8s/index.html"><a class="padding" href="../../k8s/index.html">Kubernetes documentation</a><ul id="R-subsections-7466713d447629f279c035593d0e5915" class="collapsible-menu">
+            <li class="" data-nav-id="/k8s/part01/index.html"><a class="padding" href="../../k8s/part01/index.html">Part 1</a></li>
+            <li class="" data-nav-id="/k8s/part02/index.html"><a class="padding" href="../../k8s/part02/index.html">Part 2</a></li>
+            <li class="" data-nav-id="/k8s/part03/index.html"><a class="padding" href="../../k8s/part03/index.html">Part 3</a></li>
+            <li class="active " data-nav-id="/k8s/part04/index.html"><a class="padding" href="../../k8s/part04/index.html">Part 4</a></li>
+            <li class="" data-nav-id="/k8s/part05/index.html"><a class="padding" href="../../k8s/part05/index.html">Part 5</a></li>
+            <li class="" data-nav-id="/k8s/k8s/index.html"><a class="padding" href="../../k8s/k8s/index.html">Kubernetes  Administration</a></li></ul></li>
+          </ul>
+        </div>
+    
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-language"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = this.querySelector( this.value ).dataset.url;">
+                      <option id="R-select-language-en" value="#R-select-language-en" data-url="../../k8s/part04/index.html" lang="en-us" selected></option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-paint-brush"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.relearn.changeVariant( this.value );">
+                      <option id="R-select-variant-auto" value="auto" selected>Auto</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.relearn.markVariant();</script>
+              </li>
+              <li class="footerVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-history"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter showFooter">
+        <p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../../js/clipboard.min.js?1734364046" defer></script>
+    <script src="../../js/perfect-scrollbar.min.js?1734364046" defer></script>
+    <script src="../../js/theme.js?1734364046" defer></script>
+  </body>
+</html>

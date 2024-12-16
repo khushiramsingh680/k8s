@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.139.3">
+    <meta name="generator" content="Relearn 7.2.1+16d4de84becfa2d2e6bdb2394a2f4fa411bc0007">
+    <meta name="description" content="Topics Service CLusterIP NodePort LoadBalancer Headless Service METALLB DNS Troubleshooting Deployment ReplicaSet Daemonset Labels and Selector Type of Selector Equality based Set based selector Job CronJob Metric Server HPA(pod Autoscaling) Helm Overview Service A Service is a method for exposing a network application that is running as one or more Pods in your cluster.
+A key aim of Services in Kubernetes is that you don’t need to modify your existing application to use an unfamiliar service discovery mechanism. A Kubernetes service is a logical abstraction for a deployed group of pods in a cluster What are the types of Kubernetes services? ClusterIP: Exposes a service which is only accessible from within the cluster. NodePort: Exposes a service via a static port on each node’s IP. NodePorts are in the 30000-32767 range by default LoadBalancer: Exposes the service via the cloud provider’s load balancer. ExternalName Maps a service to a predefined externalName field by returning a value for the CNAME record. Create a service of Type(ClusterIp) kubectl apply -f - &lt;&lt;EOF apiVersion: v1 kind: Service metadata: name: myapp-service spec: selector: app: myapp ports: - protocol: TCP port: 80 targetPort: 8080 EOFCreate a service of Type (NodePort) kubectl expose pod/&lt;name&gt; --port 80 --target-port=80 --name &lt;Svc&gt;Create a type of service (LoadBalancer) kubectl expose pod/name --port=80 --type=LoadBalancerCheck the endpoint kubectl get epAchieve the blue green Delete a service Exchange the service selector Metallb A LoadBalancer Solution for OnPrem Kubernetes Deploying Metallb Steps: git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ cd metallb kubectl apply -f 01 01_metallb.yaml kubectl apply -f 02_metallb-config.yamlMake a test after creating a service kubectl apply -f 03_test-load-balancer.yamlCheck the service kubectl get svcMetric Server Metric Server Github Link">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Part 3 :: Kubernetes Documentation">
+    <meta name="twitter:description" content="Topics Service CLusterIP NodePort LoadBalancer Headless Service METALLB DNS Troubleshooting Deployment ReplicaSet Daemonset Labels and Selector Type of Selector Equality based Set based selector Job CronJob Metric Server HPA(pod Autoscaling) Helm Overview Service A Service is a method for exposing a network application that is running as one or more Pods in your cluster.
+A key aim of Services in Kubernetes is that you don’t need to modify your existing application to use an unfamiliar service discovery mechanism. A Kubernetes service is a logical abstraction for a deployed group of pods in a cluster What are the types of Kubernetes services? ClusterIP: Exposes a service which is only accessible from within the cluster. NodePort: Exposes a service via a static port on each node’s IP. NodePorts are in the 30000-32767 range by default LoadBalancer: Exposes the service via the cloud provider’s load balancer. ExternalName Maps a service to a predefined externalName field by returning a value for the CNAME record. Create a service of Type(ClusterIp) kubectl apply -f - &lt;&lt;EOF apiVersion: v1 kind: Service metadata: name: myapp-service spec: selector: app: myapp ports: - protocol: TCP port: 80 targetPort: 8080 EOFCreate a service of Type (NodePort) kubectl expose pod/&lt;name&gt; --port 80 --target-port=80 --name &lt;Svc&gt;Create a type of service (LoadBalancer) kubectl expose pod/name --port=80 --type=LoadBalancerCheck the endpoint kubectl get epAchieve the blue green Delete a service Exchange the service selector Metallb A LoadBalancer Solution for OnPrem Kubernetes Deploying Metallb Steps: git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ cd metallb kubectl apply -f 01 01_metallb.yaml kubectl apply -f 02_metallb-config.yamlMake a test after creating a service kubectl apply -f 03_test-load-balancer.yamlCheck the service kubectl get svcMetric Server Metric Server Github Link">
+    <meta property="og:url" content="https://khushiramsingh680.github.io/k8s/part03/index.html">
+    <meta property="og:site_name" content="Kubernetes Documentation">
+    <meta property="og:title" content="Part 3 :: Kubernetes Documentation">
+    <meta property="og:description" content="Topics Service CLusterIP NodePort LoadBalancer Headless Service METALLB DNS Troubleshooting Deployment ReplicaSet Daemonset Labels and Selector Type of Selector Equality based Set based selector Job CronJob Metric Server HPA(pod Autoscaling) Helm Overview Service A Service is a method for exposing a network application that is running as one or more Pods in your cluster.
+A key aim of Services in Kubernetes is that you don’t need to modify your existing application to use an unfamiliar service discovery mechanism. A Kubernetes service is a logical abstraction for a deployed group of pods in a cluster What are the types of Kubernetes services? ClusterIP: Exposes a service which is only accessible from within the cluster. NodePort: Exposes a service via a static port on each node’s IP. NodePorts are in the 30000-32767 range by default LoadBalancer: Exposes the service via the cloud provider’s load balancer. ExternalName Maps a service to a predefined externalName field by returning a value for the CNAME record. Create a service of Type(ClusterIp) kubectl apply -f - &lt;&lt;EOF apiVersion: v1 kind: Service metadata: name: myapp-service spec: selector: app: myapp ports: - protocol: TCP port: 80 targetPort: 8080 EOFCreate a service of Type (NodePort) kubectl expose pod/&lt;name&gt; --port 80 --target-port=80 --name &lt;Svc&gt;Create a type of service (LoadBalancer) kubectl expose pod/name --port=80 --type=LoadBalancerCheck the endpoint kubectl get epAchieve the blue green Delete a service Exchange the service selector Metallb A LoadBalancer Solution for OnPrem Kubernetes Deploying Metallb Steps: git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ cd metallb kubectl apply -f 01 01_metallb.yaml kubectl apply -f 02_metallb-config.yamlMake a test after creating a service kubectl apply -f 03_test-load-balancer.yamlCheck the service kubectl get svcMetric Server Metric Server Github Link">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="/">
+    <meta itemprop="name" content="Part 3 :: Kubernetes Documentation">
+    <meta itemprop="description" content="Topics Service CLusterIP NodePort LoadBalancer Headless Service METALLB DNS Troubleshooting Deployment ReplicaSet Daemonset Labels and Selector Type of Selector Equality based Set based selector Job CronJob Metric Server HPA(pod Autoscaling) Helm Overview Service A Service is a method for exposing a network application that is running as one or more Pods in your cluster.
+A key aim of Services in Kubernetes is that you don’t need to modify your existing application to use an unfamiliar service discovery mechanism. A Kubernetes service is a logical abstraction for a deployed group of pods in a cluster What are the types of Kubernetes services? ClusterIP: Exposes a service which is only accessible from within the cluster. NodePort: Exposes a service via a static port on each node’s IP. NodePorts are in the 30000-32767 range by default LoadBalancer: Exposes the service via the cloud provider’s load balancer. ExternalName Maps a service to a predefined externalName field by returning a value for the CNAME record. Create a service of Type(ClusterIp) kubectl apply -f - &lt;&lt;EOF apiVersion: v1 kind: Service metadata: name: myapp-service spec: selector: app: myapp ports: - protocol: TCP port: 80 targetPort: 8080 EOFCreate a service of Type (NodePort) kubectl expose pod/&lt;name&gt; --port 80 --target-port=80 --name &lt;Svc&gt;Create a type of service (LoadBalancer) kubectl expose pod/name --port=80 --type=LoadBalancerCheck the endpoint kubectl get epAchieve the blue green Delete a service Exchange the service selector Metallb A LoadBalancer Solution for OnPrem Kubernetes Deploying Metallb Steps: git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ cd metallb kubectl apply -f 01 01_metallb.yaml kubectl apply -f 02_metallb-config.yamlMake a test after creating a service kubectl apply -f 03_test-load-balancer.yamlCheck the service kubectl get svcMetric Server Metric Server Github Link">
+    <meta itemprop="wordCount" content="1419">
+    <title>Part 3 :: Kubernetes Documentation</title>
+    <link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet"></noscript>
+    <link href="../css/auto-complete.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1734364594" rel="stylesheet"></noscript>
+    <link href="../css/perfect-scrollbar.min.css?1734364594" rel="stylesheet">
+    <link href="../css/theme.min.css?1734364594" rel="stylesheet">
+    <link href="../css/format-html.min.css?1734364594" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.relBasePath='..';
+      window.relearn.relBaseUri='..';
+      window.relearn.absBaseUri='https:\/\/khushiramsingh680.github.io\/k8s';
+      window.relearn.min = `.min`;
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant");
+        var select = document.querySelector("#R-select-variant");
+        if (select) {
+          select.value = variant;
+        }
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script>
+  </head>
+  <body class="mobile-support html" data-url="../part03/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#topics">Topics</a></li>
+    <li><a href="#service">Service</a>
+      <ul>
+        <li><a href="#what-are-the-types-of-kubernetes-services">What are the types of Kubernetes services?</a></li>
+      </ul>
+    </li>
+    <li><a href="#metallb-a-loadbalancer-solution-for-onprem-kubernetes">Metallb A LoadBalancer Solution for OnPrem Kubernetes</a></li>
+    <li><a href="#deploying-metallbhttpsmetallbuniversetf">Deploying <a href="https://metallb.universe.tf/">Metallb</a></a>
+      <ul>
+        <li><a href="#steps">Steps:</a></li>
+        <li><a href="#metric-server">Metric Server</a></li>
+        <li><a href="#steps-1">Steps</a></li>
+      </ul>
+    </li>
+    <li><a href="#hpa-pod-autoscaling">HPA (Pod Autoscaling)</a>
+      <ul>
+        <li><a href="#steps-2">Steps</a></li>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+      </ul>
+    </li>
+    <li><a href="#deployment">Deployment</a></li>
+    <li><a href="#job">job</a>
+      <ul>
+        <li><a href="#job-creation-yaml">Job Creation yaml</a></li>
+        <li><a href="#cronjob">cronjob</a></li>
+      </ul>
+    </li>
+    <li><a href="#replicaset">Replicaset</a>
+      <ul>
+        <li><a href="#replicasset-yaml-example">ReplicasSet Yaml example</a></li>
+      </ul>
+    </li>
+    <li><a href="#daemonsethttpskubernetesiodocsconceptsworkloadscontrollersdaemonset"><a href="https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/">Daemonset</a></a>
+      <ul>
+        <li><a href="#dns-troubleshooting">DNS Troubleshooting:</a></li>
+        <li><a href="#dns-for-services-and-pods">DNS for Services and Pods</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">/</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Part 3</span><meta itemprop="position" content="2"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../part02/index.html" title="Part 2 (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../part04/index.html" title="Part 4 (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable page" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+
+<h1 id="part-3">Part 3</h1>
+
+<h2 id="topics">Topics</h2>
+<ul>
+<li>Service
+<ul>
+<li>CLusterIP</li>
+<li>NodePort</li>
+<li>LoadBalancer</li>
+<li>Headless Service</li>
+</ul>
+</li>
+<li><a href="../part03/index.html#deploying-metallb">METALLB</a></li>
+<li><a href="../part03/index.html#dns-troubleshooting">DNS Troubleshooting</a></li>
+<li>Deployment</li>
+<li>ReplicaSet</li>
+<li>Daemonset</li>
+<li>Labels and Selector</li>
+<li>Type of <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/" rel="external" target="_blank">Selector</a>
+<ul>
+<li>Equality based</li>
+<li>Set based selector</li>
+</ul>
+</li>
+<li>Job</li>
+<li>CronJob</li>
+<li><a href="../part03/index.html#metric-server">Metric Server</a></li>
+<li>HPA(pod Autoscaling)</li>
+<li><a href="./docs/miscellaneous/Helm.md">Helm Overview</a></li>
+</ul>
+<h2 id="service">Service</h2>
+<p>A Service is a method for exposing a network application that is running as one or more Pods in your cluster.</p>
+<ul>
+<li>A key aim of Services in Kubernetes is that you don&rsquo;t need to modify your existing application to use an unfamiliar service discovery mechanism.</li>
+<li>A Kubernetes service is a logical abstraction for a deployed group of pods in a cluster</li>
+</ul>
+<h3 id="what-are-the-types-of-kubernetes-services">What are the types of Kubernetes services?</h3>
+<ul>
+<li><strong>ClusterIP</strong>: Exposes a service which is only accessible from within the cluster.</li>
+<li><strong>NodePort</strong>: Exposes a service via a static port on each node’s IP. NodePorts are in the 30000-32767 range by default</li>
+<li><strong>LoadBalancer</strong>: Exposes the service via the cloud provider’s load balancer.</li>
+<li><strong>ExternalName</strong> Maps a service to a predefined externalName field by returning a value for the CNAME record.</li>
+</ul>
+<h4 id="create-a-service-of-typeclusterip">Create a service of Type(ClusterIp)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: myapp-service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: myapp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - protocol: TCP
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      port: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      targetPort: 8080
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="create-a-service-of-type-nodeport">Create a service of Type (NodePort)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl expose pod<span style="color:#f92672">/</span><span style="color:#e6db74">&lt;name&gt;</span> <span style="color:#f92672">--</span>port <span style="color:#ae81ff">80</span> <span style="color:#f92672">--</span>target<span style="color:#f92672">-</span>port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span> <span style="color:#f92672">--</span>name <span style="color:#e6db74">&lt;Svc&gt;</span></span></span></code></pre></div>
+<h4 id="create-a-type-of-service-loadbalancer">Create a type of service (LoadBalancer)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl expose pod<span style="color:#f92672">/</span>name <span style="color:#f92672">--</span>port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span> <span style="color:#f92672">--</span>type<span style="color:#f92672">=</span>LoadBalancer</span></span></code></pre></div>
+<ul>
+<li>Check the endpoint
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get ep</span></span></code></pre></div>
+</li>
+<li>Achieve the blue green</li>
+<li>Delete a service</li>
+<li>Exchange the service selector</li>
+</ul>
+<h2 id="metallb-a-loadbalancer-solution-for-onprem-kubernetes">Metallb A LoadBalancer Solution for OnPrem Kubernetes</h2>
+<h2 id="deploying-metallbhttpsmetallbuniversetf">Deploying <a href="https://metallb.universe.tf/" rel="external" target="_blank">Metallb</a></h2>
+<h3 id="steps">Steps:</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>git clone https:<span style="color:#e6db74">//gi</span>tlab<span style="color:#f92672">.</span>com<span style="color:#e6db74">/container-and-kubernetes/</span>kubernetes<span style="color:#f92672">-</span><span style="color:#ae81ff">2024</span><span style="color:#f92672">.</span>git
+</span></span><span style="display:flex;"><span>cd kubernetes<span style="color:#f92672">-</span><span style="color:#ae81ff">2024</span><span style="color:#f92672">/</span>
+</span></span><span style="display:flex;"><span>cd metallb
+</span></span><span style="display:flex;"><span>kubectl apply <span style="color:#f92672">-</span>f <span style="color:#ae81ff">01</span> <span style="color:#ae81ff">01</span>_metallb<span style="color:#f92672">.</span>yaml
+</span></span><span style="display:flex;"><span>kubectl apply <span style="color:#f92672">-</span>f <span style="color:#ae81ff">02</span>_metallb<span style="color:#f92672">-</span>config<span style="color:#f92672">.</span>yaml</span></span></code></pre></div>
+<ul>
+<li>Make a test after creating a service</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f 03_test-load-balancer.yaml</span></span></code></pre></div>
+<ul>
+<li>Check the service</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get svc</span></span></code></pre></div>
+<h3 id="metric-server">Metric Server</h3>
+<p><a href="https://github.com/kubernetes-sigs/metrics-server" rel="external" target="_blank">Metric Server Github Link</a></p>
+<h3 id="steps-1">Steps</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git
+</span></span><span style="display:flex;"><span>cd kubernetes-2024
+</span></span><span style="display:flex;"><span>cd  metricserver
+</span></span><span style="display:flex;"><span>kubectl apply -f .</span></span></code></pre></div>
+<ul>
+<li>wait for few mins and check if the metric server pods are up</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl top nodes
+</span></span><span style="display:flex;"><span>kubectl top pods</span></span></code></pre></div>
+<h2 id="hpa-pod-autoscaling">HPA (Pod Autoscaling)</h2>
+<h3 id="steps-2">Steps</h3>
+<h3 id="prerequisites">Prerequisites</h3>
+<ul>
+<li>Resources should be defined for a pod</li>
+<li>Metric Api has to be available .</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git
+</span></span><span style="display:flex;"><span>cd kubernetes-2024
+</span></span><span style="display:flex;"><span>cd  hpa
+</span></span><span style="display:flex;"><span>kubectl apply -f deployment.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f service.yaml
+</span></span><span style="display:flex;"><span>kubectl apply hpa.yaml</span></span></code></pre></div>
+<ul>
+<li>check hpa</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get hpa</span></span></code></pre></div>
+<h2 id="deployment">Deployment</h2>
+<ul>
+<li>Create Deployment</li>
+<li>Update secret for a deployment</li>
+<li>Set resource block for a deployment</li>
+<li>Set Environment Variables in Deployment</li>
+<li>Perform Rollout</li>
+<li>Perform Rollback</li>
+<li>Rolled back to another revision</li>
+<li>Check the max rs for a deployment</li>
+<li>Deployment strategy</li>
+<li>Create a deployment</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create deployment myapp-deployment --image<span style="color:#f92672">=</span>nginx</span></span></code></pre></div>
+<ul>
+<li>Deployment with Yaml file</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: myapp-deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 3  # Number of desired replicas
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: myapp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: myapp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: nginx-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - containerPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Perform Rollout</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl set image deployment/myapp-deployment nginx-container<span style="color:#f92672">=</span>nginx:1.21.4</span></span></code></pre></div>
+<ul>
+<li>Check rollout status</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl rollout status deployment myapp-deployment</span></span></code></pre></div>
+<ul>
+<li>Check the rollout history</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl rollout history deployment myapp-deployment</span></span></code></pre></div>
+<ul>
+<li>Perform Rollback</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl rollout undo deployment myapp<span style="color:#f92672">-</span>deployment</span></span></code></pre></div>
+<ul>
+<li>Perform scale up/down</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl scale deployment  myapp-deployment --replicas<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span></span></span></code></pre></div>
+<ul>
+<li>Set Environment Variables in Deployment</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl set env deployment/myapp-deployment KEY<span style="color:#f92672">=</span>VALUE</span></span></code></pre></div>
+<ul>
+<li>Set Resources</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl set resources deployment<span style="color:#f92672">/</span>myapp<span style="color:#f92672">-</span>deployment <span style="color:#f92672">--</span>limits<span style="color:#f92672">=</span>cpu<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>m,memory<span style="color:#f92672">=</span><span style="color:#ae81ff">512</span>Mi <span style="color:#f92672">--</span>requests<span style="color:#f92672">=</span>cpu<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>m,memory<span style="color:#f92672">=</span><span style="color:#ae81ff">256</span>Mi</span></span></code></pre></div>
+<ul>
+<li>Update SA for a deployment</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl set serviceaccount deployment<span style="color:#f92672">/</span>myapp<span style="color:#f92672">-</span>deployment <span style="color:#66d9ef">my</span><span style="color:#f92672">-</span>service<span style="color:#f92672">-</span>account</span></span></code></pre></div>
+<ul>
+<li>Change the revision history</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">revisionHistoryLimit</span>: <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">your-app</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">your-app</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">your-container</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">image</span>: <span style="color:#ae81ff">your-image</span></span></span></code></pre></div>
+<ul>
+<li>How to check if the change has been accepted</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get deployment &lt;deployment-name&gt; -o<span style="color:#f92672">=</span>jsonpath<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">{</span>.spec.revisionHistoryLimit<span style="color:#f92672">}</span></span></span></code></pre></div>
+<ul>
+<li>How to use record option with rollback depoloyment</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl rollout undo deployment/&lt;deployment-name&gt; --to-revision<span style="color:#f92672">=</span>&lt;revision-number&gt; --record</span></span></code></pre></div>
+<h2 id="job">job</h2>
+<ul>
+<li>Create a job</li>
+<li>Create a cronjob</li>
+<li>Clean up finished jobs automatically
+<ul>
+<li>ttlSecondsAfterFinished: 100</li>
+</ul>
+</li>
+<li>check different option in cronjob as job
+<ul>
+<li>backoffLimit
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>Max pod restart in <span style="color:#66d9ef">case</span> of failure</span></span></code></pre></div>
+</li>
+<li>completions
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span> How many containers of the job are created one after another</span></span></code></pre></div>
+</li>
+<li>parallelism:
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>it defines how many pods will be created at once </span></span></code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="job-creation-yaml">Job Creation yaml</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: batch/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Job
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: pi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: busybox
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        command: [&#34;/bin/echo&#34;, &#34;Hello World&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      restartPolicy: Never
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  backoffLimit: 4
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h3 id="cronjob">cronjob</h3>
+<ul>
+<li>Create a cronjob</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: batch/v1beta1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: CronJob
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: simple-cronjob
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  schedule: &#34;*/1 * * * *&#34;  # Run every minute
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  jobTemplate:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          - name: simple-cronjob-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            image: busy
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Example 2</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: batch/v1beta1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: CronJob
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: simple-cronjob
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  schedule: &#34;*/1 * * * *&#34;  # Run every minute
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  jobTemplate:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          - name: simple-cronjob-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            image: busybox
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            command: [&#34;echo&#34;, &#34;Hello, Kubernetes!&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Example 3</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: batch/v1beta1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: CronJob
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: parallel-cronjob
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  schedule: &#34;0 */6 * * *&#34;  # Run every 6 hours
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  jobTemplate:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      completions: 2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      parallelism: 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          - name: parallel-cronjob-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            image: busybox
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            command: [&#34;echo&#34;, &#34;Running parallel cronjob&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Example 4</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: batch/v1beta1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: CronJob
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: cronjob-volume-mounts
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  schedule: &#34;*/5 * * * *&#34;  # Run every 5 minutes
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  jobTemplate:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          - name: cronjob-volume-mounts-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            image: busybox
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            command: [&#34;/bin/sh&#34;, &#34;-c&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            args: [&#34;echo Hello &gt; /data/hello.txt&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            volumeMounts:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - name: data-volume
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              mountPath: /data
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          volumes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          - name: data-volume
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            emptyDir: {}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Cronjob/job with imperative way</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create job myjob --image<span style="color:#f92672">=</span>busybox --command -- echo <span style="color:#e6db74">&#34;Hello, Kubernetes!&#34;</span>
+</span></span><span style="display:flex;"><span>kubectl create cronjob mycronjob --image<span style="color:#f92672">=</span>busybox --schedule<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;*/5 * * * *&#34;</span> --command -- echo <span style="color:#e6db74">&#34;Scheduled Job&#34;</span></span></span></code></pre></div>
+<ul>
+<li>Suspend an active Job:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl patch job<span style="color:#f92672">/</span>myjob <span style="color:#f92672">--</span>type<span style="color:#f92672">=</span>strategic <span style="color:#f92672">--</span>patch <span style="color:#e6db74">&#39;{&#34;spec&#34;:{&#34;suspend&#34;:true}}&#39;</span></span></span></code></pre></div>
+<ul>
+<li>Resume a suspended Job:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl patch job<span style="color:#f92672">/</span>myjob <span style="color:#f92672">--</span>type<span style="color:#f92672">=</span>strategic <span style="color:#f92672">--</span>patch <span style="color:#e6db74">&#39;{&#34;spec&#34;:{&#34;suspend&#34;:false}}&#39;</span></span></span></code></pre></div>
+<h2 id="replicaset">Replicaset</h2>
+<ul>
+<li>Create a replicaset</li>
+<li>Scale Replicaset</li>
+<li>Check the image used for replicaset</li>
+<li>Change the image for a rs</li>
+<li>Create a service for rs</li>
+<li>Forward the port of a rs</li>
+<li>Test if the app is opening</li>
+</ul>
+<h3 id="replicasset-yaml-example">ReplicasSet Yaml example</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ReplicaSet
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: my-replicaset
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: myapp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: myapp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: myapp-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>View Replicaset</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get replicasets
+</span></span><span style="display:flex;"><span>kubectl get rs</span></span></code></pre></div>
+<ul>
+<li>Scale up/down a replicaset</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl scale replicaset <span style="color:#66d9ef">my</span><span style="color:#f92672">-</span>replicaset <span style="color:#f92672">--</span>replicas<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span></span></span></code></pre></div>
+<ul>
+<li>Create a service for Replicaset</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: my-service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: myapp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - protocol: TCP
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    port: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    targetPort: 8080
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  type: LoadBalancer
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>configure port forward for replicaset</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl port-forward replicaset/my-replicaset 8080:80</span></span></code></pre></div>
+<h2 id="daemonsethttpskubernetesiodocsconceptsworkloadscontrollersdaemonset"><a href="https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/" rel="external" target="_blank">Daemonset</a></h2>
+<p>A DaemonSet ensures that all (or some) Nodes run a copy of a Pod. As nodes are added to the cluster, Pods are added to them. As nodes are removed from the cluster, those Pods are garbage collected. Deleting a DaemonSet will clean up the Pods it created.</p>
+<ul>
+<li>Some typical uses of a DaemonSet are:
+<ul>
+<li>running a cluster storage daemon on every node</li>
+<li>running a logs collection daemon on every node</li>
+<li>running a node monitoring daemon on every node</li>
+</ul>
+</li>
+<li>Create a daemonset</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: DaemonSet
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> name: fluentd-elasticsearch
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> namespace: kube-system
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">   k8s-app: fluentd-logging
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">   matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     name: fluentd-elasticsearch
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">   metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">       name: fluentd-elasticsearch
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">   spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     tolerations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     # these tolerations are to have the daemonset runnable on control plane nodes
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     # remove them if your control plane nodes should not run pods
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     - key: node-role.kubernetes.io/control-plane
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">       operator: Exists
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">       effect: NoSchedule
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     - key: node-role.kubernetes.io/master
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">       operator: Exists
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">       effect: NoSchedule
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     - name: fluentd-elasticsearch
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">       image: quay.io/fluentd_elasticsearch/fluentd:v2.5.2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">       resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">         limits:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           memory: 200Mi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">         requests:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           cpu: 100m
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           memory: 200Mi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">       volumeMounts:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">       - name: varlog
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">         mountPath: /var/log
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     # it may be desirable to set a high priority class to ensure that a DaemonSet Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     # preempts running Pods
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     # priorityClassName: important
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     terminationGracePeriodSeconds: 30
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     volumes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     - name: varlog
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">       hostPath:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">         path: /var/log
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Check the daemonset</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get ds</span></span></code></pre></div>
+<ul>
+<li>test if the daemonset is as expected.</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get pods <span style="color:#f92672">-</span>n kube<span style="color:#f92672">-</span>system <span style="color:#f92672">-</span>o wide <span style="color:#f92672">|</span>grep <span style="color:#f92672">-</span>i fluentd<span style="color:#f92672">-</span>elasticsearch</span></span></code></pre></div>
+<ul>
+<li>check the pod if they are creating on all nodes</li>
+</ul>
+<h3 id="dns-troubleshooting">DNS Troubleshooting:</h3>
+<p><a href="https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/" rel="external" target="_blank"> Follow this for DNS Troubleshooting</a></p>
+<ul>
+<li>Create a simple Pod to use as a test environment
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: dnsutils
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: default
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: dnsutils
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: registry.k8s.io/e2e-test-images/jessie-dnsutils:1.3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    command:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - sleep
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - &#34;infinity&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    imagePullPolicy: IfNotPresent
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  restartPolicy: Always
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+</li>
+<li>Run nslookup for kuberntes cluster</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl exec <span style="color:#f92672">-</span>i <span style="color:#f92672">-</span>t dnsutils <span style="color:#f92672">--</span> nslookup kubernetes<span style="color:#f92672">.</span>default</span></span></code></pre></div>
+<ul>
+<li>Check the local DNS configuration first</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl exec <span style="color:#f92672">-</span>ti dnsutils <span style="color:#f92672">--</span> cat <span style="color:#e6db74">/etc/</span>resolv<span style="color:#f92672">.</span>conf</span></span></code></pre></div>
+<ul>
+<li>if you get some error  Check if the DNS pod is running</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get pods <span style="color:#f92672">--</span>namespace<span style="color:#f92672">=</span>kube<span style="color:#f92672">-</span>system <span style="color:#f92672">-</span>l k8s<span style="color:#f92672">-</span>app<span style="color:#f92672">=</span>kube<span style="color:#f92672">-</span>dns</span></span></code></pre></div>
+<ul>
+<li>Check for errors in the DNS pod</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span> kubectl logs <span style="color:#f92672">--</span>namespace<span style="color:#f92672">=</span>kube<span style="color:#f92672">-</span>system <span style="color:#f92672">-</span>l k8s<span style="color:#f92672">-</span>app<span style="color:#f92672">=</span>kube<span style="color:#f92672">-</span>dns</span></span></code></pre></div>
+<ul>
+<li>Is DNS service up?</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get svc <span style="color:#f92672">--</span>namespace<span style="color:#f92672">=</span>kube<span style="color:#f92672">-</span>system</span></span></code></pre></div>
+<ul>
+<li>Are DNS endpoints exposed?</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get endpoints kube<span style="color:#f92672">-</span>dns <span style="color:#f92672">--</span>namespace<span style="color:#f92672">=</span>kube<span style="color:#f92672">-</span>system</span></span></code></pre></div>
+<h3 id="dns-for-services-and-pods">DNS for Services and Pods</h3>
+<ul>
+<li>Kubernetes creates DNS records for Services and Pods.</li>
+<li>You can contact Services with consistent DNS names instead of IP addresses.</li>
+<li>Services defined in the cluster are assigned DNS names.</li>
+<li>By default, a client Pod&rsquo;s DNS search list includes the Pod&rsquo;s own namespace and the cluster&rsquo;s default domain.</li>
+</ul>
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+          <a id="R-logo" class="R-default" href="../index.html">
+Kubernetes Documentation
+          </a>
+        </div>
+        <script>
+          window.index_js_url="../searchindex.en.js?1734364594";
+        </script>
+        <search><form action="../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../js/auto-complete.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.stemmer.support.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.multi.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.en.min.js?1734364594" defer></script>
+        <script src="../js/search.js?1734364594" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation homelinks">
+        <ul>
+          <li><a class="padding" href="../index.html"><i class="fa-fw fas fa-home"></i> Home</a></li>
+        </ul>
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-shortcutmenu-home" class="R-sidebarmenu">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes documentation</a></li>
+            <li class="" data-nav-id="/part01/index.html"><a class="padding" href="../part01/index.html">Part 1</a></li>
+            <li class="" data-nav-id="/part02/index.html"><a class="padding" href="../part02/index.html">Part 2</a></li>
+            <li class="active " data-nav-id="/part03/index.html"><a class="padding" href="../part03/index.html">Part 3</a></li>
+            <li class="" data-nav-id="/part04/index.html"><a class="padding" href="../part04/index.html">Part 4</a></li>
+            <li class="" data-nav-id="/part05/index.html"><a class="padding" href="../part05/index.html">Part 5</a></li>
+            <li class="" data-nav-id="/containerbasics/index.html"><a class="padding" href="../containerbasics/index.html">Container Basics</a></li>
+            <li class="" data-nav-id="/helm-overview/index.html"><a class="padding" href="../helm-overview/index.html">Helm Overview</a></li>
+            <li class="" data-nav-id="/imp/index.html"><a class="padding" href="../imp/index.html">Imp Commands </a></li>
+            <li class="" data-nav-id="/external-etcd/index.html"><a class="padding" href="../external-etcd/index.html">kubeadm-external-etcd</a></li>
+            <li class="" data-nav-id="/kubernetes-rbac/index.html"><a class="padding" href="../kubernetes-rbac/index.html">Kubernetes RBAC</a></li>
+            <li class="" data-nav-id="/kubernetes-on-centos/index.html"><a class="padding" href="../kubernetes-on-centos/index.html">Kubernetes-on-Centos</a></li>
+            <li class="" data-nav-id="/kuberneteshardway/index.html"><a class="padding" href="../kuberneteshardway/index.html">Kubernets Installation From Scatch on rocky 9</a></li>
+            <li class="" data-nav-id="/multimaster/index.html"><a class="padding" href="../multimaster/index.html">Multi Master kubernetes</a></li>
+            <li class="" data-nav-id="/minio/index.html"><a class="padding" href="../minio/index.html">The Object Store for AI Data Infrastructure</a></li>
+            <li class="" data-nav-id="/cks/index.html"><a class="padding" href="../cks/index.html">CKS</a></li>
+            <li class="" data-nav-id="/eks/index.html"><a class="padding" href="../eks/index.html">EKS</a></li>
+            <li class="" data-nav-id="/gke/index.html"><a class="padding" href="../gke/index.html">GKE</a></li>
+            <li class="" data-nav-id="/kuberntes-backup/index.html"><a class="padding" href="../kuberntes-backup/index.html">Kubernetes Data Protection</a></li>
+            <li class="" data-nav-id="/kubernetesloggin-monitoring/index.html"><a class="padding" href="../kubernetesloggin-monitoring/index.html">KUBERNETES LOGGING AND MONITORING</a></li>
+            <li class="" data-nav-id="/neuvector/index.html"><a class="padding" href="../neuvector/index.html">Kubernetes Security</a></li>
+          </ul>
+        </div>
+    
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-language"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = this.querySelector( this.value ).dataset.url;">
+                      <option id="R-select-language-en" value="#R-select-language-en" data-url="../part03/index.html" lang="en-us" selected></option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-paint-brush"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.relearn.changeVariant( this.value );">
+                      <option id="R-select-variant-auto" value="auto" selected>Auto</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.relearn.markVariant();</script>
+              </li>
+              <li class="footerVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-history"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter showFooter">
+        <p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../js/clipboard.min.js?1734364594" defer></script>
+    <script src="../js/perfect-scrollbar.min.js?1734364594" defer></script>
+    <script src="../js/theme.js?1734364594" defer></script>
+  </body>
+</html>

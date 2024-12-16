@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.139.3">
+    <meta name="generator" content="Relearn 7.2.1+16d4de84becfa2d2e6bdb2394a2f4fa411bc0007">
+    <meta name="description" content="Topics Downloading Release Binaries Configuring CA Installing ETCD Configuring API Server Configuring Controller Manager Configuring Scheduler Validating Cluster Status Worker Node Configuration Configuring Networking API to Kubelet RBAC Configuring DNS Kubelet Preferred Instance Type Downloading Release Binaries Kubernetes Binaries Source Code Client Binaries Server Binaries Node Binaries Container Images Download release Binaries Download Etcd Install wget and unzip yum install wget unzip -yDownload Server Binaries on master node mkdir /root/binaries cd /root/binaries wget https://dl.k8s.io/v1.28.7/kubernetes-server-linux-amd64.tar.gz tar -xzvf kubernetes-server-linux-amd64.tar.gz cd /root/binaries/kubernetes/server/bin/Check all master binaries ls -l /root/binaries/kubernetes/server/binDownload etcd in the same folder cd /root/binaries/ wget https://github.com/etcd-io/etcd/releases/download/v3.5.12/etcd-v3.5.12-darwin-amd64.zip unzip etcd-v3.5.12-darwin-amd64.zip cd etcd-v3.5.12-darwin-amd64/Check etcd relatated binaries ls -l /root/binaries/tcd-v3.5.12-darwin-amd64/Download Node Binaries on Worker node mkdir /root/binaries cd /root/binaries wget https://dl.k8s.io/v1.28.7/kubernetes-node-linux-amd64.tar.gz tar -xzvf kubernetes-node-linux-amd64.tar.gzCheck all node binaries ls -l /root/binaries/node/binConfiguring kubernetes Certificate Authority Create base directory were all the certificates and keys will be stored mkdir /root/certificates cd /root/certificatesCreating a private key for Certificate Authority openssl genrsa -out ca.key 2048Creating CSR openssl req -new -key ca.key -subj &#34;/CN=KUBERNETES-CA&#34; -out ca.csrSelf-Sign the CSR openssl x509 -req -in ca.csr -signkey ca.key -CAcreateserial -out ca.crt -days 1000See Contents of Certificate openssl x509 -in ca.crt -text -nooutRemove CSR rm -f ca.csrInstalling ETCD Documentation Referred Pre-Requisite: Set SERVER-IP variable SERVER_IP=172.16.16.110 (change this to your IP) echo $SERVER_IPConfigure the Certificates: cd /root/certificates/ openssl genrsa -out etcd.key 2048Note: Replace the value associated with IP.1 in the below step. cat &gt; etcd.cnf &lt;&lt;EOF [req] req_extensions = v3_req distinguished_name = req_distinguished_name [req_distinguished_name] [ v3_req ] basicConstraints = CA:FALSE keyUsage = nonRepudiation, digitalSignature, keyEncipherment subjectAltName = @alt_names [alt_names] IP.1 = ${SERVER_IP} IP.2 = 127.0.0.1 EOFopenssl req -new -key etcd.key -subj &#34;/CN=etcd&#34; -out etcd.csr -config etcd.cnf openssl x509 -req -in etcd.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out etcd.crt -extensions v3_req -extfile etcd.cnf -days 1000Copy the Certificates and Key to /etc/etcd mkdir /etc/etcd cp etcd.crt etcd.key ca.crt /etc/etcdCopy the ETCD and ETCDCTL Binaries to the Path cd /root/binaries/etcd-v3.5.12-darwin-amd64/ cp etcd etcdctl /usr/local/bin/Configure the systemd File Create a service file: cat &lt;&lt;EOF | sudo tee /etc/systemd/system/etcd.service [Unit] Description=etcd Documentation=https://github.com/coreos [Service] ExecStart=/usr/local/bin/etcd \\ --name master-1 \\ --cert-file=/etc/etcd/etcd.crt \\ --key-file=/etc/etcd/etcd.key \\ --peer-cert-file=/etc/etcd/etcd.crt \\ --peer-key-file=/etc/etcd/etcd.key \\ --trusted-ca-file=/etc/etcd/ca.crt \\ --peer-trusted-ca-file=/etc/etcd/ca.crt \\ --peer-client-cert-auth \\ --client-cert-auth \\ --initial-advertise-peer-urls https://${SERVER_IP}:2380 \\ --listen-peer-urls https://${SERVER_IP}:2380 \\ --listen-client-urls https://${SERVER_IP}:2379,https://127.0.0.1:2379 \\ --advertise-client-urls https://${SERVER_IP}:2379 \\ --initial-cluster-token etcd-cluster-0 \\ --initial-cluster master-1=https://${SERVER_IP}:2380 \\ --initial-cluster-state new \\ --data-dir=/var/lib/etcd Restart=on-failure RestartSec=5 [Install] WantedBy=multi-user.target EOFStart Service: systemctl start etcd systemctl status etcd systemctl enable etcdVerification Commands: When we try with etcdctl –endpoints=https://127.0.0.1:2379 get foo, it gives unknown certificate authority.">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Kubernets Installation From Scatch on rocky 9 :: Kubernetes Documentation">
+    <meta name="twitter:description" content="Topics Downloading Release Binaries Configuring CA Installing ETCD Configuring API Server Configuring Controller Manager Configuring Scheduler Validating Cluster Status Worker Node Configuration Configuring Networking API to Kubelet RBAC Configuring DNS Kubelet Preferred Instance Type Downloading Release Binaries Kubernetes Binaries Source Code Client Binaries Server Binaries Node Binaries Container Images Download release Binaries Download Etcd Install wget and unzip yum install wget unzip -yDownload Server Binaries on master node mkdir /root/binaries cd /root/binaries wget https://dl.k8s.io/v1.28.7/kubernetes-server-linux-amd64.tar.gz tar -xzvf kubernetes-server-linux-amd64.tar.gz cd /root/binaries/kubernetes/server/bin/Check all master binaries ls -l /root/binaries/kubernetes/server/binDownload etcd in the same folder cd /root/binaries/ wget https://github.com/etcd-io/etcd/releases/download/v3.5.12/etcd-v3.5.12-darwin-amd64.zip unzip etcd-v3.5.12-darwin-amd64.zip cd etcd-v3.5.12-darwin-amd64/Check etcd relatated binaries ls -l /root/binaries/tcd-v3.5.12-darwin-amd64/Download Node Binaries on Worker node mkdir /root/binaries cd /root/binaries wget https://dl.k8s.io/v1.28.7/kubernetes-node-linux-amd64.tar.gz tar -xzvf kubernetes-node-linux-amd64.tar.gzCheck all node binaries ls -l /root/binaries/node/binConfiguring kubernetes Certificate Authority Create base directory were all the certificates and keys will be stored mkdir /root/certificates cd /root/certificatesCreating a private key for Certificate Authority openssl genrsa -out ca.key 2048Creating CSR openssl req -new -key ca.key -subj &#34;/CN=KUBERNETES-CA&#34; -out ca.csrSelf-Sign the CSR openssl x509 -req -in ca.csr -signkey ca.key -CAcreateserial -out ca.crt -days 1000See Contents of Certificate openssl x509 -in ca.crt -text -nooutRemove CSR rm -f ca.csrInstalling ETCD Documentation Referred Pre-Requisite: Set SERVER-IP variable SERVER_IP=172.16.16.110 (change this to your IP) echo $SERVER_IPConfigure the Certificates: cd /root/certificates/ openssl genrsa -out etcd.key 2048Note: Replace the value associated with IP.1 in the below step. cat &gt; etcd.cnf &lt;&lt;EOF [req] req_extensions = v3_req distinguished_name = req_distinguished_name [req_distinguished_name] [ v3_req ] basicConstraints = CA:FALSE keyUsage = nonRepudiation, digitalSignature, keyEncipherment subjectAltName = @alt_names [alt_names] IP.1 = ${SERVER_IP} IP.2 = 127.0.0.1 EOFopenssl req -new -key etcd.key -subj &#34;/CN=etcd&#34; -out etcd.csr -config etcd.cnf openssl x509 -req -in etcd.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out etcd.crt -extensions v3_req -extfile etcd.cnf -days 1000Copy the Certificates and Key to /etc/etcd mkdir /etc/etcd cp etcd.crt etcd.key ca.crt /etc/etcdCopy the ETCD and ETCDCTL Binaries to the Path cd /root/binaries/etcd-v3.5.12-darwin-amd64/ cp etcd etcdctl /usr/local/bin/Configure the systemd File Create a service file: cat &lt;&lt;EOF | sudo tee /etc/systemd/system/etcd.service [Unit] Description=etcd Documentation=https://github.com/coreos [Service] ExecStart=/usr/local/bin/etcd \\ --name master-1 \\ --cert-file=/etc/etcd/etcd.crt \\ --key-file=/etc/etcd/etcd.key \\ --peer-cert-file=/etc/etcd/etcd.crt \\ --peer-key-file=/etc/etcd/etcd.key \\ --trusted-ca-file=/etc/etcd/ca.crt \\ --peer-trusted-ca-file=/etc/etcd/ca.crt \\ --peer-client-cert-auth \\ --client-cert-auth \\ --initial-advertise-peer-urls https://${SERVER_IP}:2380 \\ --listen-peer-urls https://${SERVER_IP}:2380 \\ --listen-client-urls https://${SERVER_IP}:2379,https://127.0.0.1:2379 \\ --advertise-client-urls https://${SERVER_IP}:2379 \\ --initial-cluster-token etcd-cluster-0 \\ --initial-cluster master-1=https://${SERVER_IP}:2380 \\ --initial-cluster-state new \\ --data-dir=/var/lib/etcd Restart=on-failure RestartSec=5 [Install] WantedBy=multi-user.target EOFStart Service: systemctl start etcd systemctl status etcd systemctl enable etcdVerification Commands: When we try with etcdctl –endpoints=https://127.0.0.1:2379 get foo, it gives unknown certificate authority.">
+    <meta property="og:url" content="https://khushiramsingh680.github.io/k8s/kuberneteshardway/index.html">
+    <meta property="og:site_name" content="Kubernetes Documentation">
+    <meta property="og:title" content="Kubernets Installation From Scatch on rocky 9 :: Kubernetes Documentation">
+    <meta property="og:description" content="Topics Downloading Release Binaries Configuring CA Installing ETCD Configuring API Server Configuring Controller Manager Configuring Scheduler Validating Cluster Status Worker Node Configuration Configuring Networking API to Kubelet RBAC Configuring DNS Kubelet Preferred Instance Type Downloading Release Binaries Kubernetes Binaries Source Code Client Binaries Server Binaries Node Binaries Container Images Download release Binaries Download Etcd Install wget and unzip yum install wget unzip -yDownload Server Binaries on master node mkdir /root/binaries cd /root/binaries wget https://dl.k8s.io/v1.28.7/kubernetes-server-linux-amd64.tar.gz tar -xzvf kubernetes-server-linux-amd64.tar.gz cd /root/binaries/kubernetes/server/bin/Check all master binaries ls -l /root/binaries/kubernetes/server/binDownload etcd in the same folder cd /root/binaries/ wget https://github.com/etcd-io/etcd/releases/download/v3.5.12/etcd-v3.5.12-darwin-amd64.zip unzip etcd-v3.5.12-darwin-amd64.zip cd etcd-v3.5.12-darwin-amd64/Check etcd relatated binaries ls -l /root/binaries/tcd-v3.5.12-darwin-amd64/Download Node Binaries on Worker node mkdir /root/binaries cd /root/binaries wget https://dl.k8s.io/v1.28.7/kubernetes-node-linux-amd64.tar.gz tar -xzvf kubernetes-node-linux-amd64.tar.gzCheck all node binaries ls -l /root/binaries/node/binConfiguring kubernetes Certificate Authority Create base directory were all the certificates and keys will be stored mkdir /root/certificates cd /root/certificatesCreating a private key for Certificate Authority openssl genrsa -out ca.key 2048Creating CSR openssl req -new -key ca.key -subj &#34;/CN=KUBERNETES-CA&#34; -out ca.csrSelf-Sign the CSR openssl x509 -req -in ca.csr -signkey ca.key -CAcreateserial -out ca.crt -days 1000See Contents of Certificate openssl x509 -in ca.crt -text -nooutRemove CSR rm -f ca.csrInstalling ETCD Documentation Referred Pre-Requisite: Set SERVER-IP variable SERVER_IP=172.16.16.110 (change this to your IP) echo $SERVER_IPConfigure the Certificates: cd /root/certificates/ openssl genrsa -out etcd.key 2048Note: Replace the value associated with IP.1 in the below step. cat &gt; etcd.cnf &lt;&lt;EOF [req] req_extensions = v3_req distinguished_name = req_distinguished_name [req_distinguished_name] [ v3_req ] basicConstraints = CA:FALSE keyUsage = nonRepudiation, digitalSignature, keyEncipherment subjectAltName = @alt_names [alt_names] IP.1 = ${SERVER_IP} IP.2 = 127.0.0.1 EOFopenssl req -new -key etcd.key -subj &#34;/CN=etcd&#34; -out etcd.csr -config etcd.cnf openssl x509 -req -in etcd.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out etcd.crt -extensions v3_req -extfile etcd.cnf -days 1000Copy the Certificates and Key to /etc/etcd mkdir /etc/etcd cp etcd.crt etcd.key ca.crt /etc/etcdCopy the ETCD and ETCDCTL Binaries to the Path cd /root/binaries/etcd-v3.5.12-darwin-amd64/ cp etcd etcdctl /usr/local/bin/Configure the systemd File Create a service file: cat &lt;&lt;EOF | sudo tee /etc/systemd/system/etcd.service [Unit] Description=etcd Documentation=https://github.com/coreos [Service] ExecStart=/usr/local/bin/etcd \\ --name master-1 \\ --cert-file=/etc/etcd/etcd.crt \\ --key-file=/etc/etcd/etcd.key \\ --peer-cert-file=/etc/etcd/etcd.crt \\ --peer-key-file=/etc/etcd/etcd.key \\ --trusted-ca-file=/etc/etcd/ca.crt \\ --peer-trusted-ca-file=/etc/etcd/ca.crt \\ --peer-client-cert-auth \\ --client-cert-auth \\ --initial-advertise-peer-urls https://${SERVER_IP}:2380 \\ --listen-peer-urls https://${SERVER_IP}:2380 \\ --listen-client-urls https://${SERVER_IP}:2379,https://127.0.0.1:2379 \\ --advertise-client-urls https://${SERVER_IP}:2379 \\ --initial-cluster-token etcd-cluster-0 \\ --initial-cluster master-1=https://${SERVER_IP}:2380 \\ --initial-cluster-state new \\ --data-dir=/var/lib/etcd Restart=on-failure RestartSec=5 [Install] WantedBy=multi-user.target EOFStart Service: systemctl start etcd systemctl status etcd systemctl enable etcdVerification Commands: When we try with etcdctl –endpoints=https://127.0.0.1:2379 get foo, it gives unknown certificate authority.">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="/">
+    <meta itemprop="name" content="Kubernets Installation From Scatch on rocky 9 :: Kubernetes Documentation">
+    <meta itemprop="description" content="Topics Downloading Release Binaries Configuring CA Installing ETCD Configuring API Server Configuring Controller Manager Configuring Scheduler Validating Cluster Status Worker Node Configuration Configuring Networking API to Kubelet RBAC Configuring DNS Kubelet Preferred Instance Type Downloading Release Binaries Kubernetes Binaries Source Code Client Binaries Server Binaries Node Binaries Container Images Download release Binaries Download Etcd Install wget and unzip yum install wget unzip -yDownload Server Binaries on master node mkdir /root/binaries cd /root/binaries wget https://dl.k8s.io/v1.28.7/kubernetes-server-linux-amd64.tar.gz tar -xzvf kubernetes-server-linux-amd64.tar.gz cd /root/binaries/kubernetes/server/bin/Check all master binaries ls -l /root/binaries/kubernetes/server/binDownload etcd in the same folder cd /root/binaries/ wget https://github.com/etcd-io/etcd/releases/download/v3.5.12/etcd-v3.5.12-darwin-amd64.zip unzip etcd-v3.5.12-darwin-amd64.zip cd etcd-v3.5.12-darwin-amd64/Check etcd relatated binaries ls -l /root/binaries/tcd-v3.5.12-darwin-amd64/Download Node Binaries on Worker node mkdir /root/binaries cd /root/binaries wget https://dl.k8s.io/v1.28.7/kubernetes-node-linux-amd64.tar.gz tar -xzvf kubernetes-node-linux-amd64.tar.gzCheck all node binaries ls -l /root/binaries/node/binConfiguring kubernetes Certificate Authority Create base directory were all the certificates and keys will be stored mkdir /root/certificates cd /root/certificatesCreating a private key for Certificate Authority openssl genrsa -out ca.key 2048Creating CSR openssl req -new -key ca.key -subj &#34;/CN=KUBERNETES-CA&#34; -out ca.csrSelf-Sign the CSR openssl x509 -req -in ca.csr -signkey ca.key -CAcreateserial -out ca.crt -days 1000See Contents of Certificate openssl x509 -in ca.crt -text -nooutRemove CSR rm -f ca.csrInstalling ETCD Documentation Referred Pre-Requisite: Set SERVER-IP variable SERVER_IP=172.16.16.110 (change this to your IP) echo $SERVER_IPConfigure the Certificates: cd /root/certificates/ openssl genrsa -out etcd.key 2048Note: Replace the value associated with IP.1 in the below step. cat &gt; etcd.cnf &lt;&lt;EOF [req] req_extensions = v3_req distinguished_name = req_distinguished_name [req_distinguished_name] [ v3_req ] basicConstraints = CA:FALSE keyUsage = nonRepudiation, digitalSignature, keyEncipherment subjectAltName = @alt_names [alt_names] IP.1 = ${SERVER_IP} IP.2 = 127.0.0.1 EOFopenssl req -new -key etcd.key -subj &#34;/CN=etcd&#34; -out etcd.csr -config etcd.cnf openssl x509 -req -in etcd.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out etcd.crt -extensions v3_req -extfile etcd.cnf -days 1000Copy the Certificates and Key to /etc/etcd mkdir /etc/etcd cp etcd.crt etcd.key ca.crt /etc/etcdCopy the ETCD and ETCDCTL Binaries to the Path cd /root/binaries/etcd-v3.5.12-darwin-amd64/ cp etcd etcdctl /usr/local/bin/Configure the systemd File Create a service file: cat &lt;&lt;EOF | sudo tee /etc/systemd/system/etcd.service [Unit] Description=etcd Documentation=https://github.com/coreos [Service] ExecStart=/usr/local/bin/etcd \\ --name master-1 \\ --cert-file=/etc/etcd/etcd.crt \\ --key-file=/etc/etcd/etcd.key \\ --peer-cert-file=/etc/etcd/etcd.crt \\ --peer-key-file=/etc/etcd/etcd.key \\ --trusted-ca-file=/etc/etcd/ca.crt \\ --peer-trusted-ca-file=/etc/etcd/ca.crt \\ --peer-client-cert-auth \\ --client-cert-auth \\ --initial-advertise-peer-urls https://${SERVER_IP}:2380 \\ --listen-peer-urls https://${SERVER_IP}:2380 \\ --listen-client-urls https://${SERVER_IP}:2379,https://127.0.0.1:2379 \\ --advertise-client-urls https://${SERVER_IP}:2379 \\ --initial-cluster-token etcd-cluster-0 \\ --initial-cluster master-1=https://${SERVER_IP}:2380 \\ --initial-cluster-state new \\ --data-dir=/var/lib/etcd Restart=on-failure RestartSec=5 [Install] WantedBy=multi-user.target EOFStart Service: systemctl start etcd systemctl status etcd systemctl enable etcdVerification Commands: When we try with etcdctl –endpoints=https://127.0.0.1:2379 get foo, it gives unknown certificate authority.">
+    <meta itemprop="wordCount" content="1835">
+    <title>Kubernets Installation From Scatch on rocky 9 :: Kubernetes Documentation</title>
+    <link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet"></noscript>
+    <link href="../css/auto-complete.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1734364594" rel="stylesheet"></noscript>
+    <link href="../css/perfect-scrollbar.min.css?1734364594" rel="stylesheet">
+    <link href="../css/theme.min.css?1734364594" rel="stylesheet">
+    <link href="../css/format-html.min.css?1734364594" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.relBasePath='..';
+      window.relearn.relBaseUri='..';
+      window.relearn.absBaseUri='https:\/\/khushiramsingh680.github.io\/k8s';
+      window.relearn.min = `.min`;
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant");
+        var select = document.querySelector("#R-select-variant");
+        if (select) {
+          select.value = variant;
+        }
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script>
+  </head>
+  <body class="mobile-support html" data-url="../kuberneteshardway/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#topics">Topics</a>
+      <ul>
+        <li><a href="#downloading-release-binaries">Downloading Release Binaries</a></li>
+        <li><a href="#download-server-binaries-on-master-node">Download Server Binaries on master node</a></li>
+        <li><a href="#download-node-binaries-on-worker-node">Download Node Binaries on Worker node</a></li>
+        <li><a href="#configuring-kubernetes-certificate-authority">Configuring kubernetes Certificate Authority</a></li>
+        <li><a href="#installing-etcdhttpsgithubcometcd-ioetcdreleases"><a href="https://github.com/etcd-io/etcd/releases">Installing ETCD</a></a></li>
+        <li><a href="#configuring-api-server">Configuring API Server</a></li>
+        <li><a href="#configuring-controller-manager">Configuring Controller Manager</a></li>
+        <li><a href="#configuring-scheduler">Configuring Scheduler</a></li>
+        <li><a href="#validating-cluster-status">Validating Cluster Status</a></li>
+        <li><a href="#worker-node-configuration">Worker Node Configuration</a></li>
+        <li><a href="#part-2---kube-proxy">Part 2 - Kube-Proxy</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">/</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Kubernets Installation From Scatch on rocky 9</span><meta itemprop="position" content="2"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../kubernetes-on-centos/index.html" title="Kubernetes-on-Centos (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../multimaster/index.html" title="Multi Master kubernetes (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable page" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+
+<h1 id="kubernets-installation-from-scatch-on-rocky-9">Kubernets Installation From Scatch on rocky 9</h1>
+
+<h2 id="topics">Topics</h2>
+<ul>
+<li>Downloading Release Binaries</li>
+<li>Configuring CA</li>
+<li>Installing ETCD</li>
+<li>Configuring API Server</li>
+<li>Configuring Controller Manager</li>
+<li>Configuring Scheduler</li>
+<li>Validating Cluster Status</li>
+<li>Worker Node Configuration</li>
+<li>Configuring Networking</li>
+<li>API to Kubelet RBAC</li>
+<li>Configuring DNS</li>
+<li>Kubelet Preferred Instance Type</li>
+</ul>
+<h3 id="downloading-release-binaries">Downloading Release Binaries</h3>
+<ul>
+<li>Kubernetes Binaries
+<ul>
+<li>Source Code</li>
+<li>Client Binaries</li>
+<li>Server Binaries</li>
+<li>Node Binaries</li>
+<li>Container Images</li>
+</ul>
+</li>
+<li><a href="https://github.com/kubernetes/kubernetes/tree/master/CHANGELOG" rel="external" target="_blank">Download release Binaries</a></li>
+<li><a href="https://github.com/kubernetes/kubernetes/tree/master/CHANGELOG" rel="external" target="_blank">Download Etcd</a></li>
+<li>Install wget and unzip</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>yum install wget unzip <span style="color:#f92672">-</span>y</span></span></code></pre></div>
+<h3 id="download-server-binaries-on-master-node">Download Server Binaries on master node</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mkdir /root/binaries
+</span></span><span style="display:flex;"><span>cd /root/binaries
+</span></span><span style="display:flex;"><span>wget https://dl.k8s.io/v1.28.7/kubernetes-server-linux-amd64.tar.gz 
+</span></span><span style="display:flex;"><span>tar -xzvf kubernetes-server-linux-amd64.tar.gz
+</span></span><span style="display:flex;"><span>cd /root/binaries/kubernetes/server/bin/</span></span></code></pre></div>
+<ul>
+<li>Check all master binaries</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>ls <span style="color:#f92672">-</span>l <span style="color:#e6db74">/root/</span>binaries<span style="color:#e6db74">/kubernetes/s</span>erver<span style="color:#f92672">/</span>bin</span></span></code></pre></div>
+<ul>
+<li>Download etcd in the same folder</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>cd <span style="color:#e6db74">/root/</span>binaries<span style="color:#f92672">/</span>
+</span></span><span style="display:flex;"><span>wget https:<span style="color:#e6db74">//gi</span>thub<span style="color:#f92672">.</span>com<span style="color:#e6db74">/etcd-io/</span>etcd<span style="color:#e6db74">/releases/</span>download<span style="color:#e6db74">/v3.5.12/</span>etcd<span style="color:#f92672">-</span>v3<span style="color:#ae81ff">.5.12</span><span style="color:#f92672">-</span>darwin<span style="color:#f92672">-</span>amd64<span style="color:#f92672">.</span>zip
+</span></span><span style="display:flex;"><span>unzip etcd<span style="color:#f92672">-</span>v3<span style="color:#ae81ff">.5.12</span><span style="color:#f92672">-</span>darwin<span style="color:#f92672">-</span>amd64<span style="color:#f92672">.</span>zip
+</span></span><span style="display:flex;"><span>cd etcd<span style="color:#f92672">-</span>v3<span style="color:#ae81ff">.5.12</span><span style="color:#f92672">-</span>darwin<span style="color:#f92672">-</span>amd64<span style="color:#f92672">/</span></span></span></code></pre></div>
+<ul>
+<li>Check etcd relatated binaries</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>ls <span style="color:#f92672">-</span>l <span style="color:#e6db74">/root/</span>binaries<span style="color:#e6db74">/tcd-v3.5.12-darwin-amd64/</span></span></span></code></pre></div>
+<h3 id="download-node-binaries-on-worker-node">Download Node Binaries on Worker node</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mkdir /root/binaries
+</span></span><span style="display:flex;"><span>cd /root/binaries
+</span></span><span style="display:flex;"><span>wget https://dl.k8s.io/v1.28.7/kubernetes-node-linux-amd64.tar.gz
+</span></span><span style="display:flex;"><span>tar -xzvf kubernetes-node-linux-amd64.tar.gz</span></span></code></pre></div>
+<ul>
+<li>Check all node binaries</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>ls <span style="color:#f92672">-</span>l  <span style="color:#e6db74">/root/</span>binaries<span style="color:#e6db74">/node/</span>bin</span></span></code></pre></div>
+<h3 id="configuring-kubernetes-certificate-authority">Configuring kubernetes Certificate Authority</h3>
+<h4 id="create-base-directory-were-all-the-certificates-and-keys-will-be-stored">Create base directory were all the certificates and keys will be stored</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mkdir /root/certificates
+</span></span><span style="display:flex;"><span>cd /root/certificates</span></span></code></pre></div>
+<h4 id="creating-a-private-key-for-certificate-authority">Creating a private key for Certificate Authority</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>openssl genrsa -out ca.key <span style="color:#ae81ff">2048</span></span></span></code></pre></div>
+<h4 id="creating-csr">Creating CSR</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>openssl req -new -key ca.key -subj <span style="color:#e6db74">&#34;/CN=KUBERNETES-CA&#34;</span> -out ca.csr</span></span></code></pre></div>
+<h4 id="self-sign-the-csr">Self-Sign the CSR</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>openssl x509 -req -in ca.csr -signkey ca.key -CAcreateserial  -out ca.crt -days <span style="color:#ae81ff">1000</span></span></span></code></pre></div>
+<h4 id="see-contents-of-certificate">See Contents of Certificate</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>openssl x509 -in ca.crt -text -noout</span></span></code></pre></div>
+<h4 id="remove-csr">Remove CSR</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>rm -f ca.csr</span></span></code></pre></div>
+<h3 id="installing-etcdhttpsgithubcometcd-ioetcdreleases"><a href="https://github.com/etcd-io/etcd/releases" rel="external" target="_blank">Installing ETCD</a></h3>
+<h4 id="documentation-referredhttpsetcdiodocsv35op-guideconfiguration"><a href="https://etcd.io/docs/v3.5/op-guide/configuration/" rel="external" target="_blank">Documentation Referred</a></h4>
+<h4 id="pre-requisite-set-server-ip-variable">Pre-Requisite: Set SERVER-IP variable</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>SERVER_IP<span style="color:#f92672">=</span>172.16.16.110 <span style="color:#f92672">(</span>change this to your IP<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>echo $SERVER_IP</span></span></code></pre></div>
+<h4 id="configure-the-certificates">Configure the Certificates:</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cd /root/certificates/
+</span></span><span style="display:flex;"><span>openssl genrsa -out etcd.key <span style="color:#ae81ff">2048</span></span></span></code></pre></div>
+<h4 id="note-replace-the-value-associated-with-ip1-in-the-below-step">Note: Replace the value associated with IP.1 in the below step.</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat &gt; etcd.cnf <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[req]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">req_extensions = v3_req
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">distinguished_name = req_distinguished_name
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[req_distinguished_name]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[ v3_req ]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">basicConstraints = CA:FALSE
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">subjectAltName = @alt_names
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[alt_names]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">IP.1 = ${SERVER_IP}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">IP.2 = 127.0.0.1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>openssl req -new -key etcd.key -subj <span style="color:#e6db74">&#34;/CN=etcd&#34;</span> -out etcd.csr -config etcd.cnf
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>openssl x509 -req -in etcd.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out etcd.crt -extensions v3_req -extfile etcd.cnf -days <span style="color:#ae81ff">1000</span></span></span></code></pre></div>
+<h4 id="copy-the-certificates-and-key-to-etcetcd">Copy the Certificates and Key to /etc/etcd</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mkdir /etc/etcd
+</span></span><span style="display:flex;"><span>cp etcd.crt etcd.key ca.crt /etc/etcd</span></span></code></pre></div>
+<h4 id="copy-the-etcd-and-etcdctl-binaries-to-the-path">Copy the ETCD and ETCDCTL Binaries to the Path</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cd /root/binaries/etcd-v3.5.12-darwin-amd64/
+</span></span><span style="display:flex;"><span>cp etcd etcdctl /usr/local/bin/</span></span></code></pre></div>
+<h4 id="configure-the-systemd-file">Configure the systemd File</h4>
+<h4 id="create-a-service-file">Create a service file:</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | sudo tee /etc/systemd/system/etcd.service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Unit]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Description=etcd
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Documentation=https://github.com/coreos
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Service]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">ExecStart=/usr/local/bin/etcd \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --name master-1 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --cert-file=/etc/etcd/etcd.crt \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --key-file=/etc/etcd/etcd.key \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --peer-cert-file=/etc/etcd/etcd.crt \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --peer-key-file=/etc/etcd/etcd.key \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --trusted-ca-file=/etc/etcd/ca.crt \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --peer-trusted-ca-file=/etc/etcd/ca.crt \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --peer-client-cert-auth \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --client-cert-auth \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --initial-advertise-peer-urls https://${SERVER_IP}:2380 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --listen-peer-urls https://${SERVER_IP}:2380 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --listen-client-urls https://${SERVER_IP}:2379,https://127.0.0.1:2379 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --advertise-client-urls https://${SERVER_IP}:2379 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --initial-cluster-token etcd-cluster-0 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --initial-cluster master-1=https://${SERVER_IP}:2380 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --initial-cluster-state new \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --data-dir=/var/lib/etcd
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Restart=on-failure
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RestartSec=5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Install]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">WantedBy=multi-user.target
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="start-service">Start Service:</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>systemctl start etcd
+</span></span><span style="display:flex;"><span>systemctl status etcd
+</span></span><span style="display:flex;"><span>systemctl enable etcd</span></span></code></pre></div>
+<h4 id="verification-commands">Verification Commands:</h4>
+<p>When we try with etcdctl &ndash;endpoints=https://127.0.0.1:2379 get foo, it gives unknown certificate authority.</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>ETCDCTL_API<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> etcdctl --endpoints<span style="color:#f92672">=</span>https://127.0.0.1:2379 --cacert<span style="color:#f92672">=</span>/etc/etcd/ca.crt --cert<span style="color:#f92672">=</span>/etc/etcd/etcd.crt --key<span style="color:#f92672">=</span>/etc/etcd/etcd.key put test <span style="color:#e6db74">&#34;Test&#34;</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>ETCDCTL_API<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> etcdctl --endpoints<span style="color:#f92672">=</span>https://127.0.0.1:2379 --cacert<span style="color:#f92672">=</span>/etc/etcd/ca.crt --cert<span style="color:#f92672">=</span>/etc/etcd/etcd.crt --key<span style="color:#f92672">=</span>/etc/etcd/etcd.key get test</span></span></code></pre></div>
+<h3 id="configuring-api-server">Configuring API Server</h3>
+<h4 id="reference-documentation">Reference Documentation</h4>
+<p><a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/" rel="external" target="_blank">https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/</a></p>
+<p><a href="https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/" rel="external" target="_blank">https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/</a></p>
+<h4 id="prerequisites">PreRequisites</h4>
+<ul>
+<li>Move the kube-apiserver binary to /usr/local/bin directory.</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cd /root/binaries/kubernetes/server/bin/
+</span></span><span style="display:flex;"><span>cp kube-apiserver /usr/local/bin/</span></span></code></pre></div>
+<p>Ensure that the SERVER_IP variable is still set.</p>
+<h4 id="step-1-generate-configuration-file-for-csr-creation">Step 1. Generate Configuration File for CSR Creation.</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cd /root/certificates</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | sudo tee api.conf
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[req]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">req_extensions = v3_req
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">distinguished_name = req_distinguished_name
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[req_distinguished_name]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[ v3_req ]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">basicConstraints = CA:FALSE
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">subjectAltName = @alt_names
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[alt_names]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">DNS.1 = kubernetes
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">DNS.2 = kubernetes.default
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">DNS.3 = kubernetes.default.svc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">DNS.4 = kubernetes.default.svc.cluster.local
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">IP.1 = 127.0.0.1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">IP.2 = ${SERVER_IP}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">IP.3 = 10.0.2.15
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="generate-certificates-for-api-server">Generate Certificates for API Server</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>openssl genrsa -out kube-api.key <span style="color:#ae81ff">2048</span>
+</span></span><span style="display:flex;"><span>openssl req -new -key kube-api.key -subj <span style="color:#e6db74">&#34;/CN=kube-apiserver&#34;</span> -out kube-api.csr -config api.conf
+</span></span><span style="display:flex;"><span>openssl x509 -req -in kube-api.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out kube-api.crt -extensions v3_req -extfile api.conf -days <span style="color:#ae81ff">1000</span></span></span></code></pre></div>
+<h4 id="generate-certificate-for-service-account">Generate Certificate for Service Account:</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>openssl genrsa -out service-account.key <span style="color:#ae81ff">2048</span>
+</span></span><span style="display:flex;"><span>openssl req -new -key service-account.key -subj <span style="color:#e6db74">&#34;/CN=service-accounts&#34;</span> -out service-account.csr
+</span></span><span style="display:flex;"><span>openssl x509 -req -in service-account.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out service-account.crt -days <span style="color:#ae81ff">100</span></span></span></code></pre></div>
+<h4 id="copy-the-certificate-files-to-varlibkubernetes-directory">Copy the certificate files to /var/lib/kubernetes directory</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mkdir /var/lib/kubernetes
+</span></span><span style="display:flex;"><span>cp etcd.crt etcd.key ca.crt kube-api.key kube-api.crt service-account.crt service-account.key /var/lib/kubernetes
+</span></span><span style="display:flex;"><span>ls /var/lib/kubernetes</span></span></code></pre></div>
+<h4 id="creating-encryption-key-and-configuration">Creating Encryption key and Configuration</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>ENCRYPTION_KEY<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>head -c <span style="color:#ae81ff">32</span> /dev/urandom | base64<span style="color:#66d9ef">)</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat &gt; encryption-at-rest.yaml <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: EncryptionConfig
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - secrets
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    providers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - aescbc:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          keys:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - name: key1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              secret: ${ENCRYPTION_KEY}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - identity: {}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cp encryption-at-rest.yaml /var/lib/kubernetes/encryption-at-rest.yaml</span></span></code></pre></div>
+<h4 id="creating-systemd-service-file">Creating Systemd service file:</h4>
+<p>Systemd file:</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | sudo tee /etc/systemd/system/kube-apiserver.service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Unit]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Description=Kubernetes API Server
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Documentation=https://github.com/kubernetes/kubernetes
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Service]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">ExecStart=/usr/local/bin/kube-apiserver \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--advertise-address=${SERVER_IP} \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--allow-privileged=true \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--authorization-mode=Node,RBAC \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--client-ca-file=/var/lib/kubernetes/ca.crt \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--enable-admission-plugins=NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--enable-bootstrap-token-auth=true \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--etcd-cafile=/var/lib/kubernetes/ca.crt \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--etcd-certfile=/var/lib/kubernetes/etcd.crt \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--etcd-keyfile=/var/lib/kubernetes/etcd.key \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--etcd-servers=https://127.0.0.1:2379 \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--kubelet-client-certificate=/var/lib/kubernetes/kube-api.crt \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--kubelet-client-key=/var/lib/kubernetes/kube-api.key \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--service-account-key-file=/var/lib/kubernetes/service-account.crt \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--service-cluster-ip-range=10.32.0.0/24 \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--tls-cert-file=/var/lib/kubernetes/kube-api.crt \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--tls-private-key-file=/var/lib/kubernetes/kube-api.key \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--requestheader-client-ca-file=/var/lib/kubernetes/ca.crt \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--service-node-port-range=30000-32767 \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--audit-log-maxage=30 \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--audit-log-maxbackup=3 \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--audit-log-maxsize=100 \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--audit-log-path=/var/log/kube-api-audit.log \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--bind-address=0.0.0.0 \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--event-ttl=1h \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--service-account-key-file=/var/lib/kubernetes/service-account.crt \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--service-account-signing-key-file=/var/lib/kubernetes/service-account.key \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--service-account-issuer=https://${SERVER_IP}:6443 \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--encryption-provider-config=/var/lib/kubernetes/encryption-at-rest.yaml \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--v=2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Restart=on-failure
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RestartSec=5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Install]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">WantedBy=multi-user.target
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="start-the-kube-api-service">Start the kube-api service:</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>systemctl start kube-apiserver
+</span></span><span style="display:flex;"><span>systemctl status kube-apiserver
+</span></span><span style="display:flex;"><span>systemctl enable kube-apiserver</span></span></code></pre></div>
+<h3 id="configuring-controller-manager">Configuring Controller Manager</h3>
+<h4 id="generate-certificates">Generate Certificates:</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cd /root/certificates</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>openssl genrsa -out kube-controller-manager.key <span style="color:#ae81ff">2048</span>
+</span></span><span style="display:flex;"><span>openssl req -new -key kube-controller-manager.key -subj <span style="color:#e6db74">&#34;/CN=system:kube-controller-manager&#34;</span> -out kube-controller-manager.csr
+</span></span><span style="display:flex;"><span>openssl x509 -req -in kube-controller-manager.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out kube-controller-manager.crt -days <span style="color:#ae81ff">1000</span></span></span></code></pre></div>
+<h4 id="generating-kubeconfig">Generating KubeConfig</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cp /root/binaries/kubernetes/server/bin/kubectl /usr/local/bin</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl config set-cluster kubernetes-from-scratch <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --certificate-authority<span style="color:#f92672">=</span>ca.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --embed-certs<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --server<span style="color:#f92672">=</span>https://127.0.0.1:6443 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubeconfig<span style="color:#f92672">=</span>kube-controller-manager.kubeconfig</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl config set-cluster kubernetes-from-scratch <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --certificate-authority<span style="color:#f92672">=</span>ca.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --embed-certs<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --server<span style="color:#f92672">=</span>https://127.0.0.1:6443 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubeconfig<span style="color:#f92672">=</span>kube-controller-manager.kubeconfig
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl config set-credentials system:kube-controller-manager <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --client-certificate<span style="color:#f92672">=</span>kube-controller-manager.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --client-key<span style="color:#f92672">=</span>kube-controller-manager.key <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --embed-certs<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubeconfig<span style="color:#f92672">=</span>kube-controller-manager.kubeconfig
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl config set-context default <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --cluster<span style="color:#f92672">=</span>kubernetes-from-scratch <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --user<span style="color:#f92672">=</span>system:kube-controller-manager <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubeconfig<span style="color:#f92672">=</span>kube-controller-manager.kubeconfig</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl config use-context default --kubeconfig<span style="color:#f92672">=</span>kube-controller-manager.kubeconfig</span></span></code></pre></div>
+<h4 id="copying-the-files-to-kubernetes-directory">Copying the files to kubernetes directory</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cp kube-controller-manager.crt kube-controller-manager.key kube-controller-manager.kubeconfig ca.key /var/lib/kubernetes/</span></span></code></pre></div>
+<h4 id="configuring-systemd-service-file">Configuring SystemD service file:</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | sudo tee /etc/systemd/system/kube-controller-manager.service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Unit]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Description=Kubernetes Controller Manager
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Documentation=https://github.com/kubernetes/kubernetes
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Service]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">ExecStart=/usr/local/bin/kube-controller-manager \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--bind-address=0.0.0.0 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--service-cluster-ip-range=10.32.0.0/24 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--cluster-cidr=10.200.0.0/16 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--kubeconfig=/var/lib/kubernetes/kube-controller-manager.kubeconfig \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--authentication-kubeconfig=/var/lib/kubernetes/kube-controller-manager.kubeconfig \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--authorization-kubeconfig=/var/lib/kubernetes/kube-controller-manager.kubeconfig \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--leader-elect=true \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--cluster-signing-cert-file=/var/lib/kubernetes/ca.crt \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--cluster-signing-key-file=/var/lib/kubernetes/ca.key \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--root-ca-file=/var/lib/kubernetes/ca.crt \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--service-account-private-key-file=/var/lib/kubernetes/service-account.key \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--use-service-account-credentials=true \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">--v=2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Restart=on-failure
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RestartSec=5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Install]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">WantedBy=multi-user.target
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="start-controller-manager">Start Controller Manager:</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cp /root/binaries/kubernetes/server/bin/kube-controller-manager /usr/local/bin
+</span></span><span style="display:flex;"><span>systemctl start kube-controller-manager
+</span></span><span style="display:flex;"><span>systemctl status kube-controller-manager
+</span></span><span style="display:flex;"><span>systemctl enable kube-controller-manager</span></span></code></pre></div>
+<h3 id="configuring-scheduler">Configuring Scheduler</h3>
+<h4 id="generate-certificates-1">Generate Certificates:</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cd /root/certificates
+</span></span><span style="display:flex;"><span>openssl genrsa -out kube-scheduler.key <span style="color:#ae81ff">2048</span>
+</span></span><span style="display:flex;"><span>openssl req -new -key kube-scheduler.key -subj <span style="color:#e6db74">&#34;/CN=system:kube-scheduler&#34;</span> -out kube-scheduler.csr
+</span></span><span style="display:flex;"><span>openssl x509 -req -in kube-scheduler.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out kube-scheduler.crt -days <span style="color:#ae81ff">1000</span></span></span></code></pre></div>
+<h4 id="generate-kubeconfig-file">Generate Kubeconfig file:</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  kubectl config set-cluster kubernetes-from-scratch <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --certificate-authority<span style="color:#f92672">=</span>ca.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --embed-certs<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --server<span style="color:#f92672">=</span>https://127.0.0.1:6443 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubeconfig<span style="color:#f92672">=</span>kube-scheduler.kubeconfig
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  kubectl config set-credentials system:kube-scheduler <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --client-certificate<span style="color:#f92672">=</span>kube-scheduler.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --client-key<span style="color:#f92672">=</span>kube-scheduler.key <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --embed-certs<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubeconfig<span style="color:#f92672">=</span>kube-scheduler.kubeconfig
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  kubectl config set-context default <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --cluster<span style="color:#f92672">=</span>kubernetes-from-scratch <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --user<span style="color:#f92672">=</span>system:kube-scheduler <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubeconfig<span style="color:#f92672">=</span>kube-scheduler.kubeconfig
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  kubectl config use-context default --kubeconfig<span style="color:#f92672">=</span>kube-scheduler.kubeconfig
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span></span></span></code></pre></div>
+<h4 id="copy-the-scheduler-kubeconfig">Copy the scheduler kubeconfig</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cp kube-scheduler.kubeconfig /var/lib/kubernetes/</span></span></code></pre></div>
+<h4 id="configuring-systemd-service">Configuring systemd service:</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | sudo tee /etc/systemd/system/kube-scheduler.service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Unit]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Description=Kubernetes Scheduler
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Documentation=https://github.com/kubernetes/kubernetes
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Service]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">ExecStart=/usr/local/bin/kube-scheduler \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --kubeconfig=/var/lib/kubernetes/kube-scheduler.kubeconfig \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --authentication-kubeconfig=/var/lib/kubernetes/kube-scheduler.kubeconfig \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --authorization-kubeconfig=/var/lib/kubernetes/kube-scheduler.kubeconfig \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --bind-address=127.0.0.1 \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --leader-elect=true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Restart=on-failure
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RestartSec=5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Install]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">WantedBy=multi-user.target
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="verification">Verification:</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cp /root/binaries/kubernetes/server/bin/kube-scheduler /usr/local/bin
+</span></span><span style="display:flex;"><span>systemctl start kube-scheduler
+</span></span><span style="display:flex;"><span>systemctl status kube-scheduler
+</span></span><span style="display:flex;"><span>systemctl enable kube-scheduler</span></span></code></pre></div>
+<h3 id="validating-cluster-status">Validating Cluster Status</h3>
+<h4 id="generate-certificate-for-administrator-user">Generate Certificate for Administrator User</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cd /root/certificates
+</span></span><span style="display:flex;"><span>openssl genrsa -out admin.key <span style="color:#ae81ff">2048</span>
+</span></span><span style="display:flex;"><span>openssl req -new -key admin.key -subj <span style="color:#e6db74">&#34;/CN=admin/O=system:masters&#34;</span> -out admin.csr
+</span></span><span style="display:flex;"><span>openssl x509 -req -in admin.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out admin.crt -days <span style="color:#ae81ff">1000</span></span></span></code></pre></div>
+<h4 id="create-kubeconfig-file">Create KubeConfig file:</h4>
+<p>Note: Replace the IP address from the below snippet in line 5 with your IP address.</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  kubectl config set-cluster kubernetes-from-scratch <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --certificate-authority<span style="color:#f92672">=</span>ca.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --embed-certs<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --server<span style="color:#f92672">=</span>https://<span style="color:#e6db74">${</span>SERVER_IP<span style="color:#e6db74">}</span>:6443 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubeconfig<span style="color:#f92672">=</span>admin.kubeconfig
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  kubectl config set-credentials admin <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --client-certificate<span style="color:#f92672">=</span>admin.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --client-key<span style="color:#f92672">=</span>admin.key <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --embed-certs<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubeconfig<span style="color:#f92672">=</span>admin.kubeconfig
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  kubectl config set-context default <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --cluster<span style="color:#f92672">=</span>kubernetes-from-scratch <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --user<span style="color:#f92672">=</span>admin <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubeconfig<span style="color:#f92672">=</span>admin.kubeconfig
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  kubectl config use-context default --kubeconfig<span style="color:#f92672">=</span>admin.kubeconfig
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span></span></span></code></pre></div>
+<h4 id="verify-cluster-status">Verify Cluster Status</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl get componentstatuses --kubeconfig<span style="color:#f92672">=</span>admin.kubeconfig
+</span></span><span style="display:flex;"><span>cp /root/certificates/admin.kubeconfig ~/.kube/config
+</span></span><span style="display:flex;"><span>kubectl get componentstatuses</span></span></code></pre></div>
+<h4 id="verify-kubernetes-objects-creation">Verify Kubernetes Objects Creation</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl create namespace test
+</span></span><span style="display:flex;"><span>kubectl get namespace test -o yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl create secret generic prod-secret --from-literal<span style="color:#f92672">=</span>username<span style="color:#f92672">=</span>admin --from-literal<span style="color:#f92672">=</span>password<span style="color:#f92672">=</span>password123
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get secret</span></span></code></pre></div>
+<h3 id="worker-node-configuration">Worker Node Configuration</h3>
+<h4 id="configure-container-runtime-worker-node">Configure Container Runtime. (WORKER NODE)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | sudo tee /etc/modules-load.d/containerd.conf
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">overlay
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">br_netfilter
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>modprobe overlay
+</span></span><span style="display:flex;"><span>modprobe br_netfilter</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">net.bridge.bridge-nf-call-iptables  = 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">net.ipv4.ip_forward                 = 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">net.bridge.bridge-nf-call-ip6tables = 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sysctl --system</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>sudo dnf config<span style="color:#f92672">-</span>manager <span style="color:#f92672">--</span>add<span style="color:#f92672">-</span>repo https:<span style="color:#e6db74">//</span>download<span style="color:#f92672">.</span>docker<span style="color:#f92672">.</span>com<span style="color:#e6db74">/linux/c</span>entos<span style="color:#f92672">/</span>docker<span style="color:#f92672">-</span>ce<span style="color:#f92672">.</span>repo
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>dnf install <span style="color:#f92672">-</span>y containerd<span style="color:#f92672">.</span>io
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>mkdir <span style="color:#f92672">-</span>p <span style="color:#e6db74">/etc/co</span>ntainerd
+</span></span><span style="display:flex;"><span>containerd config default <span style="color:#f92672">&gt;</span> <span style="color:#e6db74">/etc/co</span>ntainerd<span style="color:#f92672">/</span>config<span style="color:#f92672">.</span>toml</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>nano /etc/containerd/config.toml</span></span></code></pre></div>
+<p>&ndash;&gt; SystemdCgroup = true</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>systemctl restart containerd</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | sudo tee /etc/sysctl.d/k8s.conf
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">net.bridge.bridge-nf-call-ip6tables = 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">net.bridge.bridge-nf-call-iptables = 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sudo sysctl --system</span></span></code></pre></div>
+<h4 id="pre-requisites---2-worker-node">Pre-Requisites - 2: (WORKER NODE)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>dnf install socat conntrack ipset
+</span></span><span style="display:flex;"><span>sysctl -w net.ipv4.conf.all.forwarding<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>cd  /root/binaries/kubernetes/node/bin/
+</span></span><span style="display:flex;"><span>cp kube-proxy kubectl kubelet /usr/local/bin</span></span></code></pre></div>
+<h4 id="generate-kubelet-certificate-for-worker-node-master-node">Generate Kubelet Certificate for Worker Node. (MASTER NODE)</h4>
+<p>Note:</p>
+<ol>
+<li>Replace the IP Address and Hostname field in the below configurations according to your enviornement.</li>
+<li>Run this in the Kubernetes Master Node</li>
+</ol>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cd /root/certificates</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat &gt; openssl-worker.example.com.cnf <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[req]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">req_extensions = v3_req
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">distinguished_name = req_distinguished_name
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[req_distinguished_name]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[ v3_req ]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">basicConstraints = CA:FALSE
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">subjectAltName = @alt_names
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[alt_names]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">DNS.1 = worker.example.com
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">IP.1 = 172.16.16.111
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>openssl genrsa -out worker.example.com.key <span style="color:#ae81ff">2048</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>openssl req -new -key worker.example.com.key -subj <span style="color:#e6db74">&#34;/CN=system:node:worker.example.com/O=system:nodes&#34;</span> -out worker.example.com.csr -config openssl-worker.example.com.cnf
+</span></span><span style="display:flex;"><span>openssl x509 -req -in worker.example.com.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out worker.example.com.crt -extensions v3_req -extfile openssl-worker.example.com.cnf -days <span style="color:#ae81ff">1000</span></span></span></code></pre></div>
+<h4 id="step-2-generate-kube-proxy-certificate-master-node">Step 2: Generate kube-proxy certificate: (MASTER NODE)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>openssl genrsa -out kube-proxy.key <span style="color:#ae81ff">2048</span>
+</span></span><span style="display:flex;"><span>openssl req -new -key kube-proxy.key -subj <span style="color:#e6db74">&#34;/CN=system:kube-proxy&#34;</span> -out kube-proxy.csr
+</span></span><span style="display:flex;"><span>openssl x509 -req -in kube-proxy.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out kube-proxy.crt -days <span style="color:#ae81ff">1000</span></span></span></code></pre></div>
+<h4 id="step-3-copy-certificates-to-worker-node">Step 3: Copy Certificates to Worker Node:</h4>
+<p>This can either be manual approach or via SCP.
+Certificates: kubelet, kube-proxy and CA certificate.</p>
+<p>In-case you want to automate it, then following configuration can be used.
+In the demo, we had made used of manual way.</p>
+<p>In-case, you want to transfer file from master to worker node, then you can make use of the following approach:</p>
+<h5 id="--worker-node">- Worker Node:</h5>
+<h5 id="--master-node">- Master Node:</h5>
+<ul>
+<li>Copy certificate from master node to worker nodes</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>scp kube-proxy.crt kube-proxy.key worker.example.com.key worker.example.com.crt ca.crt vagrant@172.16.16.111:/tmp</span></span></code></pre></div>
+<h5 id="--worker-node-1">- Worker Node:</h5>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mkdir /root/certificates
+</span></span><span style="display:flex;"><span>cd /tmp
+</span></span><span style="display:flex;"><span>mv kube-proxy.crt kube-proxy.key worker.example.com.crt worker.example.com.key ca.crt /root/certificates</span></span></code></pre></div>
+<h4 id="step-4-move-certificates-to-specific-location-worker-node">Step 4: Move Certificates to Specific Location. (WORKER NODE)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mkdir /var/lib/kubernetes
+</span></span><span style="display:flex;"><span>cd /root/certificates
+</span></span><span style="display:flex;"><span>cp ca.crt /var/lib/kubernetes
+</span></span><span style="display:flex;"><span>mkdir /var/lib/kubelet
+</span></span><span style="display:flex;"><span>mv worker.example.com.crt  worker.example.com.key  kube-proxy.crt  kube-proxy.key /var/lib/kubelet/</span></span></code></pre></div>
+<h4 id="step-5-generate-kubelet-configuration-yaml-file-worker-node">Step 5: Generate Kubelet Configuration YAML File: (WORKER NODE)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | sudo tee /var/lib/kubelet/kubelet-config.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: KubeletConfiguration
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: kubelet.config.k8s.io/v1beta1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">authentication:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  anonymous:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  webhook:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  x509:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      clientCAFile: &#34;/var/lib/kubernetes/ca.crt&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">authorization:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  mode: Webhook
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">clusterDomain: &#34;cluster.local&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">clusterDNS:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - &#34;10.32.0.10&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">runtimeRequestTimeout: &#34;15m&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">cgroupDriver: systemd
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="step-6-generate-systemd-service-file-for-kubelet-worker-node">Step 6: Generate Systemd service file for kubelet: (WORKER NODE)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | sudo tee /etc/systemd/system/kubelet.service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Unit]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Description=Kubernetes Kubelet
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Documentation=https://github.com/kubernetes/kubernetes
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">After=containerd.service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Requires=containerd.service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Service]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">ExecStart=/usr/local/bin/kubelet \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --config=/var/lib/kubelet/kubelet-config.yaml \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --container-runtime-endpoint=unix:///var/run/containerd/containerd.sock \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --kubeconfig=/var/lib/kubelet/kubeconfig \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --v=2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Restart=on-failure
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RestartSec=5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Install]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">WantedBy=multi-user.target
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="step-7-generate-the-kubeconfig-file-for-kubelet-worker-node">Step 7: Generate the Kubeconfig file for Kubelet (WORKER NODE)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cd /var/lib/kubelet
+</span></span><span style="display:flex;"><span>cp /var/lib/kubernetes/ca.crt .
+</span></span><span style="display:flex;"><span>SERVER_IP<span style="color:#f92672">=</span>IP-OF-API-SERVER</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  kubectl config set-cluster kubernetes-from-scratch <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --certificate-authority<span style="color:#f92672">=</span>ca.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --embed-certs<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --server<span style="color:#f92672">=</span>https://<span style="color:#e6db74">${</span>SERVER_IP<span style="color:#e6db74">}</span>:6443 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubeconfig<span style="color:#f92672">=</span>worker.example.com.kubeconfig
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  kubectl config set-credentials system:node:worker.example.com <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --client-certificate<span style="color:#f92672">=</span>worker.example.com.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --client-key<span style="color:#f92672">=</span>worker.example.com.key <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --embed-certs<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubeconfig<span style="color:#f92672">=</span>worker.example.com.kubeconfig
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  kubectl config set-context default <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --cluster<span style="color:#f92672">=</span>kubernetes-from-scratch <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --user<span style="color:#f92672">=</span>system:node:worker.example.com <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubeconfig<span style="color:#f92672">=</span>worker.example.com.kubeconfig
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  kubectl config use-context default --kubeconfig<span style="color:#f92672">=</span>worker.example.com.kubeconfig
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mv worker.example.com.kubeconfig kubeconfig</span></span></code></pre></div>
+<h3 id="part-2---kube-proxy">Part 2 - Kube-Proxy</h3>
+<h4 id="step-1-copy-kube-proxy-certificate-to-directory--worker-node">Step 1: Copy Kube Proxy Certificate to Directory:  (WORKER NODE)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mkdir /var/lib/kube-proxy</span></span></code></pre></div>
+<h4 id="step-2-generate-kubeconfig-file">Step 2: Generate KubeConfig file:</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  kubectl config set-cluster kubernetes-from-scratch <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --certificate-authority<span style="color:#f92672">=</span>ca.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --embed-certs<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --server<span style="color:#f92672">=</span>https://<span style="color:#e6db74">${</span>SERVER_IP<span style="color:#e6db74">}</span>:6443 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubeconfig<span style="color:#f92672">=</span>kube-proxy.kubeconfig
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  kubectl config set-credentials system:kube-proxy <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --client-certificate<span style="color:#f92672">=</span>kube-proxy.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --client-key<span style="color:#f92672">=</span>kube-proxy.key <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --embed-certs<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubeconfig<span style="color:#f92672">=</span>kube-proxy.kubeconfig
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  kubectl config set-context default <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --cluster<span style="color:#f92672">=</span>kubernetes-from-scratch <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --user<span style="color:#f92672">=</span>system:kube-proxy <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubeconfig<span style="color:#f92672">=</span>kube-proxy.kubeconfig
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  kubectl config use-context default --kubeconfig<span style="color:#f92672">=</span>kube-proxy.kubeconfig
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mv kube-proxy.kubeconfig /var/lib/kube-proxy/kubeconfig</span></span></code></pre></div>
+<h4 id="step-3-generate-kube-proxy-configuration-file-worker-node">Step 3: Generate kube-proxy configuration file: (WORKER NODE)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cd /var/lib/kube-proxy</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | sudo tee /var/lib/kube-proxy/kube-proxy-config.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: KubeProxyConfiguration
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: kubeproxy.config.k8s.io/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">clientConnection:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  kubeconfig: &#34;/var/lib/kube-proxy/kubeconfig&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">mode: &#34;iptables&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">clusterCIDR: &#34;10.200.0.0/16&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="step-4-create-kube-proxy-service-file-worker-node">Step 4: Create kube-proxy service file: (WORKER NODE)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | sudo tee /etc/systemd/system/kube-proxy.service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Unit]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Description=Kubernetes Kube Proxy
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Documentation=https://github.com/kubernetes/kubernetes
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Service]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">ExecStart=/usr/local/bin/kube-proxy \\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  --config=/var/lib/kube-proxy/kube-proxy-config.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Restart=on-failure
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RestartSec=5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Install]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">WantedBy=multi-user.target
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="worker-node">WORKER NODE</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>systemctl start kubelet
+</span></span><span style="display:flex;"><span>systemctl start kube-proxy
+</span></span><span style="display:flex;"><span>systemctl enable kubelet
+</span></span><span style="display:flex;"><span>systemctl enable kube-proxy</span></span></code></pre></div>
+<h4 id="step-6-master-node">Step 6: (MASTER NODE)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl get nodes</span></span></code></pre></div>
+<ul>
+<li>Check the log of kubelet</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>journalctl <span style="color:#f92672">-</span>u kubelet<span style="color:#f92672">.</span>service</span></span></code></pre></div>
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+          <a id="R-logo" class="R-default" href="../index.html">
+Kubernetes Documentation
+          </a>
+        </div>
+        <script>
+          window.index_js_url="../searchindex.en.js?1734364594";
+        </script>
+        <search><form action="../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../js/auto-complete.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.stemmer.support.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.multi.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.en.min.js?1734364594" defer></script>
+        <script src="../js/search.js?1734364594" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation homelinks">
+        <ul>
+          <li><a class="padding" href="../index.html"><i class="fa-fw fas fa-home"></i> Home</a></li>
+        </ul>
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-shortcutmenu-home" class="R-sidebarmenu">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes documentation</a></li>
+            <li class="" data-nav-id="/part01/index.html"><a class="padding" href="../part01/index.html">Part 1</a></li>
+            <li class="" data-nav-id="/part02/index.html"><a class="padding" href="../part02/index.html">Part 2</a></li>
+            <li class="" data-nav-id="/part03/index.html"><a class="padding" href="../part03/index.html">Part 3</a></li>
+            <li class="" data-nav-id="/part04/index.html"><a class="padding" href="../part04/index.html">Part 4</a></li>
+            <li class="" data-nav-id="/part05/index.html"><a class="padding" href="../part05/index.html">Part 5</a></li>
+            <li class="" data-nav-id="/containerbasics/index.html"><a class="padding" href="../containerbasics/index.html">Container Basics</a></li>
+            <li class="" data-nav-id="/helm-overview/index.html"><a class="padding" href="../helm-overview/index.html">Helm Overview</a></li>
+            <li class="" data-nav-id="/imp/index.html"><a class="padding" href="../imp/index.html">Imp Commands </a></li>
+            <li class="" data-nav-id="/external-etcd/index.html"><a class="padding" href="../external-etcd/index.html">kubeadm-external-etcd</a></li>
+            <li class="" data-nav-id="/kubernetes-rbac/index.html"><a class="padding" href="../kubernetes-rbac/index.html">Kubernetes RBAC</a></li>
+            <li class="" data-nav-id="/kubernetes-on-centos/index.html"><a class="padding" href="../kubernetes-on-centos/index.html">Kubernetes-on-Centos</a></li>
+            <li class="active " data-nav-id="/kuberneteshardway/index.html"><a class="padding" href="../kuberneteshardway/index.html">Kubernets Installation From Scatch on rocky 9</a></li>
+            <li class="" data-nav-id="/multimaster/index.html"><a class="padding" href="../multimaster/index.html">Multi Master kubernetes</a></li>
+            <li class="" data-nav-id="/minio/index.html"><a class="padding" href="../minio/index.html">The Object Store for AI Data Infrastructure</a></li>
+            <li class="" data-nav-id="/cks/index.html"><a class="padding" href="../cks/index.html">CKS</a></li>
+            <li class="" data-nav-id="/eks/index.html"><a class="padding" href="../eks/index.html">EKS</a></li>
+            <li class="" data-nav-id="/gke/index.html"><a class="padding" href="../gke/index.html">GKE</a></li>
+            <li class="" data-nav-id="/kuberntes-backup/index.html"><a class="padding" href="../kuberntes-backup/index.html">Kubernetes Data Protection</a></li>
+            <li class="" data-nav-id="/kubernetesloggin-monitoring/index.html"><a class="padding" href="../kubernetesloggin-monitoring/index.html">KUBERNETES LOGGING AND MONITORING</a></li>
+            <li class="" data-nav-id="/neuvector/index.html"><a class="padding" href="../neuvector/index.html">Kubernetes Security</a></li>
+          </ul>
+        </div>
+    
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-language"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = this.querySelector( this.value ).dataset.url;">
+                      <option id="R-select-language-en" value="#R-select-language-en" data-url="../kuberneteshardway/index.html" lang="en-us" selected></option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-paint-brush"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.relearn.changeVariant( this.value );">
+                      <option id="R-select-variant-auto" value="auto" selected>Auto</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.relearn.markVariant();</script>
+              </li>
+              <li class="footerVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-history"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter showFooter">
+        <p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../js/clipboard.min.js?1734364594" defer></script>
+    <script src="../js/perfect-scrollbar.min.js?1734364594" defer></script>
+    <script src="../js/theme.js?1734364594" defer></script>
+  </body>
+</html>

@@ -1,15 +1,75 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://khushiramsingh680.github.io/Aks/azure/index.html</loc>
+    <loc>https://khushiramsingh680.github.io/k8s/k8s/index.html</loc>
   </url>
   <url>
-    <loc>https://khushiramsingh680.github.io/Aks/categories/index.html</loc>
+    <loc>https://khushiramsingh680.github.io/k8s/part01/index.html</loc>
   </url>
   <url>
-    <loc>https://khushiramsingh680.github.io/Aks/azure/azure/index.html</loc>
+    <loc>https://khushiramsingh680.github.io/k8s/part02/index.html</loc>
   </url>
   <url>
-    <loc>https://khushiramsingh680.github.io/Aks/tags/index.html</loc>
+    <loc>https://khushiramsingh680.github.io/k8s/part03/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/part04/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/part05/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/containerbasics/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/helm-overview/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/imp/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/external-etcd/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/kubernetes-rbac/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/kubernetes-on-centos/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/kuberneteshardway/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/multimaster/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/minio/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/cks/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/eks/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/gke/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/kuberntes-backup/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/kubernetesloggin-monitoring/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/neuvector/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/categories/index.html</loc>
+  </url>
+  <url>
+    <loc>https://khushiramsingh680.github.io/k8s/tags/index.html</loc>
   </url>
 </urlset>

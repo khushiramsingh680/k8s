@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.139.3">
+    <meta name="generator" content="Relearn 7.2.1+16d4de84becfa2d2e6bdb2394a2f4fa411bc0007">
+    <meta name="description" content="RBAC Kubernetes RBAC is a powerful security feature that allows administrators to control who can access the Kubernetes API and what actions they can perform. You can use it to implement the principle of “least privilege,” which means that users should have the minimum levels of access necessary to perform their tasks. This approach minimizes the potential for accidental or malicious misuse of the Kubernetes system.">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Kubernetes RBAC :: Kubernetes Documentation">
+    <meta name="twitter:description" content="RBAC Kubernetes RBAC is a powerful security feature that allows administrators to control who can access the Kubernetes API and what actions they can perform. You can use it to implement the principle of “least privilege,” which means that users should have the minimum levels of access necessary to perform their tasks. This approach minimizes the potential for accidental or malicious misuse of the Kubernetes system.">
+    <meta property="og:url" content="https://khushiramsingh680.github.io/k8s/kubernetes-rbac/index.html">
+    <meta property="og:site_name" content="Kubernetes Documentation">
+    <meta property="og:title" content="Kubernetes RBAC :: Kubernetes Documentation">
+    <meta property="og:description" content="RBAC Kubernetes RBAC is a powerful security feature that allows administrators to control who can access the Kubernetes API and what actions they can perform. You can use it to implement the principle of “least privilege,” which means that users should have the minimum levels of access necessary to perform their tasks. This approach minimizes the potential for accidental or malicious misuse of the Kubernetes system.">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="/">
+    <meta itemprop="name" content="Kubernetes RBAC :: Kubernetes Documentation">
+    <meta itemprop="description" content="RBAC Kubernetes RBAC is a powerful security feature that allows administrators to control who can access the Kubernetes API and what actions they can perform. You can use it to implement the principle of “least privilege,” which means that users should have the minimum levels of access necessary to perform their tasks. This approach minimizes the potential for accidental or malicious misuse of the Kubernetes system.">
+    <meta itemprop="wordCount" content="1456">
+    <title>Kubernetes RBAC :: Kubernetes Documentation</title>
+    <link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet"></noscript>
+    <link href="../css/auto-complete.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1734364594" rel="stylesheet"></noscript>
+    <link href="../css/perfect-scrollbar.min.css?1734364594" rel="stylesheet">
+    <link href="../css/theme.min.css?1734364594" rel="stylesheet">
+    <link href="../css/format-html.min.css?1734364594" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.relBasePath='..';
+      window.relearn.relBaseUri='..';
+      window.relearn.absBaseUri='https:\/\/khushiramsingh680.github.io\/k8s';
+      window.relearn.min = `.min`;
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant");
+        var select = document.querySelector("#R-select-variant");
+        if (select) {
+          select.value = variant;
+        }
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script>
+  </head>
+  <body class="mobile-support html" data-url="../kubernetes-rbac/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#rbac">RBAC</a>
+      <ul>
+        <li></li>
+        <li><a href="#documentation-and-websites-referredhttpskubernetesiodocsreferenceaccess-authn-authzauthentication"><a href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/">Documentation and Websites Referred</a></a></li>
+        <li><a href="#create-user-with-certificate">Create user with certificate</a></li>
+        <li><a href="#teama-rolebindingyaml">teama-rolebinding.yaml</a></li>
+        <li><a href="#clusterrole--clusterrolebindinghttpskubernetesiodocsreferenceaccess-authn-authzauthorization"><a href="https://kubernetes.io/docs/reference/access-authn-authz/authorization/">ClusterRole &amp; ClusterRoleBinding</a></a></li>
+        <li><a href="#role-with-imperative-commands">Role with Imperative commands</a></li>
+        <li><a href="#create-a-role-named-pod-reader-that-allows-users-to-perform-get-watch-and-list-on-pods">Create a Role named &ldquo;pod-reader&rdquo; that allows users to perform get, watch and list on pods:</a></li>
+        <li><a href="#create-a-role-named-pod-reader-with-resourcenames-specified">Create a Role named &ldquo;pod-reader&rdquo; with resourceNames specified:</a></li>
+        <li><a href="#create-a-role-named-foo-with-apigroups-specified">Create a Role named &ldquo;foo&rdquo; with apiGroups specified:</a></li>
+        <li><a href="#create-a-role-named-foo-with-subresource-permissions">Create a Role named &ldquo;foo&rdquo; with subresource permissions:</a></li>
+        <li><a href="#create-a-role-named-my-component-lease-holder-with-permissions-to-getupdate-a-resource-with-a-specific-name">Create a Role named &ldquo;my-component-lease-holder&rdquo; with permissions to get/update a resource with a specific name:</a></li>
+      </ul>
+    </li>
+    <li><a href="#clusterrole">CLusterROle</a>
+      <ul>
+        <li><a href="#create-a-clusterrole-named-pod-reader-that-allows-user-to-perform-get-watch-and-list-on-pods">Create a ClusterRole named &ldquo;pod-reader&rdquo; that allows user to perform get, watch and list on pods:</a></li>
+        <li><a href="#create-a-clusterrole-named-pod-reader-with-resourcenames-specified">Create a ClusterRole named &ldquo;pod-reader&rdquo; with resourceNames specified:</a></li>
+        <li><a href="#create-a-clusterrole-named-foo-with-apigroups-specified">Create a ClusterRole named &ldquo;foo&rdquo; with apiGroups specified:</a></li>
+        <li><a href="#create-a-clusterrole-named-foo-with-subresource-permissions">Create a ClusterRole named &ldquo;foo&rdquo; with subresource permissions:</a></li>
+        <li><a href="#rolebindings-with-imperative-commands">Rolebindings with Imperative commands</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#role-binding">Role Binding</a></li>
+      </ul>
+    </li>
+    <li><a href="#cluster-role">Cluster Role</a>
+      <ul>
+        <li><a href="#role-binding-namespace-level">Role Binding (Namespace-level)</a></li>
+      </ul>
+    </li>
+    <li><a href="#cluster-role-binding">Cluster Role Binding</a></li>
+    <li><a href="#securitycontexthttpskubernetesiodocstasksconfigure-pod-containersecurity-context"><a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">SecurityContext</a></a></li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">/</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Kubernetes RBAC</span><meta itemprop="position" content="2"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../external-etcd/index.html" title="kubeadm-external-etcd (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../kubernetes-on-centos/index.html" title="Kubernetes-on-Centos (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable page" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+
+<h1 id="kubernetes-rbac">Kubernetes RBAC</h1>
+
+<h2 id="rbac">RBAC</h2>
+<p>Kubernetes RBAC is a powerful security feature that allows administrators to control who can access the Kubernetes API and what actions they can perform.
+You can use it to implement the principle of &ldquo;least privilege,&rdquo; which means that users should have the minimum levels of access necessary to perform their tasks. This approach minimizes the potential for accidental or malicious misuse of the Kubernetes system.<!-- raw HTML omitted --></p>
+<p>Role-based access control (RBAC) is a method of regulating access to computer or network resources based on the roles of individual users within your organization.</p>
+<h4 id="core-components-of-kubernetes-rbac">Core Components of Kubernetes RBAC</h4>
+<h4 id="role">Role</h4>
+<ul>
+<li>Roles define a set of permissions within a specific namespace.</li>
+<li>They define which actions (verbs) can be performed on which resources (nouns) within that namespace. A role, for example, might enable a user to list and retrieve pods in a specific namespace.
+ClusterRole, by contrast, is a non-namespaced resource. The resources have different names (Role and ClusterRole) because a Kubernetes object always has to be either namespaced or not namespaced; it can&rsquo;t be both.</li>
+</ul>
+<h4 id="clusterroles">ClusterRoles</h4>
+<ul>
+<li>It has several uses. You can use a ClusterRole to define permissions on namespaced resources and be granted access within individual namespace(s)</li>
+<li>define permissions on namespaced resources and be granted access across all namespaces</li>
+<li>define permissions on cluster-scoped resources</li>
+</ul>
+<h4 id="rolebinding-and-clusterrolebinding">RoleBinding and ClusterRoleBinding</h4>
+<ul>
+<li>A role binding grants the permissions defined in a role to a user or set of users. It holds a list of subjects (users, groups, or service accounts).</li>
+<li>A RoleBinding grants permissions within a specific namespace whereas a ClusterRoleBinding grants that access cluster-wide.</li>
+</ul>
+<h3 id="documentation-and-websites-referredhttpskubernetesiodocsreferenceaccess-authn-authzauthentication"><a href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/" rel="external" target="_blank">Documentation and Websites Referred</a></h3>
+<h4 id="service-account">Service Account</h4>
+<ul>
+<li>A service account provides an identity for processes that run in a Pod, and maps to a ServiceAccount object.</li>
+<li>Token associated to a SA is stored at <code>/var/run/secrets/kubernetes.io/</code>serviceaccount/token inside a pod</li>
+<li>We can configure a SA not to mount a secret in pod using</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ServiceAccount
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: build-robot
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">automountServiceAccountToken: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: my-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  serviceAccountName: build-robot
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  automountServiceAccountToken: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span> </span></span></code></pre></div>
+<h4 id="step-1-create-a-new-service-account">Step 1: Create a new Service Account:</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl create serviceaccount external</span></span></code></pre></div>
+<h4 id="step-2-create-a-new-pod-with-external-service-account">Step 2: Create a new POD with External Service Account</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl run external-pod --image<span style="color:#f92672">=</span>nginx --dry-run<span style="color:#f92672">=</span>client -o yaml</span></span></code></pre></div>
+<p>Add following contents under .spec</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>serviceAccountName: external</span></span></code></pre></div>
+<p>Final File will look like this:</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  creationTimestamp: null
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    run: external-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: external-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  serviceAccountName: external
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - image: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    name: external-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    resources: {}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  dnsPolicy: ClusterFirst
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  restartPolicy: Always
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">status: {}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f pod-sa.yaml</span></span></code></pre></div>
+<h4 id="step-3-verification">Step 3: Verification</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl get pods
+</span></span><span style="display:flex;"><span>kubectl get pod external -o yaml</span></span></code></pre></div>
+<h4 id="step-4-fetch-the-token-of-a-pod">Step 4: Fetch the Token of a POD</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl exec -it external-pod -- bash
+</span></span><span style="display:flex;"><span>cat /var/run/secrets/kubernetes.io/serviceaccount/token</span></span></code></pre></div>
+<h4 id="step-5-make-a-request-to-kubernetes-using-token">Step 5: Make a Request to Kubernetes using Token</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>curl -k &lt;K8S-SERVER-URL&gt;
+</span></span><span style="display:flex;"><span>curl -k &lt;K8S-SERVER-URL&gt;/api/v1 --header <span style="color:#e6db74">&#34;Authorization: Bearer &lt;TOKEN-HERE&gt;&#34;</span></span></span></code></pre></div>
+<h3 id="create-user-with-certificate">Create user with certificate</h3>
+<h4 id="step-1-create-a-new-private-key--and-csr">Step 1: Create a new private key  and CSR</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mkdir /root/certificates
+</span></span><span style="display:flex;"><span>cd /root/certificates</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>openssl genrsa -out john.key <span style="color:#ae81ff">2048</span>
+</span></span><span style="display:flex;"><span>openssl req -new -key john.key -out john.csr -subj <span style="color:#e6db74">&#34;/CN=john/O=finance&#34;</span></span></span></code></pre></div>
+<h4 id="step-2-decode-the-csr">Step 2: Decode the csr</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cat john.csr | base64 | tr -d <span style="color:#e6db74">&#39;\n&#39;</span></span></span></code></pre></div>
+<h4 id="step-3-generate-the-kubernetes-signing-request">Step 3: Generate the Kubernetes Signing Request</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>nano csr-requests.yaml</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: certificates.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: CertificateSigningRequest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: john-csr
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  groups:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - system:authenticated
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  request: ADD-YOUR-CSR-HERE
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  signerName: kubernetes.io/kube-apiserver-client
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  usages:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - digital signature
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - key encipherment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - client auth
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="step-4-apply-the-signing-requests">Step 4: Apply the Signing Requests:</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f csr-requests.yaml</span></span></code></pre></div>
+<p>You can optionally verify with  kubectl get csr</p>
+<h4 id="step-5-approve-the-csr">Step 5: Approve the csr</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl certificate approve john-csr</span></span></code></pre></div>
+<h4 id="step-6-download-the-certificate-from-csr">Step 6: Download the Certificate from csr</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl get csr john-csr -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{.status.certificate}&#39;</span> | base64 -d &gt; john.crt</span></span></code></pre></div>
+<h4 id="step-7-create-a-new-context">Step 7: Create a new context</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl config set-credentials john --client-certificate<span style="color:#f92672">=</span>john.crt --client-key<span style="color:#f92672">=</span>john.key</span></span></code></pre></div>
+<h4 id="step-8-set-new-context">Step 8: Set new Context</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl config set-context john-context --cluster <span style="color:#f92672">[</span>YOUR-CLUSTER-HERE<span style="color:#f92672">]</span> --user<span style="color:#f92672">=</span>john</span></span></code></pre></div>
+<h4 id="step-9-use-context-to-verify">Step 9: Use Context to Verify</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl --context<span style="color:#f92672">=</span>john-context get pods</span></span></code></pre></div>
+<h4 id="step-10-create-rbac-role-allowing-list-pods-operation">Step 10: Create RBAC Role Allowing List PODS Operation</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: rbac.authorization.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Role
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: default
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-reader
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">rules:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- apiGroups: [&#34;&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  resources: [&#34;pods&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  verbs: [&#34;list&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="step-11-create-a-new-role-binding">Step 11: Create a New Role Binding</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: rbac.authorization.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: RoleBinding
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: read-pods
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: default
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">subjects:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- kind: User
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: john
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  apiGroup: rbac.authorization.k8s.io
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">roleRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  kind: Role
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-reader
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  apiGroup: rbac.authorization.k8s.io
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="step-12-verify-permissions">Step 12: Verify Permissions</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl --context<span style="color:#f92672">=</span>john-context get pods</span></span></code></pre></div>
+<h4 id="step-13-delete-resources-created-in-this-lab">Step 13: Delete Resources Created in this Lab</h4>
+<h4 id="namespace-access-control">NameSpace Access Control</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: rbac.authorization.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Role
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: teama
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-reader
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">rules:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- apiGroups: [&#34;&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  resources: [&#34;pods&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  verbs: [&#34;get&#34;, &#34;watch&#34;, &#34;list&#34;, &#34;create&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h3 id="teama-rolebindingyaml">teama-rolebinding.yaml</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: rbac.authorization.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: RoleBinding
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: read-pods
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: teama
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">subjects:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- kind: User
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: john
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  apiGroup: rbac.authorization.k8s.io
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">roleRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  kind: Role
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-reader
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  apiGroup: rbac.authorization.k8s.io
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h3 id="clusterrole--clusterrolebindinghttpskubernetesiodocsreferenceaccess-authn-authzauthorization"><a href="https://kubernetes.io/docs/reference/access-authn-authz/authorization/" rel="external" target="_blank">ClusterRole &amp; ClusterRoleBinding</a></h3>
+<h5 id="step-1-delete-role-and-role-binding">Step 1: Delete Role and Role Binding</h5>
+<h5 id="step-2-create-a-cluster-role">Step 2: Create a Cluster Role</h5>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: rbac.authorization.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ClusterRole
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-reader
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">rules:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- apiGroups: [&#34;&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  resources: [&#34;pods&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  verbs: [&#34;list&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Check clusterrole</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl get clusterrole
+</span></span><span style="display:flex;"><span>kubectl describe clusterrole pod-reader</span></span></code></pre></div>
+<h4 id="step-3-create-a-cluster-role-binding-for-a-serviceaccount-named-external-in-default-namespace-make-sure-to-create-sa-in-right-namespace">Step 3: Create a Cluster Role Binding for a ServiceAccount named external in default namespace (make sure to create sa in right namespace)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: rbac.authorization.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ClusterRoleBinding
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: list-pods-global
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">subjects:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- kind: User
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: system:serviceaccount:default:external
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  apiGroup: rbac.authorization.k8s.io
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">roleRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  kind: ClusterRole
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-reader
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  apiGroup: rbac.authorization.k8s.io
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Check Clusterrolebindings</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl get clusterrolebinding
+</span></span><span style="display:flex;"><span>kubectl describe clusterrolebinding list-pods-global</span></span></code></pre></div>
+<h5 id="step-4-verify-permissions">Step 4: Verify Permissions</h5>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>curl -k &lt;K8S-SERVER-URL&gt;/api/v1/namespaces/default/pods --header <span style="color:#e6db74">&#34;Authorization: Bearer &lt;TOKEN-HERE&gt;&#34;</span></span></span></code></pre></div>
+<h5 id="step-5-create-a-new-namespace">Step 5: Create a new Namespace</h5>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl create namespace external</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>curl -k &lt;K8S-SERVER-URL&gt;/api/v1/namespaces/external/pods --header <span style="color:#e6db74">&#34;Authorization: Bearer &lt;TOKEN-HERE&gt;&#34;</span></span></span></code></pre></div>
+<h4 id="step-6-delete-cluster-role-binding">Step 6: Delete Cluster Role Binding</h4>
+<ul>
+<li>Verify if you receive forbidden error.</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>curl -k &lt;K8S-SERVER-URL&gt;/api/v1/namespaces/external/pods --header <span style="color:#e6db74">&#34;Authorization: Bearer &lt;TOKEN-HERE&gt;&#34;</span></span></span></code></pre></div>
+<h4 id="step-7-create-role-binding-with-clusterrole">Step 7: Create Role Binding with ClusterRole</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: rbac.authorization.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: RoleBinding
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: read-pods
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: default
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">subjects:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- kind: User
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: system:serviceaccount:default:external
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  apiGroup: rbac.authorization.k8s.io
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">roleRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  kind: ClusterRole
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-reader
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  apiGroup: rbac.authorization.k8s.io
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="step-8-verification">Step 8: Verification</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>curl -k &lt;K8S-SERVER-URL&gt;/api/v1/namespaces/external/pods --header <span style="color:#e6db74">&#34;Authorization: Bearer &lt;TOKEN-HERE&gt;&#34;</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>curl -k &lt;K8S-SERVER-URL&gt;/api/v1/namespaces/default/pods --header <span style="color:#e6db74">&#34;Authorization: Bearer &lt;TOKEN-HERE&gt;&#34;</span></span></span></code></pre></div>
+<ul>
+<li>You can also assign cluster-Admin role using below</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: rbac.authorization.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ClusterRoleBinding
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: admin-user
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">roleRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  apiGroup: rbac.authorization.k8s.io
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  kind: ClusterRole
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: cluster-admin
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">subjects:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- kind: ServiceAccount
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: admin-user
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: kube-system
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h3 id="role-with-imperative-commands">Role with Imperative commands</h3>
+<h3 id="create-a-role-named-pod-reader-that-allows-users-to-perform-get-watch-and-list-on-pods">Create a Role named &ldquo;pod-reader&rdquo; that allows users to perform get, watch and list on pods:</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create role pod-reader --verb<span style="color:#f92672">=</span>get --verb<span style="color:#f92672">=</span>list --verb<span style="color:#f92672">=</span>watch --resource<span style="color:#f92672">=</span>pods</span></span></code></pre></div>
+<h3 id="create-a-role-named-pod-reader-with-resourcenames-specified">Create a Role named &ldquo;pod-reader&rdquo; with resourceNames specified:</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create role pod-reader --verb<span style="color:#f92672">=</span>get --resource<span style="color:#f92672">=</span>pods --resource-name<span style="color:#f92672">=</span>readablepod --resource-name<span style="color:#f92672">=</span>anotherpod</span></span></code></pre></div>
+<h3 id="create-a-role-named-foo-with-apigroups-specified">Create a Role named &ldquo;foo&rdquo; with apiGroups specified:</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl create role foo <span style="color:#f92672">--</span>verb<span style="color:#f92672">=</span>get,list,watch <span style="color:#f92672">--</span>resource<span style="color:#f92672">=</span>replicasets<span style="color:#f92672">.</span>apps</span></span></code></pre></div>
+<h3 id="create-a-role-named-foo-with-subresource-permissions">Create a Role named &ldquo;foo&rdquo; with subresource permissions:</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create role foo --verb<span style="color:#f92672">=</span>get,list,watch --resource<span style="color:#f92672">=</span>pods,pods/status</span></span></code></pre></div>
+<h3 id="create-a-role-named-my-component-lease-holder-with-permissions-to-getupdate-a-resource-with-a-specific-name">Create a Role named &ldquo;my-component-lease-holder&rdquo; with permissions to get/update a resource with a specific name:</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create role my-component-lease-holder --verb<span style="color:#f92672">=</span>get,list,watch,update --resource<span style="color:#f92672">=</span>lease --resource-name<span style="color:#f92672">=</span>my-component</span></span></code></pre></div>
+<h2 id="clusterrole">CLusterROle</h2>
+<h3 id="create-a-clusterrole-named-pod-reader-that-allows-user-to-perform-get-watch-and-list-on-pods">Create a ClusterRole named &ldquo;pod-reader&rdquo; that allows user to perform get, watch and list on pods:</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create clusterrole pod-reader --verb<span style="color:#f92672">=</span>get,list,watch --resource<span style="color:#f92672">=</span>pods</span></span></code></pre></div>
+<h3 id="create-a-clusterrole-named-pod-reader-with-resourcenames-specified">Create a ClusterRole named &ldquo;pod-reader&rdquo; with resourceNames specified:</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create clusterrole pod-reader --verb<span style="color:#f92672">=</span>get --resource<span style="color:#f92672">=</span>pods --resource-name<span style="color:#f92672">=</span>readablepod --resource-name<span style="color:#f92672">=</span>anotherpod</span></span></code></pre></div>
+<h3 id="create-a-clusterrole-named-foo-with-apigroups-specified">Create a ClusterRole named &ldquo;foo&rdquo; with apiGroups specified:</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create clusterrole foo --verb<span style="color:#f92672">=</span>get,list,watch --resource<span style="color:#f92672">=</span>replicasets.apps</span></span></code></pre></div>
+<h3 id="create-a-clusterrole-named-foo-with-subresource-permissions">Create a ClusterRole named &ldquo;foo&rdquo; with subresource permissions:</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create clusterrole foo --verb<span style="color:#f92672">=</span>get,list,watch --resource<span style="color:#f92672">=</span>pods,pods/status</span></span></code></pre></div>
+<h3 id="rolebindings-with-imperative-commands">Rolebindings with Imperative commands</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create clusterrolebinding myapp-view-binding --clusterrole<span style="color:#f92672">=</span>view --serviceaccount<span style="color:#f92672">=</span>acme:myapp</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create rolebinding my-sa-view <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --clusterrole<span style="color:#f92672">=</span>view <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --serviceaccount<span style="color:#f92672">=</span>my-namespace:my-sa <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --namespace<span style="color:#f92672">=</span>my-namespace</span></span></code></pre></div>
+<h1 id="kubernetes-rbac-setup">Kubernetes RBAC Setup</h1>
+<ul>
+<li>Authentication</li>
+<li>Authorization</li>
+</ul>
+<h3 id="role-binding">Role Binding</h3>
+<p>The rolebinding.yaml file defines a role binding named read-pods that binds the pod-reader role to the user jack in the default namespace.</p>
+<h2 id="cluster-role">Cluster Role</h2>
+<p>The clusterrole.yaml file contains the configuration for creating a cluster role named secret-reader. This cluster role allows the user to perform actions like get, watch, and list on secrets resources.</p>
+<h3 id="role-binding-namespace-level">Role Binding (Namespace-level)</h3>
+<p>The rolebinding.yaml file defines a role binding named read-secrets that binds the secret-reader cluster role to the user dev in the development namespace.</p>
+<h2 id="cluster-role-binding">Cluster Role Binding</h2>
+<p>The clusterrolebinding.yaml file contains the configuration for creating a cluster role binding named read-secrets-global. This cluster role binding binds the secret-reader cluster role to the user riya globally.</p>
+<h2 id="securitycontexthttpskubernetesiodocstasksconfigure-pod-containersecurity-context"><a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/" rel="external" target="_blank">SecurityContext</a></h2>
+<ul>
+<li>A Kubernetes security context is a set of security settings that are applied at the pod or container level.</li>
+<li>It provides you with the ability to define privilege and access controls for pods or containers.</li>
+<li>Example 1</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-context
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  securityContext:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      runAsUser: 1000
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      runAsGroup: 3000
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: sec-ctx-demo
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: busybox
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    command: [ &#34;sh&#34;, &#34;-c&#34;, &#34;sleep 1h&#34; ]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Check the user id assigned</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl exec -it pod-context sh
+</span></span><span style="display:flex;"><span>id</span></span></code></pre></div>
+<ul>
+<li>Example 2</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: security-context-demo
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  securityContext:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    fsGroup: 2000
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  volumes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: sec-ctx-vol
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    emptyDir: {}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: sec-ctx-demo
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: busybox
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    command: [ &#34;sh&#34;, &#34;-c&#34;, &#34;sleep 1h&#34; ]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    volumeMounts:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - name: sec-ctx-vol
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      mountPath: /data/demo
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Check the permission of /data/demo</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span> kubectl exec -it security-context-demo sh
+</span></span><span style="display:flex;"><span> cd /data
+</span></span><span style="display:flex;"><span> ls -l </span></span></code></pre></div>
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+          <a id="R-logo" class="R-default" href="../index.html">
+Kubernetes Documentation
+          </a>
+        </div>
+        <script>
+          window.index_js_url="../searchindex.en.js?1734364594";
+        </script>
+        <search><form action="../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../js/auto-complete.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.stemmer.support.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.multi.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.en.min.js?1734364594" defer></script>
+        <script src="../js/search.js?1734364594" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation homelinks">
+        <ul>
+          <li><a class="padding" href="../index.html"><i class="fa-fw fas fa-home"></i> Home</a></li>
+        </ul>
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-shortcutmenu-home" class="R-sidebarmenu">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes documentation</a></li>
+            <li class="" data-nav-id="/part01/index.html"><a class="padding" href="../part01/index.html">Part 1</a></li>
+            <li class="" data-nav-id="/part02/index.html"><a class="padding" href="../part02/index.html">Part 2</a></li>
+            <li class="" data-nav-id="/part03/index.html"><a class="padding" href="../part03/index.html">Part 3</a></li>
+            <li class="" data-nav-id="/part04/index.html"><a class="padding" href="../part04/index.html">Part 4</a></li>
+            <li class="" data-nav-id="/part05/index.html"><a class="padding" href="../part05/index.html">Part 5</a></li>
+            <li class="" data-nav-id="/containerbasics/index.html"><a class="padding" href="../containerbasics/index.html">Container Basics</a></li>
+            <li class="" data-nav-id="/helm-overview/index.html"><a class="padding" href="../helm-overview/index.html">Helm Overview</a></li>
+            <li class="" data-nav-id="/imp/index.html"><a class="padding" href="../imp/index.html">Imp Commands </a></li>
+            <li class="" data-nav-id="/external-etcd/index.html"><a class="padding" href="../external-etcd/index.html">kubeadm-external-etcd</a></li>
+            <li class="active " data-nav-id="/kubernetes-rbac/index.html"><a class="padding" href="../kubernetes-rbac/index.html">Kubernetes RBAC</a></li>
+            <li class="" data-nav-id="/kubernetes-on-centos/index.html"><a class="padding" href="../kubernetes-on-centos/index.html">Kubernetes-on-Centos</a></li>
+            <li class="" data-nav-id="/kuberneteshardway/index.html"><a class="padding" href="../kuberneteshardway/index.html">Kubernets Installation From Scatch on rocky 9</a></li>
+            <li class="" data-nav-id="/multimaster/index.html"><a class="padding" href="../multimaster/index.html">Multi Master kubernetes</a></li>
+            <li class="" data-nav-id="/minio/index.html"><a class="padding" href="../minio/index.html">The Object Store for AI Data Infrastructure</a></li>
+            <li class="" data-nav-id="/cks/index.html"><a class="padding" href="../cks/index.html">CKS</a></li>
+            <li class="" data-nav-id="/eks/index.html"><a class="padding" href="../eks/index.html">EKS</a></li>
+            <li class="" data-nav-id="/gke/index.html"><a class="padding" href="../gke/index.html">GKE</a></li>
+            <li class="" data-nav-id="/kuberntes-backup/index.html"><a class="padding" href="../kuberntes-backup/index.html">Kubernetes Data Protection</a></li>
+            <li class="" data-nav-id="/kubernetesloggin-monitoring/index.html"><a class="padding" href="../kubernetesloggin-monitoring/index.html">KUBERNETES LOGGING AND MONITORING</a></li>
+            <li class="" data-nav-id="/neuvector/index.html"><a class="padding" href="../neuvector/index.html">Kubernetes Security</a></li>
+          </ul>
+        </div>
+    
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-language"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = this.querySelector( this.value ).dataset.url;">
+                      <option id="R-select-language-en" value="#R-select-language-en" data-url="../kubernetes-rbac/index.html" lang="en-us" selected></option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-paint-brush"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.relearn.changeVariant( this.value );">
+                      <option id="R-select-variant-auto" value="auto" selected>Auto</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.relearn.markVariant();</script>
+              </li>
+              <li class="footerVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-history"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter showFooter">
+        <p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../js/clipboard.min.js?1734364594" defer></script>
+    <script src="../js/perfect-scrollbar.min.js?1734364594" defer></script>
+    <script src="../js/theme.js?1734364594" defer></script>
+  </body>
+</html>

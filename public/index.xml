@@ -1,18 +1,158 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Azure Managed Kubernetes</title>
-    <link>https://khushiramsingh680.github.io/Aks/index.html</link>
-    <description>Azure Cloud Documentatation</description>
+    <title>/ :: Kubernetes Documentation</title>
+    <link>https://khushiramsingh680.github.io/k8s/index.html</link>
+    <description></description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <atom:link href="https://khushiramsingh680.github.io/Aks/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://khushiramsingh680.github.io/k8s/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Azure documentation</title>
-      <link>https://khushiramsingh680.github.io/Aks/azure/index.html</link>
+      <title>Kubernetes documentation</title>
+      <link>https://khushiramsingh680.github.io/k8s/k8s/index.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://khushiramsingh680.github.io/Aks/azure/index.html</guid>
+      <guid>https://khushiramsingh680.github.io/k8s/k8s/index.html</guid>
       <description>Learn by doing</description>
+    </item>
+    <item>
+      <title>Part 1</title>
+      <link>https://khushiramsingh680.github.io/k8s/part01/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/part01/index.html</guid>
+      <description>Topics Kubernetes Overview Kubernetes Architecture Kubernetes Components Kubernetes Installation Kubernetes SSL Certificates Kubernetes Static Pods Kubernetes Configuration files Kubernetes Upgrade Etcd backup and restore Kubernetes Node related commands CIS Benchmark Kubernetes Overview Kubernetes or k8s is an open-source orchestration and cluster management for container-based applications maintained by the Cloud Native Computing Foundation. Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery</description>
+    </item>
+    <item>
+      <title>Part 2</title>
+      <link>https://khushiramsingh680.github.io/k8s/part02/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/part02/index.html</guid>
+      <description>Topics: NameSpace Create a namespace Switch from one ns to another Resource Quota Resource Limits POD Single Container pod MultiContainer pod Login to a pod Copy to a pod and from a pod(container) How to check logs from a container Environment Variables of pod initContainer Command and Argument of a pod pullSecret of a pod pod restart policy imagePull policy How to delete a pod Pod priority Pod Resources Pod Quality of Services(QOS) Advance Scheduling of pod Scheduler Nodename nodeSelector Node Affinity Taints and Tolerations Pod affinity and anti affinity Priority and PriorityClass Preemption Disruption Budget Topology and Constraints Descheduler Namespace Namespaces are a way to divide cluster resources between multiple users (via resource quota). namespaces provides a mechanism for isolating groups of resources within a single cluster Names of resources need to be unique within a namespace, but not across namespaces. To achieve multitenancy with Networkpolicy To configure RBAC Check all namespaces kubectl get ns&#xD;Create a new namespace kubectl create ns &lt;name&gt;&#xD;Switch from one ns to another kubens kubens &lt;ns name&gt;&#xD;To see which Kubernetes resources are and aren’t in a namespace: In a namespace kubectl api-resources --namespaced=true&#xD;Not in a namespace kubectl api-resources --namespaced=false&#xD;Learn About Resource Quota and limits</description>
+    </item>
+    <item>
+      <title>Part 3</title>
+      <link>https://khushiramsingh680.github.io/k8s/part03/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/part03/index.html</guid>
+      <description>Topics Service CLusterIP NodePort LoadBalancer Headless Service METALLB DNS Troubleshooting Deployment ReplicaSet Daemonset Labels and Selector Type of Selector Equality based Set based selector Job CronJob Metric Server HPA(pod Autoscaling) Helm Overview Service A Service is a method for exposing a network application that is running as one or more Pods in your cluster.&#xA;A key aim of Services in Kubernetes is that you don’t need to modify your existing application to use an unfamiliar service discovery mechanism. A Kubernetes service is a logical abstraction for a deployed group of pods in a cluster What are the types of Kubernetes services? ClusterIP: Exposes a service which is only accessible from within the cluster. NodePort: Exposes a service via a static port on each node’s IP. NodePorts are in the 30000-32767 range by default LoadBalancer: Exposes the service via the cloud provider’s load balancer. ExternalName Maps a service to a predefined externalName field by returning a value for the CNAME record. Create a service of Type(ClusterIp) kubectl apply -f - &lt;&lt;EOF apiVersion: v1 kind: Service metadata: name: myapp-service spec: selector: app: myapp ports: - protocol: TCP port: 80 targetPort: 8080 EOF&#xD;Create a service of Type (NodePort) kubectl expose pod/&lt;name&gt; --port 80 --target-port=80 --name &lt;Svc&gt;&#xD;Create a type of service (LoadBalancer) kubectl expose pod/name --port=80 --type=LoadBalancer&#xD;Check the endpoint kubectl get ep&#xD;Achieve the blue green Delete a service Exchange the service selector Metallb A LoadBalancer Solution for OnPrem Kubernetes Deploying Metallb Steps: git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ cd metallb kubectl apply -f 01 01_metallb.yaml kubectl apply -f 02_metallb-config.yaml&#xD;Make a test after creating a service kubectl apply -f 03_test-load-balancer.yaml&#xD;Check the service kubectl get svc&#xD;Metric Server Metric Server Github Link</description>
+    </item>
+    <item>
+      <title>Part 4</title>
+      <link>https://khushiramsingh680.github.io/k8s/part04/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/part04/index.html</guid>
+      <description>Topics Kubernetes Probes Kubernetes Storage Secret ConfigMap emptyDIr hostPath StatefulSet Kubernetes IngressController Kubectl Set Kubectl Patch Probes The kubelet uses liveness probes to know when to restart a container. Liveness probes can be a powerful way to recover from application failures, but they should be used with caution.&#xA;Liveness Probe It checks whether the application running inside the container is still alive and functioning properly. Readiness Probe: It determines whether the application inside the container is ready to accept traffic or requests. When a readiness probe fails, Kubernetes stops sending traffic to the container until it passes the probe. This is useful during application startup or when the application needs some time to initialize before serving traffic.</description>
+    </item>
+    <item>
+      <title>Part 5</title>
+      <link>https://khushiramsingh680.github.io/k8s/part05/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/part05/index.html</guid>
+      <description>Topics Rancher Network Policies Metric Server Configure HPA Logging with Grafana Loki Monitoring with Prometheus Enable Audit logs Rancher (Kubernetes Management Tool) Rancher Installation Steps&#xA;Rancher is a Kubernetes management tool to deploy and run clusters anywhere and on any provider.&#xA;Rancher can provision Kubernetes from a hosted provider, provision compute nodes and then install Kubernetes onto them, or import existing Kubernetes clusters running anywhere.&#xA;Rancher adds significant value on top of Kubernetes, first by centralizing authentication and role-based access control (RBAC) for all of the clusters, giving global admins the ability to control cluster access from one location.</description>
+    </item>
+    <item>
+      <title>Container Basics</title>
+      <link>https://khushiramsingh680.github.io/k8s/containerbasics/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/containerbasics/index.html</guid>
+      <description>Topics Create a virtual machine git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ vagrant up&#xD;You will have a vm ready within 5 mins of time Login to Linux vm ssh vagrant@172.16.16.105 Enter password: vagrant&#xD;Switch from vagrant user of root user sudo -s&#xD;Docker Basics Lab How to install docker # Add Docker&#39;s official GPG key: sudo apt-get update sudo apt-get install ca-certificates curl sudo install -m 0755 -d /etc/apt/keyrings sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc sudo chmod a+r /etc/apt/keyrings/docker.asc # Add the repository to Apt sources: echo \ &#34;deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \ $(. /etc/os-release &amp;&amp; echo &#34;$VERSION_CODENAME&#34;) stable&#34; | \ sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null sudo apt-get update&#xD;Run the below command</description>
+    </item>
+    <item>
+      <title>Helm Overview</title>
+      <link>https://khushiramsingh680.github.io/k8s/helm-overview/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/helm-overview/index.html</guid>
+      <description>Topics What is Helm ? What is Helm chart ? What is Helm release ? What is Helm repo ? What is Helm ? Helm is a packager for Kubernetes that bundles related manifest files and packages them into a single logical deployment unit: Chart. Simplified, for many engineers Helm makes it easy to start using Kubernetes with real applications.&#xA;What is Helm Chart ? A Helm chart is a package that contains all the necessary resources to deploy an application to a Kubernetes cluster. This includes YAML configuration files for deployments, services, secrets, and config maps that define the desired state of your application.</description>
+    </item>
+    <item>
+      <title>Imp Commands </title>
+      <link>https://khushiramsingh680.github.io/k8s/imp/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/imp/index.html</guid>
+      <description>Topics How to increase disk size if the vm is created with vagrant First set the environment variable C:\Program Files\Oracle\VirtualBox this is default path for VBoxManage command Run the below command VBoxManage modifymedium disk &#34;E:\VirtualBox VMs\Prometheus_default_1725120844484_62520\packer-rocky-84-1624559295-disk001.vmdk&#34; --resize 100000&#xD;Verify the size VBoxManage showmediuminfo &#34;E:\VirtualBox VMs\Prometheus_default_1725120844484_62520\packer-rocky-84-1624559295-disk001.vmdk&#34;</description>
+    </item>
+    <item>
+      <title>kubeadm-external-etcd</title>
+      <link>https://khushiramsingh680.github.io/k8s/external-etcd/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/external-etcd/index.html</guid>
+      <description>Topics Set up a Highly Available Kubernetes Cluster using kubeadm and external etcd Follow this documentation to set up a highly available Kubernetes cluster using Ubuntu 24.04 LTS.&#xA;Quorum For N nodes in a cluster Quorum = floor(N/2 + 1)&#xD;Vagrant Environment Role FQDN IP OS RAM CPU Master etcd1.example.com 172.16.16.221 Ubuntu 24.04 2G 1 Master etcd2.example.com 172.16.16.222 Ubuntu 24.04 2G 1 Worker etcd3.example.com 172.16.16.223 Ubuntu 24.04 2G 1 Password for the root account on all these virtual machines is kubeadmin Perform all the commands as root user unless otherwise specified Pre-requisites If you want to try this in a virtualized environment on your workstation</description>
+    </item>
+    <item>
+      <title>Kubernetes RBAC</title>
+      <link>https://khushiramsingh680.github.io/k8s/kubernetes-rbac/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/kubernetes-rbac/index.html</guid>
+      <description>RBAC Kubernetes RBAC is a powerful security feature that allows administrators to control who can access the Kubernetes API and what actions they can perform. You can use it to implement the principle of “least privilege,” which means that users should have the minimum levels of access necessary to perform their tasks. This approach minimizes the potential for accidental or malicious misuse of the Kubernetes system.</description>
+    </item>
+    <item>
+      <title>Kubernetes-on-Centos</title>
+      <link>https://khushiramsingh680.github.io/k8s/kubernetes-on-centos/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/kubernetes-on-centos/index.html</guid>
+      <description>Kubernetes Installation on Centos 9 Common Steps for master and worker node sudo tee /etc/sysctl.d/99-k8s-cri.conf &gt;/dev/null &lt;&lt;EOF net.bridge.bridge-nf-call-iptables=1 net.ipv4.ip_forward=1 net.bridge.bridge-nf-call-ip6tables=1 EOF&#xD;update the setting without restarting the OS sysctl --system modprobe overlay modprobe br_netfilter echo -e overlay\\nbr_netfilter &gt; /etc/modules-load.d/k8s.conf install from EPEL&#xD;Install iptables legacy dnf --enablerepo=epel -y install iptables-legacy alternatives --config iptables There are 2 programs which provide &#39;iptables&#39;. Selection Command ----------------------------------------------- *+ 1 /usr/sbin/iptables-nft 2 /usr/sbin/iptables-legacy switch to [iptables-legacy] Enter to keep the current selection[+], or type selection number: 2&#xD;set Swap off setting swapoff -a vi /etc/fstab comment out the Swap line /dev/mapper/cs-swap none swap defaults 0 0&#xD;Install Cri and other software dnf -y install centos-release-okd-4.14 sed -i -e &#34;s/enabled=1/enabled=0/g&#34; /etc/yum.repos.d/CentOS-OKD-4.14.repo dnf --enablerepo=centos-okd-4.14 -y install cri-o systemctl enable --now crio cat &lt;&lt;&#39;EOF&#39; &gt; /etc/yum.repos.d/kubernetes.repo [kubernetes] name=Kubernetes baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch enabled=0 gpgcheck=1 repo_gpgcheck=1 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg EOF&#xD;Install kubelet and cri-tools dnf --enablerepo=kubernetes -y install kubeadm kubelet cri-tools iproute-tc container-selinux&#xD;Restart kubelet systemctl enable kubelet On Master node: Bootstrap Kubernetes Cluster kubeadm init --apiserver-advertise-address=10.224.29.85 --pod-network-cidr=192.168.0.0/16 --cri-socket=unix:///var/run/crio/crio.sock&#xD;Run the below command on master nodes to run kubectl command To start using your cluster, you need to run the following as a regular user: mkdir -p $HOME/.kube sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config sudo chown $(id -u):$(id -g) $HOME/.kube/config Alternatively, if you are the root user, you can run: export KUBECONFIG=/etc/kubernetes/admin.conf&#xD;Execute the below command on worker nodes</description>
+    </item>
+    <item>
+      <title>Kubernets Installation From Scatch on rocky 9</title>
+      <link>https://khushiramsingh680.github.io/k8s/kuberneteshardway/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/kuberneteshardway/index.html</guid>
+      <description>Topics Downloading Release Binaries Configuring CA Installing ETCD Configuring API Server Configuring Controller Manager Configuring Scheduler Validating Cluster Status Worker Node Configuration Configuring Networking API to Kubelet RBAC Configuring DNS Kubelet Preferred Instance Type Downloading Release Binaries Kubernetes Binaries Source Code Client Binaries Server Binaries Node Binaries Container Images Download release Binaries Download Etcd Install wget and unzip yum install wget unzip -y&#xD;Download Server Binaries on master node mkdir /root/binaries cd /root/binaries wget https://dl.k8s.io/v1.28.7/kubernetes-server-linux-amd64.tar.gz tar -xzvf kubernetes-server-linux-amd64.tar.gz cd /root/binaries/kubernetes/server/bin/&#xD;Check all master binaries ls -l /root/binaries/kubernetes/server/bin&#xD;Download etcd in the same folder cd /root/binaries/ wget https://github.com/etcd-io/etcd/releases/download/v3.5.12/etcd-v3.5.12-darwin-amd64.zip unzip etcd-v3.5.12-darwin-amd64.zip cd etcd-v3.5.12-darwin-amd64/&#xD;Check etcd relatated binaries ls -l /root/binaries/tcd-v3.5.12-darwin-amd64/&#xD;Download Node Binaries on Worker node mkdir /root/binaries cd /root/binaries wget https://dl.k8s.io/v1.28.7/kubernetes-node-linux-amd64.tar.gz tar -xzvf kubernetes-node-linux-amd64.tar.gz&#xD;Check all node binaries ls -l /root/binaries/node/bin&#xD;Configuring kubernetes Certificate Authority Create base directory were all the certificates and keys will be stored mkdir /root/certificates cd /root/certificates&#xD;Creating a private key for Certificate Authority openssl genrsa -out ca.key 2048&#xD;Creating CSR openssl req -new -key ca.key -subj &#34;/CN=KUBERNETES-CA&#34; -out ca.csr&#xD;Self-Sign the CSR openssl x509 -req -in ca.csr -signkey ca.key -CAcreateserial -out ca.crt -days 1000&#xD;See Contents of Certificate openssl x509 -in ca.crt -text -noout&#xD;Remove CSR rm -f ca.csr&#xD;Installing ETCD Documentation Referred Pre-Requisite: Set SERVER-IP variable SERVER_IP=172.16.16.110 (change this to your IP) echo $SERVER_IP&#xD;Configure the Certificates: cd /root/certificates/ openssl genrsa -out etcd.key 2048&#xD;Note: Replace the value associated with IP.1 in the below step. cat &gt; etcd.cnf &lt;&lt;EOF [req] req_extensions = v3_req distinguished_name = req_distinguished_name [req_distinguished_name] [ v3_req ] basicConstraints = CA:FALSE keyUsage = nonRepudiation, digitalSignature, keyEncipherment subjectAltName = @alt_names [alt_names] IP.1 = ${SERVER_IP} IP.2 = 127.0.0.1 EOF&#xD;openssl req -new -key etcd.key -subj &#34;/CN=etcd&#34; -out etcd.csr -config etcd.cnf openssl x509 -req -in etcd.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out etcd.crt -extensions v3_req -extfile etcd.cnf -days 1000&#xD;Copy the Certificates and Key to /etc/etcd mkdir /etc/etcd cp etcd.crt etcd.key ca.crt /etc/etcd&#xD;Copy the ETCD and ETCDCTL Binaries to the Path cd /root/binaries/etcd-v3.5.12-darwin-amd64/ cp etcd etcdctl /usr/local/bin/&#xD;Configure the systemd File Create a service file: cat &lt;&lt;EOF | sudo tee /etc/systemd/system/etcd.service [Unit] Description=etcd Documentation=https://github.com/coreos [Service] ExecStart=/usr/local/bin/etcd \\ --name master-1 \\ --cert-file=/etc/etcd/etcd.crt \\ --key-file=/etc/etcd/etcd.key \\ --peer-cert-file=/etc/etcd/etcd.crt \\ --peer-key-file=/etc/etcd/etcd.key \\ --trusted-ca-file=/etc/etcd/ca.crt \\ --peer-trusted-ca-file=/etc/etcd/ca.crt \\ --peer-client-cert-auth \\ --client-cert-auth \\ --initial-advertise-peer-urls https://${SERVER_IP}:2380 \\ --listen-peer-urls https://${SERVER_IP}:2380 \\ --listen-client-urls https://${SERVER_IP}:2379,https://127.0.0.1:2379 \\ --advertise-client-urls https://${SERVER_IP}:2379 \\ --initial-cluster-token etcd-cluster-0 \\ --initial-cluster master-1=https://${SERVER_IP}:2380 \\ --initial-cluster-state new \\ --data-dir=/var/lib/etcd Restart=on-failure RestartSec=5 [Install] WantedBy=multi-user.target EOF&#xD;Start Service: systemctl start etcd systemctl status etcd systemctl enable etcd&#xD;Verification Commands: When we try with etcdctl –endpoints=https://127.0.0.1:2379 get foo, it gives unknown certificate authority.</description>
+    </item>
+    <item>
+      <title>Multi Master kubernetes</title>
+      <link>https://khushiramsingh680.github.io/k8s/multimaster/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/multimaster/index.html</guid>
+      <description>Topics Set up a Highly Available Kubernetes Cluster using kubeadm Follow this documentation to set up a highly available Kubernetes cluster using Ubuntu 24.04 LTS.&#xA;This documentation guides you in setting up a cluster with two master nodes, one worker node and a load balancer node using HAProxy.&#xA;Vagrant Environment Role FQDN IP OS RAM CPU Load Balancer loadbalancer.example.com 172.16.16.100 Ubuntu 24.04 1G 1 Master kmaster1.example.com 172.16.16.101 Ubuntu 24.04 2G 2 Master kmaster2.example.com 172.16.16.102 Ubuntu 24.04 2G 2 Worker kworker1.example.com 172.16.16.201 Ubuntu 24.04 1G 1 Password for the root account on all these virtual machines is kubeadmin Perform all the commands as root user unless otherwise specified Pre-requisites If you want to try this in a virtualized environment on your workstation</description>
+    </item>
+    <item>
+      <title>The Object Store for AI Data Infrastructure</title>
+      <link>https://khushiramsingh680.github.io/k8s/minio/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/minio/index.html</guid>
+      <description>Topics MinIO is a high-performance, S3 compatible object store. It is built for large scale AI/ML, data lake and database workloads. It is software-defined and runs on any cloud or on-premises infrastructure. MinIO is dual-licensed under open source GNU AGPL v3 and a commercial enterprise license.&#xA;Simple Simplicity is the foundation for exascale data infrastructure - both technically and operationally. No other object store lets you go from download to production in less time.</description>
+    </item>
+    <item>
+      <title>CKS</title>
+      <link>https://khushiramsingh680.github.io/k8s/cks/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/cks/index.html</guid>
+      <description>Topics Kubernetes Overview Kubernetes Architecture Kubernetes Components Kubernetes Installation Kubernetes SSL Certificates Kubernetes Static Pods Kubernetes Configuration files Kubernetes Upgrade Etcd backup and restore Kubernetes Node related commands CIS Benchmark Kubernetes Overview Kubernetes or k8s is an open-source orchestration and cluster management for container-based applications maintained by the Cloud Native Computing Foundation. Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery</description>
+    </item>
+    <item>
+      <title>EKS</title>
+      <link>https://khushiramsingh680.github.io/k8s/eks/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/eks/index.html</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>GKE</title>
+      <link>https://khushiramsingh680.github.io/k8s/gke/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/gke/index.html</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Kubernetes Data Protection</title>
+      <link>https://khushiramsingh680.github.io/k8s/kuberntes-backup/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/kuberntes-backup/index.html</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>KUBERNETES LOGGING AND MONITORING</title>
+      <link>https://khushiramsingh680.github.io/k8s/kubernetesloggin-monitoring/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/kubernetesloggin-monitoring/index.html</guid>
+      <description>Topics Kubernetes Overview Kubernetes Architecture Kubernetes Components Kubernetes Installation Kubernetes SSL Certificates Kubernetes Static Pods Kubernetes Configuration files Kubernetes Upgrade Etcd backup and restore Kubernetes Node related commands CIS Benchmark Kubernetes Overview Kubernetes or k8s is an open-source orchestration and cluster management for container-based applications maintained by the Cloud Native Computing Foundation. Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery</description>
+    </item>
+    <item>
+      <title>Kubernetes Security</title>
+      <link>https://khushiramsingh680.github.io/k8s/neuvector/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://khushiramsingh680.github.io/k8s/neuvector/index.html</guid>
+      <description></description>
     </item>
   </channel>
 </rss>

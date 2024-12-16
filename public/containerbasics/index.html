@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.139.3">
+    <meta name="generator" content="Relearn 7.2.1+16d4de84becfa2d2e6bdb2394a2f4fa411bc0007">
+    <meta name="description" content="Topics Create a virtual machine git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ vagrant upYou will have a vm ready within 5 mins of time Login to Linux vm ssh vagrant@172.16.16.105 Enter password: vagrantSwitch from vagrant user of root user sudo -sDocker Basics Lab How to install docker # Add Docker&#39;s official GPG key: sudo apt-get update sudo apt-get install ca-certificates curl sudo install -m 0755 -d /etc/apt/keyrings sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc sudo chmod a&#43;r /etc/apt/keyrings/docker.asc # Add the repository to Apt sources: echo \ &#34;deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \ $(. /etc/os-release &amp;&amp; echo &#34;$VERSION_CODENAME&#34;) stable&#34; | \ sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null sudo apt-get updateRun the below command">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Container Basics :: Kubernetes Documentation">
+    <meta name="twitter:description" content="Topics Create a virtual machine git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ vagrant upYou will have a vm ready within 5 mins of time Login to Linux vm ssh vagrant@172.16.16.105 Enter password: vagrantSwitch from vagrant user of root user sudo -sDocker Basics Lab How to install docker # Add Docker&#39;s official GPG key: sudo apt-get update sudo apt-get install ca-certificates curl sudo install -m 0755 -d /etc/apt/keyrings sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc sudo chmod a&#43;r /etc/apt/keyrings/docker.asc # Add the repository to Apt sources: echo \ &#34;deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \ $(. /etc/os-release &amp;&amp; echo &#34;$VERSION_CODENAME&#34;) stable&#34; | \ sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null sudo apt-get updateRun the below command">
+    <meta property="og:url" content="https://khushiramsingh680.github.io/k8s/containerbasics/index.html">
+    <meta property="og:site_name" content="Kubernetes Documentation">
+    <meta property="og:title" content="Container Basics :: Kubernetes Documentation">
+    <meta property="og:description" content="Topics Create a virtual machine git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ vagrant upYou will have a vm ready within 5 mins of time Login to Linux vm ssh vagrant@172.16.16.105 Enter password: vagrantSwitch from vagrant user of root user sudo -sDocker Basics Lab How to install docker # Add Docker&#39;s official GPG key: sudo apt-get update sudo apt-get install ca-certificates curl sudo install -m 0755 -d /etc/apt/keyrings sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc sudo chmod a&#43;r /etc/apt/keyrings/docker.asc # Add the repository to Apt sources: echo \ &#34;deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \ $(. /etc/os-release &amp;&amp; echo &#34;$VERSION_CODENAME&#34;) stable&#34; | \ sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null sudo apt-get updateRun the below command">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="/">
+    <meta itemprop="name" content="Container Basics :: Kubernetes Documentation">
+    <meta itemprop="description" content="Topics Create a virtual machine git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ vagrant upYou will have a vm ready within 5 mins of time Login to Linux vm ssh vagrant@172.16.16.105 Enter password: vagrantSwitch from vagrant user of root user sudo -sDocker Basics Lab How to install docker # Add Docker&#39;s official GPG key: sudo apt-get update sudo apt-get install ca-certificates curl sudo install -m 0755 -d /etc/apt/keyrings sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc sudo chmod a&#43;r /etc/apt/keyrings/docker.asc # Add the repository to Apt sources: echo \ &#34;deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \ $(. /etc/os-release &amp;&amp; echo &#34;$VERSION_CODENAME&#34;) stable&#34; | \ sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null sudo apt-get updateRun the below command">
+    <meta itemprop="wordCount" content="1848">
+    <title>Container Basics :: Kubernetes Documentation</title>
+    <link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet"></noscript>
+    <link href="../css/auto-complete.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1734364594" rel="stylesheet"></noscript>
+    <link href="../css/perfect-scrollbar.min.css?1734364594" rel="stylesheet">
+    <link href="../css/theme.min.css?1734364594" rel="stylesheet">
+    <link href="../css/format-html.min.css?1734364594" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.relBasePath='..';
+      window.relearn.relBaseUri='..';
+      window.relearn.absBaseUri='https:\/\/khushiramsingh680.github.io\/k8s';
+      window.relearn.min = `.min`;
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant");
+        var select = document.querySelector("#R-select-variant");
+        if (select) {
+          select.value = variant;
+        }
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script>
+  </head>
+  <body class="mobile-support html" data-url="../containerbasics/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#topics">Topics</a></li>
+    <li><a href="#docker-basics-lab">Docker Basics Lab</a>
+      <ul>
+        <li><a href="#docker-networking">Docker Networking</a></li>
+        <li><a href="#docker-storage">Docker storage</a></li>
+        <li><a href="#docker-images">Docker Images</a></li>
+        <li><a href="#creating-dockerimage-from-docker-file">Creating dockerimage from Docker file</a></li>
+      </ul>
+    </li>
+    <li><a href="#upcoming">Upcoming</a>
+      <ul>
+        <li><a href="#docker-capabilities">Docker Capabilities</a></li>
+        <li><a href="#docker-compose">Docker Compose</a></li>
+        <li><a href="#dockerfile">Dockerfile</a></li>
+      </ul>
+    </li>
+    <li><a href="#namespace">Namespace</a>
+      <ul>
+        <li><a href="#types-of-namespaces">Types of Namespaces</a></li>
+        <li><a href="#what-are-cgroups">What Are cgroups?</a></li>
+        <li><a href="#introduction-to-capabilities">Introduction to capabilities</a></li>
+        <li><a href="#testing-docker-capabilities">Testing Docker capabilities</a></li>
+        <li><a href="#add-capabiliies-for-a-pod">Add Capabiliies for a pod</a></li>
+      </ul>
+    </li>
+    <li><a href="#topics-1">Topics</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#day-1-introduction-to-containerization">Day 1: Introduction to Containerization</a></li>
+    <li><a href="#day-2-the-docker-engine">Day 2: The Docker Engine</a>
+      <ul>
+        <li><a href="#hands-on">Hands-On</a></li>
+      </ul>
+    </li>
+    <li><a href="#day-3-image-management-and-registry">Day 3: Image Management and Registry</a></li>
+    <li><a href="#day-4-storage-in-docker">Day 4: Storage in Docker</a>
+      <ul>
+        <li><a href="#hands-on-1">Hands-On</a></li>
+      </ul>
+    </li>
+    <li><a href="#day-5-orchestration-in-docker">Day 5: Orchestration in Docker</a>
+      <ul>
+        <li><a href="#hands-on-2">Hands-On</a></li>
+      </ul>
+    </li>
+    <li><a href="#day-6-networking-and-security">Day 6: Networking and Security</a>
+      <ul>
+        <li><a href="#hands-on-3">Hands-On</a></li>
+      </ul>
+    </li>
+    <li><a href="#day-7-docker-ee-and-monitoring">Day 7: Docker EE and Monitoring</a></li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">/</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Container Basics</span><meta itemprop="position" content="2"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../part05/index.html" title="Part 5 (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../helm-overview/index.html" title="Helm Overview (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable page" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+
+<h1 id="container-basics">Container Basics</h1>
+
+<h2 id="topics">Topics</h2>
+<ul>
+<li>Create a virtual machine</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git
+</span></span><span style="display:flex;"><span>cd kubernetes-2024/
+</span></span><span style="display:flex;"><span>vagrant up</span></span></code></pre></div>
+<ul>
+<li>You will have a vm ready within 5 mins of time</li>
+<li>Login to Linux vm</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ssh vagrant@172.16.16.105
+</span></span><span style="display:flex;"><span>Enter password: vagrant</span></span></code></pre></div>
+<ul>
+<li>Switch from vagrant user of root user</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span> sudo -s</span></span></code></pre></div>
+<h2 id="docker-basics-lab">Docker Basics Lab</h2>
+<ul>
+<li>How to install docker</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Add Docker&#39;s official GPG key:</span>
+</span></span><span style="display:flex;"><span>sudo apt-get update
+</span></span><span style="display:flex;"><span>sudo apt-get install ca-certificates curl
+</span></span><span style="display:flex;"><span>sudo install -m <span style="color:#ae81ff">0755</span> -d /etc/apt/keyrings
+</span></span><span style="display:flex;"><span>sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+</span></span><span style="display:flex;"><span>sudo chmod a+r /etc/apt/keyrings/docker.asc
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Add the repository to Apt sources:</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  <span style="color:#e6db74">&#34;deb [arch=</span><span style="color:#66d9ef">$(</span>dpkg --print-architecture<span style="color:#66d9ef">)</span><span style="color:#e6db74"> signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  </span><span style="color:#66d9ef">$(</span>. /etc/os-release <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;</span>$VERSION_CODENAME<span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span><span style="color:#e6db74"> stable&#34;</span> | <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
+</span></span><span style="display:flex;"><span>sudo apt-get update</span></span></code></pre></div>
+<ul>
+<li>
+<p>Run the below command</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>sudo apt<span style="color:#f92672">-</span>get install docker<span style="color:#f92672">-</span>ce docker<span style="color:#f92672">-</span>ce<span style="color:#f92672">-</span>cli containerd<span style="color:#f92672">.</span>io docker<span style="color:#f92672">-</span>buildx<span style="color:#f92672">-</span>plugin docker<span style="color:#f92672">-</span>compose<span style="color:#f92672">-</span>plugin</span></span></code></pre></div>
+</li>
+<li>
+<p>Check docker version</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker version</span></span></code></pre></div>
+</li>
+<li>
+<p>check all docker images</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker images</span></span></code></pre></div>
+</li>
+<li>
+<p>check all running containers</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker ps </span></span></code></pre></div>
+</li>
+<li>
+<p>Check all containers</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker ps <span style="color:#f92672">-</span>a</span></span></code></pre></div>
+</li>
+<li>
+<p>Download an image</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker pull <span style="color:#e6db74">&lt;imagename&gt;</span>
+</span></span><span style="display:flex;"><span>docker pull nginx</span></span></code></pre></div>
+</li>
+<li>
+<p>How to create a container</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker run container id  (this will run a process in foreground)</span></span></code></pre></div>
+</li>
+<li>
+<p>Run a container in backgroud</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker run <span style="color:#f92672">-</span>d container id</span></span></code></pre></div>
+</li>
+<li>
+<p>Login to a container</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker exec container id sh<span style="color:#f92672">/</span>bash</span></span></code></pre></div>
+</li>
+<li>
+<p>Delete a container</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker rm containerid</span></span></code></pre></div>
+</li>
+<li>
+<p>Delete container forcefully(if the container is running)</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker rm containerid <span style="color:#f92672">--</span>force</span></span></code></pre></div>
+</li>
+<li>
+<p>Check the id of all containers</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker ps <span style="color:#f92672">-</span>aq</span></span></code></pre></div>
+</li>
+<li>
+<p>Delete all containers</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker rm $<span style="color:#960050;background-color:#1e0010">(</span>docker ps <span style="color:#f92672">-</span>aq) <span style="color:#f92672">-</span>f</span></span></code></pre></div>
+</li>
+<li>
+<p>Delete all images</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker rmi $<span style="color:#960050;background-color:#1e0010">(</span>docker images <span style="color:#f92672">-</span>aq)</span></span></code></pre></div>
+</li>
+</ul>
+<h3 id="docker-networking">Docker Networking</h3>
+<ul>
+<li>Expose a docker container port to access from host ip
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker run <span style="color:#f92672">-</span>d <span style="color:#f92672">-</span>p <span style="color:#e6db74">&lt;hostport&gt;</span>:<span style="color:#e6db74">&lt;containerport&gt;</span> <span style="color:#f92672">&lt;</span>image name<span style="color:#f92672">&gt;</span></span></span></code></pre></div>
+</li>
+</ul>
+<h4 id="note-you-can-not-map-a-host-port-which-is-already-in-use">NOTE: You can not map a host port which is already in use</h4>
+<h3 id="docker-storage">Docker storage</h3>
+<ul>
+<li>How to map a  directory to container dir
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker run <span style="color:#f92672">-</span>d <span style="color:#f92672">-</span>v <span style="color:#f92672">&lt;</span>dir at host<span style="color:#f92672">&gt;</span>:<span style="color:#f92672">&lt;</span>dir at container<span style="color:#f92672">&gt;</span> <span style="color:#e6db74">&lt;imagename&gt;</span></span></span></code></pre></div>
+</li>
+</ul>
+<h3 id="docker-images">Docker Images</h3>
+<ul>
+<li>
+<p>How to login to docker hub</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker login</span></span></code></pre></div>
+</li>
+<li>
+<p>How to convert a running container into an image</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker commit containerid newname</span></span></code></pre></div>
+</li>
+<li>
+<p>How to save docker image into a tar</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker save <span style="color:#e6db74">&lt;imagename&gt;</span>  <span style="color:#f92672">&gt;</span> example<span style="color:#f92672">.</span>tar</span></span></code></pre></div>
+</li>
+<li>
+<p>How to import from a tar file</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker load <span style="color:#f92672">&lt;</span> example<span style="color:#f92672">.</span>tar</span></span></code></pre></div>
+</li>
+<li>
+<p>How to rename an image</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker tag <span style="color:#e6db74">&lt;oldname&gt;</span> <span style="color:#e6db74">&lt;newname&gt;</span></span></span></code></pre></div>
+</li>
+<li>
+<p>Login to docker hub/any other container registry</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker login 
+</span></span><span style="display:flex;"><span>docker login &lt;registry url <span style="color:#66d9ef">if</span> any&gt;</span></span></code></pre></div>
+</li>
+<li>
+<p>Tag the image before you push.</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span> docker tag &lt;old image name&gt; &lt;new image name &gt;</span></span></code></pre></div>
+</li>
+<li>
+<p>How to push image to dockerhub</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker push imagename</span></span></code></pre></div>
+</li>
+</ul>
+<h3 id="creating-dockerimage-from-docker-file">Creating dockerimage from Docker file</h3>
+<p><a href="https://docs.docker.com/engine/reference/builder/" rel="external" target="_blank">Dockerfile Documentation</a></p>
+<ul>
+<li>Destroy the vm once the Lab is completed from the directory of your Laptop where you have vagrantfile
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>vagrant destroy </span></span></code></pre></div>
+</li>
+</ul>
+<h2 id="upcoming">Upcoming</h2>
+<h3 id="docker-capabilities">Docker Capabilities</h3>
+<h3 id="docker-compose">Docker Compose</h3>
+<h3 id="dockerfile">Dockerfile</h3>
+<p>Docker containers are very similar to LXC containers, and they have similar security features.
+When you start a container with docker run, behind the scenes Docker creates a set of namespaces and control groups for the container.</p>
+<p>Docker makes heavy use of Linux kernel features. One of the fundamental aspects that containers make use of from Linux Kernel are namespaces and cgroups.</p>
+<h2 id="namespace">Namespace</h2>
+<p>Namespaces provide the first and most straightforward form of isolation. Processes running within a container cannot see, and even less affect, processes running in another container, or in the host system.
+Namespaces are a feature of the Linux kernel that partitions kernel resources such that one set of processes sees one set of resources and another set of processes sees a different set of resources.</p>
+<h3 id="types-of-namespaces">Types of Namespaces</h3>
+<p>Within the Linux kernel, there are different types of namespaces. Each namespace has its own unique properties:</p>
+<ul>
+<li>A <strong>user</strong> namespace has its own set of user IDs and group IDs for assignment to processes. In particular, this means that a process can have root privilege within its user namespace without having it in other user namespaces.</li>
+<li>A <strong>process ID</strong> (PID) namespace assigns a set of PIDs to processes that are independent from the set of PIDs in other namespaces. The first process created in a new namespace has PID 1 and child processes are assigned subsequent PIDs. If a child process is created with its own PID namespace, it has PID 1 in that namespace as well as its PID in the parent process’ namespace. See below for an example.</li>
+<li>A <strong>network</strong> namespace has an independent network stack: its own private routing table, set of IP addresses, socket listing, connection tracking table, firewall, and other network‑related resources.</li>
+<li>A <strong>mount</strong> namespace has an independent list of mount points seen by the processes in the namespace. This means that you can mount and unmount filesystems in a mount namespace without affecting the host filesystem.</li>
+<li>An interprocess communication (IPC) namespace has its own IPC resources, for example POSIX message queues.
+A <strong>UNIX Time‑Sharing</strong> (UTS) namespace allows a single system to appear to have different host and domain names to different processes.</li>
+<li>Create two container and check if the they are sharing the namespaces defined above</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span> docker run <span style="color:#f92672">-</span>d <span style="color:#f92672">--</span>name c1 ubuntu sleep <span style="color:#ae81ff">1</span>d
+</span></span><span style="display:flex;"><span> docker run <span style="color:#f92672">-</span>d <span style="color:#f92672">--</span>name c2 ubuntu sleep <span style="color:#ae81ff">2</span>d</span></span></code></pre></div>
+<ul>
+<li>Login to container and check</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker exec c2 ps aux</span></span></code></pre></div>
+<ul>
+<li>Now check on host vm</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>ps <span style="color:#f92672">-</span>aux</span></span></code></pre></div>
+<ul>
+<li>Now create a container with the namespace</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker run <span style="color:#f92672">-</span>d c3 <span style="color:#f92672">--</span>pid<span style="color:#f92672">=</span>container:c1 ununtu sleep <span style="color:#ae81ff">3</span>d</span></span></code></pre></div>
+<ul>
+<li>Now check if the pid is shared for c1 container and c3 container</li>
+</ul>
+<h3 id="what-are-cgroups">What Are cgroups?</h3>
+<p>A control group (cgroup) is a Linux kernel feature that limits, accounts for, and isolates the resource usage (CPU, memory, disk I/O, network, and so on) of a collection of processes.</p>
+<p>Cgroups provide the following features:</p>
+<ul>
+<li><strong>Resource limits</strong> – You can configure a cgroup to limit how much of a particular resource (memory or CPU, for example) a process can use.</li>
+<li><strong>Prioritization</strong> – You can control how much of a resource (CPU, disk, or network) a process can use compared to processes in another cgroup when there is resource contention.</li>
+<li><strong>Accounting</strong> – Resource limits are monitored and reported at the cgroup level.</li>
+<li><strong>Control</strong> – You can change the status (frozen, stopped, or restarted) of all processes in a cgroup with a single command.</li>
+<li>Check the resouce stats
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker stats</span></span></code></pre></div>
+</li>
+</ul>
+<h3 id="introduction-to-capabilities">Introduction to capabilities</h3>
+<p>The Linux kernel is able to break down the privileges of the root user into distinct units referred to as capabilities. For example, the CAP_CHOWN capability is what allows the root use to make arbitrary changes to file UIDs and GIDs. The CAP_DAC_OVERRIDE capability allows the root user to bypass kernel permission checks on file read, write and execute operations. Almost all of the special powers associated with the Linux root user are broken down into individual capabilities.</p>
+<p>This breaking down of root privileges into granular capabilities allows you to:</p>
+<p>Remove individual capabilities from the root user account, making it less powerful/dangerous.
+Add privileges to non-root users at a very granular level.</p>
+<p>Capabilities apply to both files and threads. File capabilities allow users to execute programs with higher privileges. This is similar to the way the setuid bit works. Thread capabilities keep track of the current state of capabilities in running programs.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Capabilities</th>
+          <th>Definition</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>CHOWN</td>
+          <td>Make arbitrary changes to file UIDs and GIDs</td>
+      </tr>
+      <tr>
+          <td>DAC_OVERRIDE</td>
+          <td>Discretionary access control (DAC) - Bypass file read, write, and execute permission checks</td>
+      </tr>
+      <tr>
+          <td>FSETID</td>
+          <td>Don’t clear set-user-ID and set-group-ID mode bits when a file is modified; set the set-group-ID bit for a file whose GID does not match the file system or any of the supplementary GIDs of the calling process.</td>
+      </tr>
+      <tr>
+          <td>FOWNER</td>
+          <td>Bypass permission checks on operations that normally require the file system UID of the process to match the UID of the file, excluding those operations covered by CAP_DAC_OVERRIDE and CAP_DAC_READ_SEARCH.</td>
+      </tr>
+      <tr>
+          <td>MKNOD</td>
+          <td>MKNOD - Create special files using mknod(2)</td>
+      </tr>
+      <tr>
+          <td>NET_RAW</td>
+          <td>Use RAW and PACKET sockets; bind to any address for transparent proxying.</td>
+      </tr>
+      <tr>
+          <td>SETGID</td>
+          <td>Make arbitrary manipulations of process GIDs and supplementary GID list; forge GID when passing socket credentials via UNIX domain sockets; write a group ID mapping in a user namespace.</td>
+      </tr>
+      <tr>
+          <td>SETUID</td>
+          <td>Make arbitrary manipulations of process UIDs; forge UID when passing socket credentials via UNIX domain sockets; write a user ID mapping in a user namespace.</td>
+      </tr>
+      <tr>
+          <td>SETFCAP</td>
+          <td>Set file capabilities.</td>
+      </tr>
+      <tr>
+          <td>SETPCAP</td>
+          <td>If file capabilities are not supported: grant or remove any capability in the caller’s permitted capability set to or from any other process.</td>
+      </tr>
+      <tr>
+          <td>NET_BIND_SERVICE</td>
+          <td>Bind a socket to Internet domain privileged ports (port numbers less than 1024).</td>
+      </tr>
+      <tr>
+          <td>SYS_CHROOT</td>
+          <td>Use chroot(2) to change to a different root directory.</td>
+      </tr>
+      <tr>
+          <td>KILL</td>
+          <td>Bypass permission checks for sending signals. This includes use of the ioctl(2) KDSIGACCEPT operation.</td>
+      </tr>
+      <tr>
+          <td>AUDIT_WRITE</td>
+          <td>Write records to kernel auditing log.</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>To drop capabilities from the root account of a container.</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sudo docker run --rm -it --cap-drop $CAP alpine sh</span></span></code></pre></div>
+<ul>
+<li>To add capabilities to the root account of a container.</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sudo docker run --rm -it --cap-add $CAP alpine sh</span></span></code></pre></div>
+<ul>
+<li>To drop all capabilities and then explicitly add individual capabilities to the root account of a container.</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sudo docker run --rm -it --cap-drop ALL --cap-add $CAP alpine sh</span></span></code></pre></div>
+<h3 id="testing-docker-capabilities">Testing Docker capabilities</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>docker container run <span style="color:#f92672">--</span>rm <span style="color:#f92672">-</span>it alpine chown nobody <span style="color:#f92672">/</span>
+</span></span><span style="display:flex;"><span>docker container run <span style="color:#f92672">--</span>rm <span style="color:#f92672">-</span>it <span style="color:#f92672">--</span>cap<span style="color:#f92672">-</span>drop ALL <span style="color:#f92672">--</span>cap<span style="color:#f92672">-</span>add CHOWN alpine chown nobody <span style="color:#f92672">/</span>
+</span></span><span style="display:flex;"><span>docker container run <span style="color:#f92672">--</span>rm <span style="color:#f92672">-</span>it <span style="color:#f92672">--</span>cap<span style="color:#f92672">-</span>drop CHOWN alpine chown nobody <span style="color:#f92672">/</span>
+</span></span><span style="display:flex;"><span>docker container run <span style="color:#f92672">--</span>rm <span style="color:#f92672">-</span>it <span style="color:#f92672">--</span>cap<span style="color:#f92672">-</span>add chown <span style="color:#f92672">-</span>u nobody alpine chown nobody <span style="color:#f92672">/</span>
+</span></span><span style="display:flex;"><span>ocker run <span style="color:#f92672">--</span>rm <span style="color:#f92672">-</span>it <span style="color:#f92672">--</span>cap<span style="color:#f92672">-</span>drop<span style="color:#f92672">=</span>NET_RAW alpine sh
+</span></span><span style="display:flex;"><span>ping <span style="color:#ae81ff">127.0.0.1</span> <span style="color:#f92672">-</span>c <span style="color:#ae81ff">2</span></span></span></code></pre></div>
+<ul>
+<li>check all capabilities</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>capsh <span style="color:#f92672">--</span><span style="color:#66d9ef">print</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>docker run --rm -it --privileged<span style="color:#f92672">=</span>true 71aa5f3f90dc bash
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>capsh --print</span></span></code></pre></div>
+<h3 id="add-capabiliies-for-a-pod">Add Capabiliies for a pod</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Pod
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: security-context-demo-4
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  containers:
+</span></span><span style="display:flex;"><span>  - name: sec-ctx-4
+</span></span><span style="display:flex;"><span>    image: gcr.io/google-samples/node-hello:1.0
+</span></span><span style="display:flex;"><span>    securityContext:
+</span></span><span style="display:flex;"><span>      capabilities:
+</span></span><span style="display:flex;"><span>        add: <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;NET_ADMIN&#34;</span>, <span style="color:#e6db74">&#34;SYS_TIME&#34;</span><span style="color:#f92672">]</span></span></span></code></pre></div>
+<ul>
+<li>Selinux</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>securityContext:
+</span></span><span style="display:flex;"><span>seLinuxOptions:
+</span></span><span style="display:flex;"><span>  level: <span style="color:#e6db74">&#34;s0:c123,c456&#34;</span></span></span></code></pre></div>
+<h2 id="topics-1">Topics</h2>
+<h1 id="docker-course-toc">Docker Course TOC</h1>
+<h2 id="day-1-introduction-to-containerization">Day 1: Introduction to Containerization</h2>
+<ul>
+<li>Containerization</li>
+<li>History of Containers</li>
+<li>Namespaces and Cgroups</li>
+<li>Containers vs Virtual Machines</li>
+<li>Types of Containers</li>
+<li>Introduction to Docker</li>
+<li>Docker Architecture</li>
+<li>Container Lifecycle</li>
+<li>Docker CE vs Docker EE</li>
+</ul>
+<h2 id="day-2-the-docker-engine">Day 2: The Docker Engine</h2>
+<ul>
+<li>Docker Engine</li>
+<li>Configuring Logging Drivers</li>
+<li>Docker Terminology</li>
+<li>Port Binding</li>
+<li>Detached vs Foreground Mode</li>
+<li>Docker CLI</li>
+<li>Docker Exec</li>
+<li>Restart Policy</li>
+</ul>
+<h3 id="hands-on">Hands-On</h3>
+<ul>
+<li>Setting up Docker Engine</li>
+<li>Upgrading Docker Engine</li>
+<li>Setting up logging drivers in Docker</li>
+<li>Port Binding</li>
+<li>Starting Containers in different modes</li>
+<li>Docker CLI Commands</li>
+<li>Docker Exec Commands</li>
+<li>Restart Policy in Docker</li>
+<li>Removing Containers</li>
+</ul>
+<h2 id="day-3-image-management-and-registry">Day 3: Image Management and Registry</h2>
+<ul>
+<li>Dockerfile</li>
+<li>Dockerfile Instructions</li>
+<li>Build Context</li>
+<li>Docker Image</li>
+<li>Docker Registry</li>
+<li>Write a Dockerfile to create an Image</li>
+<li>Docker Image Tags</li>
+<li>Setting up Docker Hub</li>
+<li>Configuring Local Registry</li>
+<li>Removing Images from the Registry</li>
+</ul>
+<h2 id="day-4-storage-in-docker">Day 4: Storage in Docker</h2>
+<ul>
+<li>Docker Storage</li>
+<li>Types of Persistent Storage</li>
+<li>Volumes</li>
+<li>Bind Mounts</li>
+<li>tmpfs Mount</li>
+<li>Storage Drivers</li>
+<li>Device Mapper</li>
+<li>Docker Clean Up</li>
+</ul>
+<h3 id="hands-on-1">Hands-On</h3>
+<ul>
+<li>Deploy Docker Volumes</li>
+<li>Deploy Bind Mounts</li>
+<li>Use tmpfs mounts</li>
+<li>Configure Device Mapper</li>
+<li>Docker Clean Up</li>
+</ul>
+<h2 id="day-5-orchestration-in-docker">Day 5: Orchestration in Docker</h2>
+<ul>
+<li>Docker Compose</li>
+<li>Docker Swarm</li>
+<li>Docker Service</li>
+<li>Service Placement</li>
+<li>Rolling Update and Rollback</li>
+<li>Docker Stack</li>
+</ul>
+<h3 id="hands-on-2">Hands-On</h3>
+<ul>
+<li>Deploy a Multi-container Application using Compose</li>
+<li>Running Docker in Swarm mode</li>
+<li>Deploying a Service in Swarm</li>
+<li>Scale Services</li>
+<li>Service Placement</li>
+<li>Rolling Updates and Rollbacks</li>
+<li>Docker Stack</li>
+</ul>
+<h2 id="day-6-networking-and-security">Day 6: Networking and Security</h2>
+<ul>
+<li>Docker Networking</li>
+<li>Network Drivers</li>
+<li>Bridge Network</li>
+<li>Overlay Network</li>
+<li>Host and Macvlan</li>
+<li>Docker Security</li>
+<li>Docker Content Trust</li>
+<li>Securing the Docker Daemon</li>
+</ul>
+<h3 id="hands-on-3">Hands-On</h3>
+<ul>
+<li>Create and use a User-defined Bridge Network</li>
+<li>Create and use a Overlay Network</li>
+<li>Use Host and Macvlan Network</li>
+<li>Configure Docker to use External DNS</li>
+<li>Signing images using DCT</li>
+<li>Securing the Docker Daemon</li>
+</ul>
+<h2 id="day-7-docker-ee-and-monitoring">Day 7: Docker EE and Monitoring</h2>
+<ul>
+<li>Docker Enterprise</li>
+<li>Universal Control Plane (UCP)</li>
+<li>UCP Architecture</li>
+<li>Access Control in UCP</li>
+<li>Docker Trusted Registry (DTR)</li>
+<li>Monitoring using Prometheus</li>
+<li>Set up Docker Enterprise Edition</li>
+</ul>
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+          <a id="R-logo" class="R-default" href="../index.html">
+Kubernetes Documentation
+          </a>
+        </div>
+        <script>
+          window.index_js_url="../searchindex.en.js?1734364594";
+        </script>
+        <search><form action="../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../js/auto-complete.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.stemmer.support.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.multi.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.en.min.js?1734364594" defer></script>
+        <script src="../js/search.js?1734364594" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation homelinks">
+        <ul>
+          <li><a class="padding" href="../index.html"><i class="fa-fw fas fa-home"></i> Home</a></li>
+        </ul>
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-shortcutmenu-home" class="R-sidebarmenu">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes documentation</a></li>
+            <li class="" data-nav-id="/part01/index.html"><a class="padding" href="../part01/index.html">Part 1</a></li>
+            <li class="" data-nav-id="/part02/index.html"><a class="padding" href="../part02/index.html">Part 2</a></li>
+            <li class="" data-nav-id="/part03/index.html"><a class="padding" href="../part03/index.html">Part 3</a></li>
+            <li class="" data-nav-id="/part04/index.html"><a class="padding" href="../part04/index.html">Part 4</a></li>
+            <li class="" data-nav-id="/part05/index.html"><a class="padding" href="../part05/index.html">Part 5</a></li>
+            <li class="active " data-nav-id="/containerbasics/index.html"><a class="padding" href="../containerbasics/index.html">Container Basics</a></li>
+            <li class="" data-nav-id="/helm-overview/index.html"><a class="padding" href="../helm-overview/index.html">Helm Overview</a></li>
+            <li class="" data-nav-id="/imp/index.html"><a class="padding" href="../imp/index.html">Imp Commands </a></li>
+            <li class="" data-nav-id="/external-etcd/index.html"><a class="padding" href="../external-etcd/index.html">kubeadm-external-etcd</a></li>
+            <li class="" data-nav-id="/kubernetes-rbac/index.html"><a class="padding" href="../kubernetes-rbac/index.html">Kubernetes RBAC</a></li>
+            <li class="" data-nav-id="/kubernetes-on-centos/index.html"><a class="padding" href="../kubernetes-on-centos/index.html">Kubernetes-on-Centos</a></li>
+            <li class="" data-nav-id="/kuberneteshardway/index.html"><a class="padding" href="../kuberneteshardway/index.html">Kubernets Installation From Scatch on rocky 9</a></li>
+            <li class="" data-nav-id="/multimaster/index.html"><a class="padding" href="../multimaster/index.html">Multi Master kubernetes</a></li>
+            <li class="" data-nav-id="/minio/index.html"><a class="padding" href="../minio/index.html">The Object Store for AI Data Infrastructure</a></li>
+            <li class="" data-nav-id="/cks/index.html"><a class="padding" href="../cks/index.html">CKS</a></li>
+            <li class="" data-nav-id="/eks/index.html"><a class="padding" href="../eks/index.html">EKS</a></li>
+            <li class="" data-nav-id="/gke/index.html"><a class="padding" href="../gke/index.html">GKE</a></li>
+            <li class="" data-nav-id="/kuberntes-backup/index.html"><a class="padding" href="../kuberntes-backup/index.html">Kubernetes Data Protection</a></li>
+            <li class="" data-nav-id="/kubernetesloggin-monitoring/index.html"><a class="padding" href="../kubernetesloggin-monitoring/index.html">KUBERNETES LOGGING AND MONITORING</a></li>
+            <li class="" data-nav-id="/neuvector/index.html"><a class="padding" href="../neuvector/index.html">Kubernetes Security</a></li>
+          </ul>
+        </div>
+    
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-language"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = this.querySelector( this.value ).dataset.url;">
+                      <option id="R-select-language-en" value="#R-select-language-en" data-url="../containerbasics/index.html" lang="en-us" selected></option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-paint-brush"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.relearn.changeVariant( this.value );">
+                      <option id="R-select-variant-auto" value="auto" selected>Auto</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.relearn.markVariant();</script>
+              </li>
+              <li class="footerVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-history"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter showFooter">
+        <p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../js/clipboard.min.js?1734364594" defer></script>
+    <script src="../js/perfect-scrollbar.min.js?1734364594" defer></script>
+    <script src="../js/theme.js?1734364594" defer></script>
+  </body>
+</html>

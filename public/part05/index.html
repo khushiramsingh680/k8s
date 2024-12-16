@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.139.3">
+    <meta name="generator" content="Relearn 7.2.1+16d4de84becfa2d2e6bdb2394a2f4fa411bc0007">
+    <meta name="description" content="Topics Rancher Network Policies Metric Server Configure HPA Logging with Grafana Loki Monitoring with Prometheus Enable Audit logs Rancher (Kubernetes Management Tool) Rancher Installation Steps
+Rancher is a Kubernetes management tool to deploy and run clusters anywhere and on any provider.
+Rancher can provision Kubernetes from a hosted provider, provision compute nodes and then install Kubernetes onto them, or import existing Kubernetes clusters running anywhere.
+Rancher adds significant value on top of Kubernetes, first by centralizing authentication and role-based access control (RBAC) for all of the clusters, giving global admins the ability to control cluster access from one location.">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Part 5 :: Kubernetes Documentation">
+    <meta name="twitter:description" content="Topics Rancher Network Policies Metric Server Configure HPA Logging with Grafana Loki Monitoring with Prometheus Enable Audit logs Rancher (Kubernetes Management Tool) Rancher Installation Steps
+Rancher is a Kubernetes management tool to deploy and run clusters anywhere and on any provider.
+Rancher can provision Kubernetes from a hosted provider, provision compute nodes and then install Kubernetes onto them, or import existing Kubernetes clusters running anywhere.
+Rancher adds significant value on top of Kubernetes, first by centralizing authentication and role-based access control (RBAC) for all of the clusters, giving global admins the ability to control cluster access from one location.">
+    <meta property="og:url" content="https://khushiramsingh680.github.io/k8s/part05/index.html">
+    <meta property="og:site_name" content="Kubernetes Documentation">
+    <meta property="og:title" content="Part 5 :: Kubernetes Documentation">
+    <meta property="og:description" content="Topics Rancher Network Policies Metric Server Configure HPA Logging with Grafana Loki Monitoring with Prometheus Enable Audit logs Rancher (Kubernetes Management Tool) Rancher Installation Steps
+Rancher is a Kubernetes management tool to deploy and run clusters anywhere and on any provider.
+Rancher can provision Kubernetes from a hosted provider, provision compute nodes and then install Kubernetes onto them, or import existing Kubernetes clusters running anywhere.
+Rancher adds significant value on top of Kubernetes, first by centralizing authentication and role-based access control (RBAC) for all of the clusters, giving global admins the ability to control cluster access from one location.">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="/">
+    <meta itemprop="name" content="Part 5 :: Kubernetes Documentation">
+    <meta itemprop="description" content="Topics Rancher Network Policies Metric Server Configure HPA Logging with Grafana Loki Monitoring with Prometheus Enable Audit logs Rancher (Kubernetes Management Tool) Rancher Installation Steps
+Rancher is a Kubernetes management tool to deploy and run clusters anywhere and on any provider.
+Rancher can provision Kubernetes from a hosted provider, provision compute nodes and then install Kubernetes onto them, or import existing Kubernetes clusters running anywhere.
+Rancher adds significant value on top of Kubernetes, first by centralizing authentication and role-based access control (RBAC) for all of the clusters, giving global admins the ability to control cluster access from one location.">
+    <meta itemprop="wordCount" content="2108">
+    <title>Part 5 :: Kubernetes Documentation</title>
+    <link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet"></noscript>
+    <link href="../css/auto-complete.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1734364594" rel="stylesheet"></noscript>
+    <link href="../css/perfect-scrollbar.min.css?1734364594" rel="stylesheet">
+    <link href="../css/theme.min.css?1734364594" rel="stylesheet">
+    <link href="../css/format-html.min.css?1734364594" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.relBasePath='..';
+      window.relearn.relBaseUri='..';
+      window.relearn.absBaseUri='https:\/\/khushiramsingh680.github.io\/k8s';
+      window.relearn.min = `.min`;
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant");
+        var select = document.querySelector("#R-select-variant");
+        if (select) {
+          select.value = variant;
+        }
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script>
+  </head>
+  <body class="mobile-support html" data-url="../part05/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#topics">Topics</a></li>
+    <li><a href="#rancher-kubernetes-management-tool">Rancher (Kubernetes Management Tool)</a></li>
+    <li><a href="#get-started-with-kubernetes-network-policy">Get started with Kubernetes network policy</a>
+      <ul>
+        <li></li>
+        <li><a href="#network-policy">Network Policy</a></li>
+        <li><a href="#rule-4---podselector">Rule 4 - PodSelector:</a></li>
+        <li><a href="#create-ingress-policies-with-pod-selector--colorblue-on-port-80">Create ingress policies with pod selector  color=blue on port 80</a></li>
+        <li><a href="#create-egress-policies">Create egress policies</a></li>
+        <li><a href="#allow-a-cidr-range">Allow a CIDR range</a></li>
+        <li><a href="#create-deny-all-default-ingress-and-egress-network-policy">Create deny-all default ingress and egress network policy</a></li>
+      </ul>
+    </li>
+    <li><a href="#kubernetes-monitoring">Kubernetes Monitoring</a>
+      <ul>
+        <li><a href="#what-is-prometheus-">What is Prometheus ?</a></li>
+        <li><a href="#prometheus-architecture">Prometheus Architecture</a></li>
+        <li><a href="#prometheus-components">Prometheus Components</a></li>
+        <li><a href="#what-is-grafana-">What is Grafana ?</a></li>
+        <li><a href="#what-is-node-exporter-">What is Node Exporter ?</a></li>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#add-prometheus-helm-repo">Add Prometheus Helm Repo</a></li>
+        <li><a href="#search-for-prometheus-helm-chart">Search for Prometheus helm chart</a></li>
+        <li><a href="#install-prometheus-helm-chart-on-kubernetes-cluster">Install Prometheus Helm Chart on Kubernetes Cluster</a></li>
+        <li><a href="#check-all-services-podsdeployment">Check all services pods,deployment</a></li>
+        <li><a href="#exposing-the-prometheus-server-kubernetes-service">Exposing the prometheus-server Kubernetes Service</a></li>
+        <li><a href="#access-prometheus-from-ui">Access Prometheus from UI</a></li>
+        <li><a href="#check-targets-rules-etc">Check targets, Rules etc</a></li>
+      </ul>
+    </li>
+    <li><a href="#install-grafana">Install Grafana</a>
+      <ul>
+        <li><a href="#grafana-dashboard">Grafana Dashboard</a></li>
+        <li><a href="#kuberntes-monitoring-with-grafana-loki">Kuberntes Monitoring with Grafana Loki</a></li>
+        <li><a href="#kubernetes-monitoring-1">Kubernetes Monitoring</a></li>
+        <li><a href="#source-httpsartifacthubiopackageshelmgrafanaloki-stack">source <a href="https://artifacthub.io/packages/helm/grafana/loki-stack">https://artifacthub.io/packages/helm/grafana/loki-stack</a></a></li>
+        <li><a href="#grafana-loki">Grafana Loki</a></li>
+        <li><a href="#loki-stack-helm-chart">Loki-Stack Helm Chart</a></li>
+        <li><a href="#get-repo-info">Get Repo Info</a></li>
+        <li><a href="#etcd-backup-and-restore-on-kubernetes-cluster">Etcd Backup and Restore on Kubernetes Cluster</a></li>
+        <li><a href="#we-need-to-pass-the-following-three-pieces-of-information-to-etcdctl-to-take-an-etcd-snapshot">We need to pass the following three pieces of information to etcdctl to take an etcd snapshot.</a></li>
+        <li><a href="#kubernetes-api-related-commands">Kubernetes Api related commands</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">/</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Part 5</span><meta itemprop="position" content="2"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../part04/index.html" title="Part 4 (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../containerbasics/index.html" title="Container Basics (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable page" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+
+<h1 id="part-5">Part 5</h1>
+
+<h2 id="topics">Topics</h2>
+<ul>
+<li><a href="../part05/index.html#rancher-kubernetes-management-tool">Rancher</a></li>
+<li><a href="../part05/index.html#get-started-with-kubernetes-network-policy">Network Policies</a></li>
+<li><a href="Day03.md#metric-server">Metric Server</a></li>
+<li><a href="Day03.md#hpa">Configure HPA</a></li>
+<li><a href="../part05/index.html#grafana-loki">Logging with Grafana Loki</a></li>
+<li><a href="../part05/index.html#kubernetes-monitoring">Monitoring with Prometheus</a></li>
+<li><a href="https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/" rel="external" target="_blank">Enable Audit logs</a></li>
+</ul>
+<h2 id="rancher-kubernetes-management-tool">Rancher (Kubernetes Management Tool)</h2>
+<p><a href="https://ranchermanager.docs.rancher.com/getting-started/quick-start-guides/deploy-rancher-manager/vagrant" rel="external" target="_blank">Rancher Installation Steps</a></p>
+<ul>
+<li>
+<p>Rancher is a Kubernetes management tool to deploy and run clusters anywhere and on any provider.</p>
+</li>
+<li>
+<p>Rancher can provision Kubernetes from a hosted provider, provision compute nodes and then install Kubernetes onto them, or import existing Kubernetes clusters running anywhere.</p>
+</li>
+<li>
+<p>Rancher adds significant value on top of Kubernetes, first by centralizing authentication and role-based access control (RBAC) for all of the clusters, giving global admins the ability to control cluster access from one location.</p>
+</li>
+<li>
+<p>It then enables detailed monitoring and alerting for clusters and their resources, ships logs to external providers, and integrates directly with Helm via the Application Catalog. If you have an external CI/CD system, you can plug it into Rancher, but if you don&rsquo;t, Rancher even includes Fleet to help you automatically deploy and upgrade workloads.</p>
+</li>
+<li>
+<p>Rancher is a complete container management platform for Kubernetes, giving you the tools to successfully run Kubernetes anywhere.</p>
+</li>
+<li>
+<p>Rancher Installation on docker</p>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo docker run --privileged -d --restart<span style="color:#f92672">=</span>unless-stopped -p 80:80 -p 443:443 rancher/rancher</span></span></code></pre></div>
+<ul>
+<li>Login to rancher</li>
+<li>Wait for atleast 4 to 5 mins</li>
+<li>Monitoring all node pods</li>
+<li>Try to deploy some pod/app</li>
+</ul>
+<h2 id="get-started-with-kubernetes-network-policy">Get started with Kubernetes network policy</h2>
+<ul>
+<li>Kubernetes network policy lets administrators and developers enforce which network traffic is allowed using rules.</li>
+<li>Kubernetes network policy lets developers secure access to and from their applications using the same simple language they use to deploy them. Developers can focus on their applications without understanding low-level networking concepts. Enabling developers to easily secure their applications using network policies supports a shift left DevOps environment.</li>
+<li>The Kubernetes Network Policy API supports the following features:
+<ul>
+<li>Policies are namespace scoped</li>
+<li>Policies are applied to pods using label selectors</li>
+<li>Policy rules can specify the traffic that is allowed to/from pods, namespaces, or CIDRs</li>
+<li>Policy rules can specify protocols (TCP, UDP, SCTP), named ports or port numbers</li>
+</ul>
+</li>
+</ul>
+<h4 id="ingress-and-egress">Ingress and egress</h4>
+<ul>
+<li>ingress is incoming traffic to the pod, and egress is outgoing traffic from the pod. In Kubernetes network policy,</li>
+<li>you create ingress and egress “allow” rules independently (egress, ingress, or both).</li>
+</ul>
+<h4 id="default-denyallow-behavior">Default deny/allow behavior</h4>
+<ul>
+<li>Default allow means all traffic is allowed by default, unless otherwise specified.</li>
+<li>Default deny means all traffic is denied by default, unless explicitly allowed.</li>
+</ul>
+<h3 id="network-policy">Network Policy</h3>
+<ul>
+<li>Create base setup (Default behaviour is all traffic is allowd)</li>
+<li>Create a namespace</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl create ns external</span></span></code></pre></div>
+<ul>
+<li>Test the default behaviour by creating pod and try to ping</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl run pod-1 --image<span style="color:#f92672">=</span>praqma/network-multitool
+</span></span><span style="display:flex;"><span>kubectl run pod-2 --image<span style="color:#f92672">=</span>praqma/network-multitool
+</span></span><span style="display:flex;"><span>kubectl run pod-3 --image<span style="color:#f92672">=</span>praqma/network-multitool -n external</span></span></code></pre></div>
+<ul>
+<li>Get Ip address</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl get pods -o wide
+</span></span><span style="display:flex;"><span>kubectl get pods -o wide -n external</span></span></code></pre></div>
+<ul>
+<li>Check connectivity from POD-1 to POD2 and POD-3 and Internet</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl exec -it pod-1 -- ping <span style="color:#f92672">[</span>pod-2-ip<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it pod-1 -- ping <span style="color:#f92672">[</span>pod-3-ip<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it pod-1 -- ping google.com</span></span></code></pre></div>
+<ul>
+<li>Rule 1: Deny all Ingress traffic</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: networking.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: NetworkPolicy
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: default-deny-ingress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  podSelector: {}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  policyTypes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - Ingress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Check newly applied network policy</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl get netpol</span></span></code></pre></div>
+<ul>
+<li>Test incoming traffic should not be allowed</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl exec -it pod-1 -- ping <span style="color:#f92672">[</span>pod2-ip<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it pod-1 -- ping <span style="color:#f92672">[</span>pod3-ip<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it pod-1 -- ping google.com
+</span></span><span style="display:flex;"><span>kubectl exec -it pod-3 -- ping <span style="color:#f92672">[</span>pod1-ip<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it pod-3 -- ping <span style="color:#f92672">[</span>pod2-ip<span style="color:#f92672">]</span></span></span></code></pre></div>
+<ul>
+<li>Rule 2: Allow Ingress</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: networking.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: NetworkPolicy
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: allow-all-ingress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  podSelector: {}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ingress:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - {}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  policyTypes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - Ingress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Test again</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl exec -it pod-3 -- ping <span style="color:#f92672">[</span>pod1-ip<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it pod-3 -- ping <span style="color:#f92672">[</span>pod2-ip<span style="color:#f92672">]</span></span></span></code></pre></div>
+<ul>
+<li>Rule 3: Deny All Egress:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: networking.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: NetworkPolicy
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: default-deny-egress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  podSelector: {}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  policyTypes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - Egress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Make a test</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl exec -it pod-2 -- ping google.com
+</span></span><span style="display:flex;"><span>kubectl exec -n external -it pod-3 -- ping <span style="color:#f92672">[</span>pod1<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>kubectl exec -n external -it pod-3 -- ping <span style="color:#f92672">[</span>pod2<span style="color:#f92672">]</span></span></span></code></pre></div>
+<h3 id="rule-4---podselector">Rule 4 - PodSelector:</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: networking.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: NetworkPolicy
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: podselector-suspicous
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  podSelector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      role: suspicious
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  policyTypes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - Ingress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - Egress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Rule 5 - Ingress From:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl label pod pod-1 role<span style="color:#f92672">=</span>secure</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: networking.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: NetworkPolicy
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: ingress-from-ips
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  podSelector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      role: secure
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ingress:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     - ipBlock:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        cidr: 192.168.0.0/16
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        except:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - 192.168.137.70/32
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  policyTypes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - Ingress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl exec -n external -it pod-3 -- ping <span style="color:#f92672">[</span>pod-1<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it pod-2 -- ping <span style="color:#f92672">[</span>pod-1<span style="color:#f92672">]</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl label pod pod-1 role-
+</span></span><span style="display:flex;"><span>kubectl delete -f netpol.yaml</span></span></code></pre></div>
+<ul>
+<li>Rule 6 - Egress To:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl label pod pod-1 role<span style="color:#f92672">=</span>secure</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: networking.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: NetworkPolicy
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: egress-to-ips
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  podSelector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      role: secure
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  egress:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - to:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     - ipBlock:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        cidr: 192.168.137.70/32
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  policyTypes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - Egress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl exec -it pod-1 -- ping <span style="color:#f92672">[</span>pod-2<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it pod-1 -- ping google.com</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl delete -f netpol.yaml</span></span></code></pre></div>
+<ul>
+<li>Rule 7 - Namespace Selector:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: networking.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: NetworkPolicy
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: namespace-selector
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  podSelector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      role: secure
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ingress:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     - namespaceSelector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          role: app
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">       podSelector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">         matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           role: reconcile
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  policyTypes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - Ingress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h3 id="create-ingress-policies-with-pod-selector--colorblue-on-port-80">Create ingress policies with pod selector  color=blue on port 80</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kind: NetworkPolicy
+</span></span><span style="display:flex;"><span>apiVersion: networking<span style="color:#f92672">.</span>k8s<span style="color:#f92672">.</span>io<span style="color:#f92672">/</span>v1
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: allow<span style="color:#f92672">-</span>same<span style="color:#f92672">-</span>namespace
+</span></span><span style="display:flex;"><span>  namespace: default
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  podSelector:
+</span></span><span style="display:flex;"><span>    matchLabels:
+</span></span><span style="display:flex;"><span>      color: blue
+</span></span><span style="display:flex;"><span>  ingress:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">-</span> from:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">-</span> podSelector:
+</span></span><span style="display:flex;"><span>            matchLabels:
+</span></span><span style="display:flex;"><span>              color: red
+</span></span><span style="display:flex;"><span>      ports:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">-</span> port: <span style="color:#ae81ff">80</span></span></span></code></pre></div>
+<h4 id="allow-ingress-traffic-from-pods-in-a-different-namespace-using-namespaceselector">Allow ingress traffic from pods in a different namespace using namespaceSelector</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kind: NetworkPolicy
+</span></span><span style="display:flex;"><span>apiVersion: networking<span style="color:#f92672">.</span>k8s<span style="color:#f92672">.</span>io<span style="color:#f92672">/</span>v1
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: allow<span style="color:#f92672">-</span>different<span style="color:#f92672">-</span>namespace
+</span></span><span style="display:flex;"><span>  namespace: default
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  podSelector:
+</span></span><span style="display:flex;"><span>    matchLabels:
+</span></span><span style="display:flex;"><span>      color: blue
+</span></span><span style="display:flex;"><span>  ingress:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">-</span> from:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">-</span> podSelector:
+</span></span><span style="display:flex;"><span>            matchLabels:
+</span></span><span style="display:flex;"><span>              color: red
+</span></span><span style="display:flex;"><span>          namespaceSelector:
+</span></span><span style="display:flex;"><span>            matchLabels:
+</span></span><span style="display:flex;"><span>              shape: square
+</span></span><span style="display:flex;"><span>      ports:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">-</span> port: <span style="color:#ae81ff">80</span></span></span></code></pre></div>
+<p><!-- raw HTML omitted -->Here&rsquo;s an example of a Network Policy in Kubernetes that allows incoming traffic only from a pod with label color=red in a namespace with label shape=square, on port 80:<!-- raw HTML omitted --></p>
+<h3 id="create-egress-policies">Create egress policies</h3>
+<p><!-- raw HTML omitted -->In the following example, outbound traffic is allowed only if they go to a pod with label color=red, on port 80.<!-- raw HTML omitted --></p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kind: NetworkPolicy
+</span></span><span style="display:flex;"><span>apiVersion: networking<span style="color:#f92672">.</span>k8s<span style="color:#f92672">.</span>io<span style="color:#f92672">/</span>v1
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: allow<span style="color:#f92672">-</span>egress<span style="color:#f92672">-</span>same<span style="color:#f92672">-</span>namespace
+</span></span><span style="display:flex;"><span>  namespace: default
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  podSelector:
+</span></span><span style="display:flex;"><span>    matchLabels:
+</span></span><span style="display:flex;"><span>      color: blue
+</span></span><span style="display:flex;"><span>  egress:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">-</span> to:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">-</span> podSelector:
+</span></span><span style="display:flex;"><span>            matchLabels:
+</span></span><span style="display:flex;"><span>              color: red
+</span></span><span style="display:flex;"><span>      ports:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">-</span> port: <span style="color:#ae81ff">80</span></span></span></code></pre></div>
+<h3 id="allow-a-cidr-range">Allow a CIDR range</h3>
+<ul>
+<li>The following policy allows egress traffic to pods in CIDR, 172.18.0.0/24.</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kind: NetworkPolicy
+</span></span><span style="display:flex;"><span>apiVersion: networking<span style="color:#f92672">.</span>k8s<span style="color:#f92672">.</span>io<span style="color:#f92672">/</span>v1
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: allow<span style="color:#f92672">-</span>egress<span style="color:#f92672">-</span>external
+</span></span><span style="display:flex;"><span>  namespace: default
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  podSelector:
+</span></span><span style="display:flex;"><span>    matchLabels:
+</span></span><span style="display:flex;"><span>      color: red
+</span></span><span style="display:flex;"><span>  egress:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">-</span> to:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">-</span> ipBlock:
+</span></span><span style="display:flex;"><span>            cidr: <span style="color:#ae81ff">172.18.0.0</span><span style="color:#f92672">/</span><span style="color:#ae81ff">24</span></span></span></code></pre></div>
+<h3 id="create-deny-all-default-ingress-and-egress-network-policy">Create deny-all default ingress and egress network policy</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kind: NetworkPolicy
+</span></span><span style="display:flex;"><span>apiVersion: networking<span style="color:#f92672">.</span>k8s<span style="color:#f92672">.</span>io<span style="color:#f92672">/</span>v1
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: default<span style="color:#f92672">-</span>deny
+</span></span><span style="display:flex;"><span>  namespace: policy<span style="color:#f92672">-</span>demo
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  podSelector:
+</span></span><span style="display:flex;"><span>    matchLabels: {}
+</span></span><span style="display:flex;"><span>  policyTypes:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">-</span> Ingress
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">-</span> Egress</span></span></code></pre></div>
+<h2 id="kubernetes-monitoring">Kubernetes Monitoring</h2>
+<h3 id="what-is-prometheus-">What is Prometheus ?</h3>
+<ul>
+<li>Prometheus is a open source Linux Server Monitoring tool mainly used for metrics monitoring, event monitoring, alert management, etc.
+Prometheus has changed the way of monitoring systems and that is why it has become the Top-Level project of Cloud Native Computing Foundation (CNCF).</li>
+<li>Prometheus uses a powerful query language i.e. “PromQL”.</li>
+<li>In Prometheus tabs are on and handles hundreds of services and microservices.</li>
+<li>Prometheus use multiple modes used for graphing and dashboarding support.</li>
+</ul>
+<h3 id="prometheus-architecture">Prometheus Architecture</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>Promethe port: <span style="color:#ae81ff">9090</span>
+</span></span><span style="display:flex;"><span>Node Exporter: <span style="color:#ae81ff">9100</span></span></span></code></pre></div>
+<h3 id="prometheus-components">Prometheus Components</h3>
+<ol>
+<li>
+<p>Prometheus Server</p>
+<p>Prometheus server is a first component of Prometheus architecture.
+Prometheus server is a core of Prometheus architecture which is divided into several parts like Storage, PromQL, HTTP server, etc.
+In Prometheus server data is scraped from the target nodes and then stored int the database.</p>
+</li>
+</ol>
+<p>1.1 Storage</p>
+<p>Storage in Prometheus server has a local on disk storge.
+Prometheus has many interfaces that allow integrating with remote storage systems.</p>
+<p>1.2. PromQL</p>
+<p>Prometheus uses its own query language i.e. PromQL which is very powerful querying language.
+PromQL allows the user to select and aggregate the data.</p>
+<ol start="2">
+<li>
+<p>Service Discovery</p>
+<p>Next and very important component of Prometheus Server is the Service Discovery.
+With the help of Service discovery the services are identified which are need to scraped.
+To Pull metrics, identification of services and finding the targets are compulsory needed.
+Through Service discovery we monitor the entities and can also locate its targets.</p>
+</li>
+<li>
+<p>Scrape Target</p>
+<p>Once the services are identified and the targets are ready then we can pull metrics from it and can scrape the target.
+We can export the data of end point using node exporters.
+Once the metrics or other data is pulled, Prometheus stores it in a local storage.</p>
+</li>
+<li>
+<p>Alert Manager</p>
+<p>Alert Manager handles the alerts which may occurs during the session.
+Alert manager handles all the alerts which are sent by Prometheus server.
+Alert manager is one of the very useful component of Prometheus tool.
+If in case any big error or any issue occurs, alert manager manage those alerts and contact with human via E-mail, Text Messages, On-call, or any other chat application service.</p>
+</li>
+<li>
+<p>User Interface</p>
+<p>User interface is also a important component as it builds a bridge between the user and the system.
+In Prometheus, user interface are note that much user friendly and can be used till graph queries.
+For good exclusive dashboards Prometheus works together with Grafana (visualization tool).
+Using Grafana over Prometheus to visualize properly we can use custom dashboards.
+Grafana dashboards displays via pie charts, line charts, tables, good data graphs of CPU usage, RAM utilization, network load, etc with indicators.
+Grafana supports and run with Prometheus by querying language i.e. PromQL.
+To fetch data from Prometheus and to display the results on Grafana dashboards PromQL is used.</p>
+<h3 id="what-is-grafana-">What is Grafana ?</h3>
+<p>Grafana is a free and open source visualization tool mostly used with Prometheus to which monitor metrics.
+Grafana provides various dashboards, charts, graphs, alerts for the particular data source.
+Grafana allows us to query, visualize, explore metrics and set alerts for the data source which can be a system, server, nodes, cluster, etc.
+We can also create our own dynamic dashboard for visualization and monitoring.
+We can save the dashboard and can even share with our team members which is one of the main advantage of Grafana.</p>
+</li>
+</ol>
+<h3 id="what-is-node-exporter-">What is Node Exporter ?</h3>
+<p>Node exporter is one of the Prometheus exporters which is used to expose servers or system OS metrics.</p>
+<p>With the help of Node exporter we can expose various resources of the system like RAM, CPU utilization, Memory Utilization, disk space.</p>
+<p>Node exporter runs as a system service which gathers the metrics of your system and that gathered metrics is displayed with the help of Grafana visualization tool.</p>
+<h3 id="prerequisites">Prerequisites</h3>
+<ul>
+<li>Access to Kubernetes Cluster</li>
+<li>Helm cli installed</li>
+</ul>
+<h3 id="add-prometheus-helm-repo">Add Prometheus Helm Repo</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+</span></span><span style="display:flex;"><span>helm repo update</span></span></code></pre></div>
+<h3 id="search-for-prometheus-helm-chart">Search for Prometheus helm chart</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm search repo prometheus-community</span></span></code></pre></div>
+<h3 id="install-prometheus-helm-chart-on-kubernetes-cluster">Install Prometheus Helm Chart on Kubernetes Cluster</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm install prometheus prometheus-community/prometheus</span></span></code></pre></div>
+<h3 id="check-all-services-podsdeployment">Check all services pods,deployment</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get svc,deployment,pods,secret</span></span></code></pre></div>
+<h3 id="exposing-the-prometheus-server-kubernetes-service">Exposing the prometheus-server Kubernetes Service</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl expose service prometheus-server --type<span style="color:#f92672">=</span>LoadBalancer --target-port<span style="color:#f92672">=</span><span style="color:#ae81ff">9090</span> --name<span style="color:#f92672">=</span>prometheus-server-ext</span></span></code></pre></div>
+<h3 id="access-prometheus-from-ui">Access Prometheus from UI</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>LoadBalancer Ip</span></span></code></pre></div>
+<h3 id="check-targets-rules-etc">Check targets, Rules etc</h3>
+<h2 id="install-grafana">Install Grafana</h2>
+<ul>
+<li>Search for Grafana Chart</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm search hub grafana</span></span></code></pre></div>
+<ul>
+<li>Add and update Grafana repo</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm repo add grafana https://grafana.github.io/helm-charts 
+</span></span><span style="display:flex;"><span>helm repo update</span></span></code></pre></div>
+<ul>
+<li>Install Grafana Helm Chart on Kubernetes Cluster</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm install grafana grafana/grafana</span></span></code></pre></div>
+<ul>
+<li>Check for Services and other details</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get service</span></span></code></pre></div>
+<ul>
+<li>Exposing the grafana Kubernetes Service</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl expose service grafana --type<span style="color:#f92672">=</span>LoadBalancer --target-port<span style="color:#f92672">=</span><span style="color:#ae81ff">3000</span> --name<span style="color:#f92672">=</span>grafana-ext</span></span></code></pre></div>
+<ul>
+<li>Take the password for Grafana user(Admin)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get secret --namespace default grafana -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.data.admin-password}&#34;</span> | base64 --decode ; echo</span></span></code></pre></div>
+<ul>
+<li>
+<p>Login to Grafana and add datasource
+<a href="#R-image-a3f7d9a626ed7880df3edbeed07e4dee" class="lightbox-link"><img alt="image" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/Grafana01.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-a3f7d9a626ed7880df3edbeed07e4dee"><img alt="image" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/Grafana01.png"></a></p>
+</li>
+<li>
+<p>Select Prometheus as the data source:
+<a href="#R-image-627bdf20a32e6a16655e096e6b6467d9" class="lightbox-link"><img alt="image" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/Grafana02.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-627bdf20a32e6a16655e096e6b6467d9"><img alt="image" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/Grafana02.png"></a>
+<a href="#R-image-75e5744e161bbb4c7d5ef67a92f81655" class="lightbox-link"><img alt="image" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/Grafana03.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-75e5744e161bbb4c7d5ef67a92f81655"><img alt="image" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/Grafana03.png"></a></p>
+</li>
+<li>
+<p>Click on “Save &amp; test” to save your changes.</p>
+</li>
+</ul>
+<h3 id="grafana-dashboard">Grafana Dashboard</h3>
+<ul>
+<li>To import a Grafana Dashboard, follow these steps:</li>
+</ul>
+<p><a href="https://grafana.com/grafana/dashboards/" rel="external" target="_blank">Click here</a></p>
+<p><a href="#R-image-9ec778534c55607f21f2ea8e9747f9c3" class="lightbox-link"><img alt="image" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/Grafana04.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-9ec778534c55607f21f2ea8e9747f9c3"><img alt="image" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/Grafana04.png"></a></p>
+<p><a href="#R-image-e6d72af9654a012363e426858fef97cb" class="lightbox-link"><img alt="image" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/Grafana05.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-e6d72af9654a012363e426858fef97cb"><img alt="image" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/Grafana05.png"></a></p>
+<p><a href="#R-image-c7cc7ddc82d6feb26c1efd179309290b" class="lightbox-link"><img alt="image" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/Grafana06.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-c7cc7ddc82d6feb26c1efd179309290b"><img alt="image" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/Grafana06.png"></a></p>
+<p><a href="#R-image-a9e753cece2ab38b03b9dfbaab9ecfb1" class="lightbox-link"><img alt="image" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/Grafana07.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-a9e753cece2ab38b03b9dfbaab9ecfb1"><img alt="image" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/Grafana07.png"></a></p>
+<h3 id="kuberntes-monitoring-with-grafana-loki">Kuberntes Monitoring with Grafana Loki</h3>
+<h3 id="kubernetes-monitoring-1">Kubernetes Monitoring</h3>
+<h3 id="source-httpsartifacthubiopackageshelmgrafanaloki-stack">source <a href="https://artifacthub.io/packages/helm/grafana/loki-stack" rel="external" target="_blank">https://artifacthub.io/packages/helm/grafana/loki-stack</a></h3>
+<h3 id="grafana-loki">Grafana Loki</h3>
+<h3 id="loki-stack-helm-chart">Loki-Stack Helm Chart</h3>
+<h3 id="get-repo-info">Get Repo Info</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>helm repo add grafana https:<span style="color:#e6db74">//g</span>rafana<span style="color:#f92672">.</span>github<span style="color:#f92672">.</span>io<span style="color:#f92672">/</span>helm<span style="color:#f92672">-</span>charts
+</span></span><span style="display:flex;"><span>helm repo update</span></span></code></pre></div>
+<ul>
+<li>Deploy Loki and Promtail to your cluster</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm upgrade --install loki grafana/loki-stack <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --set fluent-bit.enabled<span style="color:#f92672">=</span>false,promtail.enabled<span style="color:#f92672">=</span>true,grafana.enabled<span style="color:#f92672">=</span>true</span></span></code></pre></div>
+<ul>
+<li>To get the admin password for the Grafana pod, run the following command:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get secret --namespace &lt;YOUR-NAMESPACE&gt; loki-grafana -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.data.admin-password}&#34;</span> | base64 --decode ; echo</span></span></code></pre></div>
+<ul>
+<li>To access Grafana you can use port forwarding or Service LoadBalancer</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl port-forward --namespace &lt;YOUR-NAMESPACE&gt; service/loki-grafana 3000:80</span></span></code></pre></div>
+<h3 id="etcd-backup-and-restore-on-kubernetes-cluster">Etcd Backup and Restore on Kubernetes Cluster</h3>
+<ul>
+<li>Login to control plane</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>ssh vagrant@172<span style="color:#ae81ff">.16.16.100</span></span></span></code></pre></div>
+<ul>
+<li>Change user to root</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>sudo <span style="color:#f92672">-</span>s</span></span></code></pre></div>
+<ul>
+<li>Install etcd cli</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt install etcd-client</span></span></code></pre></div>
+<h3 id="we-need-to-pass-the-following-three-pieces-of-information-to-etcdctl-to-take-an-etcd-snapshot">We need to pass the following three pieces of information to etcdctl to take an etcd snapshot.</h3>
+<ul>
+<li>
+<p>etcd endpoint (–endpoints)</p>
+</li>
+<li>
+<p>ca certificate (–cacert)</p>
+</li>
+<li>
+<p>server certificate (–cert)</p>
+</li>
+<li>
+<p>server key (–key)</p>
+</li>
+<li>
+<p>Check the file for above information</p>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat /etc/kubernetes/manifests/etcd.yaml</span></span></code></pre></div>
+<p><a href="#R-image-7fdb9cc4e239ae8e59ab50fd7e88ee3f" class="lightbox-link"><img alt="image" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/etcd01.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-7fdb9cc4e239ae8e59ab50fd7e88ee3f"><img alt="image" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/etcd01.png"></a></p>
+<ul>
+<li>Take an etcd snapshot backup using the following command.</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ETCDCTL_API<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> etcdctl <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --endpoints<span style="color:#f92672">=</span>https://127.0.0.1:2379 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --cacert<span style="color:#f92672">=</span>&lt;ca-file&gt; <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --cert<span style="color:#f92672">=</span>&lt;cert-file&gt; <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --key<span style="color:#f92672">=</span>&lt;key-file&gt; <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  snapshot save &lt;backup-file-location&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ETCDCTL_API<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> etcdctl <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --endpoints<span style="color:#f92672">=</span>https://127.0.0.1:2379 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --cacert<span style="color:#f92672">=</span>/etc/kubernetes/pki/etcd/ca.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --cert<span style="color:#f92672">=</span>/etc/kubernetes/pki/etcd/server.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --key<span style="color:#f92672">=</span>/etc/kubernetes/pki/etcd/server.key <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  snapshot save /opt/backup/etcd.db</span></span></code></pre></div>
+<ul>
+<li>you can verify the snapshot using the following command.</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ETCDCTL_API<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> etcdctl --write-out<span style="color:#f92672">=</span>table snapshot status /opt/backup/etcd.db</span></span></code></pre></div>
+<ul>
+<li>
+<p>Kubernetes etcd Restore Using Snapshot Backup</p>
+</li>
+<li>
+<p>Use the below command</p>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ETCDCTL_API<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> etcdctl snapshot restore &lt;backup-file-location&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ETCDCTL_API<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> etcdctl snapshot restore /opt/backup/etcd.db
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ETCDCTL_API<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> etcdctl --data-dir /opt/etcd snapshot restore /opt/backup/etcd.db</span></span></code></pre></div>
+<h3 id="kubernetes-api-related-commands">Kubernetes Api related commands</h3>
+<ul>
+<li>All namespaced resources</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl api-resources --namespaced<span style="color:#f92672">=</span>true      
+</span></span><span style="display:flex;"><span>kubectl api-resources --namespaced<span style="color:#f92672">=</span>false    
+</span></span><span style="display:flex;"><span>kubectl api-resources -o name                
+</span></span><span style="display:flex;"><span>kubectl api-resources -o wide                
+</span></span><span style="display:flex;"><span>kubectl api-resources --verbs<span style="color:#f92672">=</span>list,get      
+</span></span><span style="display:flex;"><span>kubectl api-resources --api-group<span style="color:#f92672">=</span>extensions </span></span></code></pre></div>
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+          <a id="R-logo" class="R-default" href="../index.html">
+Kubernetes Documentation
+          </a>
+        </div>
+        <script>
+          window.index_js_url="../searchindex.en.js?1734364594";
+        </script>
+        <search><form action="../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../js/auto-complete.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.stemmer.support.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.multi.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.en.min.js?1734364594" defer></script>
+        <script src="../js/search.js?1734364594" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation homelinks">
+        <ul>
+          <li><a class="padding" href="../index.html"><i class="fa-fw fas fa-home"></i> Home</a></li>
+        </ul>
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-shortcutmenu-home" class="R-sidebarmenu">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes documentation</a></li>
+            <li class="" data-nav-id="/part01/index.html"><a class="padding" href="../part01/index.html">Part 1</a></li>
+            <li class="" data-nav-id="/part02/index.html"><a class="padding" href="../part02/index.html">Part 2</a></li>
+            <li class="" data-nav-id="/part03/index.html"><a class="padding" href="../part03/index.html">Part 3</a></li>
+            <li class="" data-nav-id="/part04/index.html"><a class="padding" href="../part04/index.html">Part 4</a></li>
+            <li class="active " data-nav-id="/part05/index.html"><a class="padding" href="../part05/index.html">Part 5</a></li>
+            <li class="" data-nav-id="/containerbasics/index.html"><a class="padding" href="../containerbasics/index.html">Container Basics</a></li>
+            <li class="" data-nav-id="/helm-overview/index.html"><a class="padding" href="../helm-overview/index.html">Helm Overview</a></li>
+            <li class="" data-nav-id="/imp/index.html"><a class="padding" href="../imp/index.html">Imp Commands </a></li>
+            <li class="" data-nav-id="/external-etcd/index.html"><a class="padding" href="../external-etcd/index.html">kubeadm-external-etcd</a></li>
+            <li class="" data-nav-id="/kubernetes-rbac/index.html"><a class="padding" href="../kubernetes-rbac/index.html">Kubernetes RBAC</a></li>
+            <li class="" data-nav-id="/kubernetes-on-centos/index.html"><a class="padding" href="../kubernetes-on-centos/index.html">Kubernetes-on-Centos</a></li>
+            <li class="" data-nav-id="/kuberneteshardway/index.html"><a class="padding" href="../kuberneteshardway/index.html">Kubernets Installation From Scatch on rocky 9</a></li>
+            <li class="" data-nav-id="/multimaster/index.html"><a class="padding" href="../multimaster/index.html">Multi Master kubernetes</a></li>
+            <li class="" data-nav-id="/minio/index.html"><a class="padding" href="../minio/index.html">The Object Store for AI Data Infrastructure</a></li>
+            <li class="" data-nav-id="/cks/index.html"><a class="padding" href="../cks/index.html">CKS</a></li>
+            <li class="" data-nav-id="/eks/index.html"><a class="padding" href="../eks/index.html">EKS</a></li>
+            <li class="" data-nav-id="/gke/index.html"><a class="padding" href="../gke/index.html">GKE</a></li>
+            <li class="" data-nav-id="/kuberntes-backup/index.html"><a class="padding" href="../kuberntes-backup/index.html">Kubernetes Data Protection</a></li>
+            <li class="" data-nav-id="/kubernetesloggin-monitoring/index.html"><a class="padding" href="../kubernetesloggin-monitoring/index.html">KUBERNETES LOGGING AND MONITORING</a></li>
+            <li class="" data-nav-id="/neuvector/index.html"><a class="padding" href="../neuvector/index.html">Kubernetes Security</a></li>
+          </ul>
+        </div>
+    
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-language"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = this.querySelector( this.value ).dataset.url;">
+                      <option id="R-select-language-en" value="#R-select-language-en" data-url="../part05/index.html" lang="en-us" selected></option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-paint-brush"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.relearn.changeVariant( this.value );">
+                      <option id="R-select-variant-auto" value="auto" selected>Auto</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.relearn.markVariant();</script>
+              </li>
+              <li class="footerVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-history"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter showFooter">
+        <p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../js/clipboard.min.js?1734364594" defer></script>
+    <script src="../js/perfect-scrollbar.min.js?1734364594" defer></script>
+    <script src="../js/theme.js?1734364594" defer></script>
+  </body>
+</html>

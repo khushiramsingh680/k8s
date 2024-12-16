@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head><script src="/k8s/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=k8s/livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.139.3">
+    <meta name="generator" content="Relearn 7.2.1+16d4de84becfa2d2e6bdb2394a2f4fa411bc0007">
+    <meta name="description" content="Topics: NameSpace Create a namespace Switch from one ns to another Resource Quota Resource Limits POD Single Container pod MultiContainer pod Login to a pod Copy to a pod and from a pod(container) How to check logs from a container Environment Variables of pod initContainer Command and Argument of a pod pullSecret of a pod pod restart policy imagePull policy How to delete a pod Pod priority Pod Resources Pod Quality of Services(QOS) Advance Scheduling of pod Scheduler Nodename nodeSelector Node Affinity Taints and Tolerations Pod affinity and anti affinity Priority and PriorityClass Preemption Disruption Budget Topology and Constraints Descheduler Namespace Namespaces are a way to divide cluster resources between multiple users (via resource quota). namespaces provides a mechanism for isolating groups of resources within a single cluster Names of resources need to be unique within a namespace, but not across namespaces. To achieve multitenancy with Networkpolicy To configure RBAC Check all namespaces kubectl get nsCreate a new namespace kubectl create ns &lt;name&gt;Switch from one ns to another kubens kubens &lt;ns name&gt;To see which Kubernetes resources are and aren’t in a namespace: In a namespace kubectl api-resources --namespaced=trueNot in a namespace kubectl api-resources --namespaced=falseLearn About Resource Quota and limits">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Part 2 :: Kubernetes Documentation">
+    <meta name="twitter:description" content="Topics: NameSpace Create a namespace Switch from one ns to another Resource Quota Resource Limits POD Single Container pod MultiContainer pod Login to a pod Copy to a pod and from a pod(container) How to check logs from a container Environment Variables of pod initContainer Command and Argument of a pod pullSecret of a pod pod restart policy imagePull policy How to delete a pod Pod priority Pod Resources Pod Quality of Services(QOS) Advance Scheduling of pod Scheduler Nodename nodeSelector Node Affinity Taints and Tolerations Pod affinity and anti affinity Priority and PriorityClass Preemption Disruption Budget Topology and Constraints Descheduler Namespace Namespaces are a way to divide cluster resources between multiple users (via resource quota). namespaces provides a mechanism for isolating groups of resources within a single cluster Names of resources need to be unique within a namespace, but not across namespaces. To achieve multitenancy with Networkpolicy To configure RBAC Check all namespaces kubectl get nsCreate a new namespace kubectl create ns &lt;name&gt;Switch from one ns to another kubens kubens &lt;ns name&gt;To see which Kubernetes resources are and aren’t in a namespace: In a namespace kubectl api-resources --namespaced=trueNot in a namespace kubectl api-resources --namespaced=falseLearn About Resource Quota and limits">
+    <meta property="og:url" content="http://localhost:1313/k8s/k8s/part02/index.html">
+    <meta property="og:site_name" content="Kubernetes Documentation">
+    <meta property="og:title" content="Part 2 :: Kubernetes Documentation">
+    <meta property="og:description" content="Topics: NameSpace Create a namespace Switch from one ns to another Resource Quota Resource Limits POD Single Container pod MultiContainer pod Login to a pod Copy to a pod and from a pod(container) How to check logs from a container Environment Variables of pod initContainer Command and Argument of a pod pullSecret of a pod pod restart policy imagePull policy How to delete a pod Pod priority Pod Resources Pod Quality of Services(QOS) Advance Scheduling of pod Scheduler Nodename nodeSelector Node Affinity Taints and Tolerations Pod affinity and anti affinity Priority and PriorityClass Preemption Disruption Budget Topology and Constraints Descheduler Namespace Namespaces are a way to divide cluster resources between multiple users (via resource quota). namespaces provides a mechanism for isolating groups of resources within a single cluster Names of resources need to be unique within a namespace, but not across namespaces. To achieve multitenancy with Networkpolicy To configure RBAC Check all namespaces kubectl get nsCreate a new namespace kubectl create ns &lt;name&gt;Switch from one ns to another kubens kubens &lt;ns name&gt;To see which Kubernetes resources are and aren’t in a namespace: In a namespace kubectl api-resources --namespaced=trueNot in a namespace kubectl api-resources --namespaced=falseLearn About Resource Quota and limits">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="Kubernetes documentation">
+    <meta itemprop="name" content="Part 2 :: Kubernetes Documentation">
+    <meta itemprop="description" content="Topics: NameSpace Create a namespace Switch from one ns to another Resource Quota Resource Limits POD Single Container pod MultiContainer pod Login to a pod Copy to a pod and from a pod(container) How to check logs from a container Environment Variables of pod initContainer Command and Argument of a pod pullSecret of a pod pod restart policy imagePull policy How to delete a pod Pod priority Pod Resources Pod Quality of Services(QOS) Advance Scheduling of pod Scheduler Nodename nodeSelector Node Affinity Taints and Tolerations Pod affinity and anti affinity Priority and PriorityClass Preemption Disruption Budget Topology and Constraints Descheduler Namespace Namespaces are a way to divide cluster resources between multiple users (via resource quota). namespaces provides a mechanism for isolating groups of resources within a single cluster Names of resources need to be unique within a namespace, but not across namespaces. To achieve multitenancy with Networkpolicy To configure RBAC Check all namespaces kubectl get nsCreate a new namespace kubectl create ns &lt;name&gt;Switch from one ns to another kubens kubens &lt;ns name&gt;To see which Kubernetes resources are and aren’t in a namespace: In a namespace kubectl api-resources --namespaced=trueNot in a namespace kubectl api-resources --namespaced=falseLearn About Resource Quota and limits">
+    <meta itemprop="wordCount" content="4024">
+    <title>Part 2 :: Kubernetes Documentation</title>
+    <link href="../../css/fontawesome-all.min.css?1734364046" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/fontawesome-all.min.css?1734364046" rel="stylesheet"></noscript>
+    <link href="../../css/auto-complete.css?1734364046" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/auto-complete.css?1734364046" rel="stylesheet"></noscript>
+    <link href="../../css/perfect-scrollbar.min.css?1734364046" rel="stylesheet">
+    <link href="../../css/theme.css?1734364046" rel="stylesheet">
+    <link href="../../css/format-html.css?1734364046" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.relBasePath='..\/..';
+      window.relearn.relBaseUri='..\/..';
+      window.relearn.absBaseUri='http:\/\/localhost:1313\/k8s';
+      window.relearn.min = ``;
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant");
+        var select = document.querySelector("#R-select-variant");
+        if (select) {
+          select.value = variant;
+        }
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script>
+  </head>
+  <body class="mobile-support html" data-url="../../k8s/part02/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#topics">Topics:</a>
+      <ul>
+        <li><a href="#namespacenamespace"><a href="#namespace">NameSpace</a></a></li>
+        <li><a href="#podpod"><a href="#pod">POD</a></a></li>
+        <li><a href="#advance-scheduling-of-podadvance-scheduling-of-pod"><a href="#advance-scheduling-of-pod">Advance Scheduling of pod</a></a></li>
+        <li><a href="#some-useful-command-in-realtimeproduction">Some useful command in realtime(Production)</a></li>
+        <li><a href="#define-environment-variables-for-a-container">Define Environment Variables for a Container</a></li>
+      </ul>
+    </li>
+    <li><a href="#command-and-arguments-with-kubernetes-pod">Command and Arguments with Kubernetes Pod</a>
+      <ul>
+        <li><a href="#example-1-command-override">Example 1: Command Override</a></li>
+        <li><a href="#example-2-command-and-arguments">Example 2: Command and Arguments</a></li>
+        <li><a href="#example-4-passing-arguments-to-docker-entrypoint">Example 4: Passing Arguments to Docker Entrypoint</a></li>
+        <li><a href="#multicontainer-pod">MultiContainer pod</a></li>
+        <li><a href="#use-cases-for-multi-container-pods">Use Cases for Multi-Container Pods</a></li>
+        <li><a href="#resources-definition-in-pod">Resources definition in pod</a></li>
+        <li><a href="#create-a-kubernetes-secret">Create a Kubernetes Secret:</a></li>
+      </ul>
+    </li>
+    <li><a href="#imagepullpolicy-examples">imagePullPolicy Examples</a>
+      <ul>
+        <li><a href="#1-ifnotpresent">1. IfNotPresent</a></li>
+        <li><a href="#1-ifnotpresent-1">1. IfNotPresent</a></li>
+        <li><a href="#2-always">2. Always</a></li>
+        <li><a href="#3-never">3. Never</a></li>
+        <li><a href="#4-ifpresent">4. IfPresent</a></li>
+        <li><a href="#5-default-ifnotpresent">5. Default (IfNotPresent)</a></li>
+        <li><a href="#container-restartpolicy-in-pod-block">Container RestartPolicy in Pod block</a></li>
+        <li><a href="#1-always">1. Always</a></li>
+        <li><a href="#2-onfailure">2. OnFailure</a></li>
+        <li><a href="#3-never-1">3. Never</a></li>
+        <li><a href="#4-default-always">4. Default (Always)</a></li>
+      </ul>
+    </li>
+    <li><a href="#advance-scheduling-of--pod">Advance Scheduling of  pod</a>
+      <ul>
+        <li></li>
+        <li><a href="#node-affinity">Node Affinity</a></li>
+        <li><a href="#example-2-with-operator-notin">Example 2 with operator notin</a></li>
+        <li><a href="#example-with-preferred-affinity">Example with Preferred Affinity</a></li>
+        <li><a href="#pod-priorityhttpskubernetesiodocsconceptsscheduling-evictionpod-priority-preemption"><a href="https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/">Pod Priority</a></a></li>
+      </ul>
+    </li>
+    <li><a href="#pod-disruptions-budget">Pod Disruptions Budget:</a>
+      <ul>
+        <li><a href="#use-of-pdb-with-deployment">Use of pdb with Deployment</a></li>
+        <li><a href="#pod-preemption-and-pod-distruption-budget">Pod Preemption and Pod Distruption Budget</a></li>
+        <li><a href="#operator">operator</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../index.html"><span itemprop="name">/</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../k8s/index.html"><span itemprop="name">Kubernetes documentation</span></a><meta itemprop="position" content="2">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Part 2</span><meta itemprop="position" content="3"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../k8s/part01/index.html" title="Part 1 (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../k8s/part03/index.html" title="Part 3 (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable k8s" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+
+<h1 id="part-2">Part 2</h1>
+
+<h2 id="topics">Topics:</h2>
+<h3 id="namespacenamespace"><a href="../../k8s/part02/index.html#namespace">NameSpace</a></h3>
+<ul>
+<li>Create a namespace</li>
+<li>Switch from one ns to another</li>
+<li>Resource Quota</li>
+<li>Resource Limits</li>
+</ul>
+<h3 id="podpod"><a href="../../k8s/part02/index.html#pod">POD</a></h3>
+<ul>
+<li>Single Container pod</li>
+<li>MultiContainer pod</li>
+<li>Login to a pod</li>
+<li>Copy to a pod and from a pod(container)</li>
+<li>How to check logs from a container</li>
+<li>Environment Variables of pod</li>
+<li>initContainer</li>
+<li>Command and Argument of a pod</li>
+<li>pullSecret of a pod</li>
+<li>pod restart policy</li>
+<li>imagePull policy</li>
+<li>How to delete a pod</li>
+<li>Pod priority</li>
+<li>Pod Resources</li>
+<li>Pod Quality of Services(QOS)</li>
+</ul>
+<h3 id="advance-scheduling-of-podadvance-scheduling-of-pod"><a href="../../k8s/part02/index.html#advance-scheduling-of-pod">Advance Scheduling of pod</a></h3>
+<ul>
+<li>Scheduler</li>
+<li>Nodename</li>
+<li>nodeSelector</li>
+<li>Node Affinity</li>
+<li>Taints and Tolerations</li>
+<li>Pod affinity and anti affinity</li>
+<li>Priority and PriorityClass</li>
+<li>Preemption</li>
+<li>Disruption Budget</li>
+<li>Topology and Constraints</li>
+<li>Descheduler</li>
+</ul>
+<h4 id="namespace">Namespace</h4>
+<ul>
+<li>Namespaces are a way to divide cluster resources between multiple users (via resource quota).</li>
+<li>namespaces provides a mechanism for isolating groups of resources within a single cluster</li>
+<li>Names of resources need to be unique within a namespace, but not across namespaces.</li>
+<li>To achieve multitenancy with Networkpolicy</li>
+<li>To configure RBAC</li>
+<li>Check all namespaces</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get ns</span></span></code></pre></div>
+<ul>
+<li>Create a new namespace</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl create ns <span style="color:#e6db74">&lt;name&gt;</span></span></span></code></pre></div>
+<ul>
+<li>Switch from one ns to another</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubens
+</span></span><span style="display:flex;"><span>kubens <span style="color:#f92672">&lt;</span>ns name<span style="color:#f92672">&gt;</span></span></span></code></pre></div>
+<h4 id="to-see-which-kubernetes-resources-are-and-arent-in-a-namespace">To see which Kubernetes resources are and aren&rsquo;t in a namespace:</h4>
+<ul>
+<li>In a namespace</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl api<span style="color:#f92672">-</span>resources <span style="color:#f92672">--</span>namespaced<span style="color:#f92672">=</span>true</span></span></code></pre></div>
+<ul>
+<li>Not in a namespace</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl api<span style="color:#f92672">-</span>resources <span style="color:#f92672">--</span>namespaced<span style="color:#f92672">=</span>false</span></span></code></pre></div>
+<ul>
+<li>
+<p><a href="https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/" rel="external" target="_blank">Learn About Resource Quota and limits </a></p>
+</li>
+<li>
+<p>Configure Memory and CPU Quotas for a Namespace</p>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ResourceQuota
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: mem-cpu-demo
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  hard:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    requests.cpu: &#34;1&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    requests.memory: 1Gi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    limits.cpu: &#34;2&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    limits.memory: 2Gi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="as-per-above-example">As per above Example:</h4>
+<ul>
+<li>
+<p>The ResourceQuota places these requirements on the quota-mem-cpu-example namespace:</p>
+</li>
+<li>
+<p>For every Pod in the namespace, each container must have a memory request, memory limit, cpu request, and cpu limit.</p>
+</li>
+<li>
+<p>The memory request total for all Pods in that namespace must not exceed 1 GiB.</p>
+</li>
+<li>
+<p>The memory limit total for all Pods in that namespace must not exceed 2 GiB.</p>
+</li>
+<li>
+<p>The CPU request total for all Pods in that namespace must not exceed 1 cpu.</p>
+</li>
+<li>
+<p>The CPU limit total for all Pods in that namespace must not exceed 2 cpu.</p>
+</li>
+<li>
+<p><strong>Check applied quota</strong></p>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get quota </span></span></code></pre></div>
+<ul>
+<li><strong>Create namespace using a yaml file</strong></li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Namespace
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: test
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    name: test
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="resource-limits">Resource Limits</h4>
+<p>A Kubernetes cluster can be divided into namespaces. Once you have a namespace that has a default memory limit, and you then try to create a Pod with a container that does not specify its own memory limit, then the control plane assigns the default memory limit to that container.</p>
+<ul>
+<li>Create a LimitRange</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: LimitRange
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: mem-limit-range
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  limits:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - default:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      memory: 512Mi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    defaultRequest:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      memory: 256Mi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    type: Container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Now create one pod with no resource and check if the default resource has been applied</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl describe pod <span style="color:#e6db74">&lt;podname&gt;</span></span></span></code></pre></div>
+<h4 id="pod">POD</h4>
+<ul>
+<li>A pod is the smallest deployable unit in Kubernetes that represents a single instance of an application.</li>
+<li>For example, if you want to run the Nginx application, you run it in a pod.</li>
+<li>A container is a single unit. However, a pod can contain more than one container. You can think of pods as a box that can hold one or more containers together.</li>
+<li>the pod gets a single unique IP address and containers running inside the pod use localhost to connect to each other on different ports.</li>
+<li>Each pod gets a unique IP address.</li>
+<li>Pods communicate with each other using the IP address.</li>
+<li>Containers inside a pod connect using localhost on different ports.</li>
+<li>Containers running inside a pod should have different port numbers to avoid port clashes.</li>
+<li>You can set CPU and memory resources for each container running inside the pod.</li>
+<li>Containers inside a pod share the same volume mount.</li>
+<li>All the containers inside a pod are scheduled on the same node; It cannot span multiple nodes.
+<ul>
+<li>If there is more than one container, during the pod startup all the main containers start in parallel. Whereas the init containers inside the pod run in sequence.</li>
+<li>Create a pod</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl run pod <span style="color:#f92672">--</span>image<span style="color:#f92672">=</span>nginx</span></span></code></pre></div>
+<ul>
+<li>Check newly created pod</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get pods</span></span></code></pre></div>
+<ul>
+<li>Check more info of a pod like where the pod is scheduled and ip address</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get pods <span style="color:#f92672">-</span>o wide</span></span></code></pre></div>
+<ul>
+<li>check pods details like events and resources</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl describe pod <span style="color:#e6db74">&lt;podname&gt;</span></span></span></code></pre></div>
+<ul>
+<li>Check the name of all pods</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get pods <span style="color:#f92672">-</span>o name</span></span></code></pre></div>
+</li>
+<li>Create a pod using yaml file</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: example-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: example
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: my-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Check Pod Logs
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl logs <span style="color:#e6db74">&lt;pod-name&gt;</span></span></span></code></pre></div>
+</li>
+<li>Follow Pod Logs in Real-time</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>  kubectl logs <span style="color:#f92672">-</span>f <span style="color:#e6db74">&lt;pod-name&gt;</span></span></span></code></pre></div>
+<ul>
+<li>How to check logs for a container from multiContainer pod</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl logs <span style="color:#f92672">-</span>c <span style="color:#e6db74">&lt;containername&gt;</span> <span style="color:#e6db74">&lt;podname&gt;</span></span></span></code></pre></div>
+<ul>
+<li>Check the logs for all containers</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl logs &lt;podname&gt; --all-containers<span style="color:#f92672">=</span>true
+</span></span><span style="display:flex;"><span>- Execute Command in a Pod:
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">```</span>t
+</span></span><span style="display:flex;"><span>kubectl exec -it &lt;pod-name&gt; -- &lt;command&gt;</span></span></code></pre></div>
+<ul>
+<li>Copy Files to/from Pod:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl cp <span style="color:#e6db74">&lt;local-path&gt;</span> <span style="color:#e6db74">&lt;pod-name&gt;</span>:<span style="color:#e6db74">&lt;pod-path&gt;</span>
+</span></span><span style="display:flex;"><span>kubectl cp <span style="color:#e6db74">&lt;pod-name&gt;</span>:<span style="color:#e6db74">&lt;pod-path&gt;</span> <span style="color:#e6db74">&lt;local-path&gt;</span></span></span></code></pre></div>
+<ul>
+<li>Delete a Pod:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl delete pod <span style="color:#e6db74">&lt;pod-name&gt;</span></span></span></code></pre></div>
+<ul>
+<li>How to delete a pod forcefully</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl delete pod <span style="color:#f92672">--</span>force <span style="color:#f92672">--</span>grace<span style="color:#f92672">-</span>period<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span></span></span></code></pre></div>
+<ul>
+<li>Port Forwarding to Pod:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl port<span style="color:#f92672">-</span>forward <span style="color:#e6db74">&lt;pod-name&gt;</span> <span style="color:#e6db74">&lt;local-port&gt;</span>:<span style="color:#e6db74">&lt;pod-port&gt;</span></span></span></code></pre></div>
+<ul>
+<li>Port forwarding on ip address not on the localhost</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span> kubectl port<span style="color:#f92672">-</span>forward <span style="color:#f92672">--</span>address <span style="color:#ae81ff">0.0.0.0</span> pod<span style="color:#f92672">/</span>mypod <span style="color:#ae81ff">8888</span>:<span style="color:#ae81ff">5000</span></span></span></code></pre></div>
+<ul>
+<li>Get YAML Definition of a Running Pod:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get pod <span style="color:#e6db74">&lt;pod-name&gt;</span> <span style="color:#f92672">-</span>o yaml</span></span></code></pre></div>
+<h3 id="some-useful-command-in-realtimeproduction">Some useful command in realtime(Production)</h3>
+<ul>
+<li>Find out all the images of all the pods</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get pods <span style="color:#f92672">--</span>all<span style="color:#f92672">-</span>namespaces <span style="color:#f92672">-</span>o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{range .items[*]}{.spec.containers[*].image}{&#34;\n&#34;}{end}&#39;</span></span></span></code></pre></div>
+<ul>
+<li>Get  All containers name</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get pods <span style="color:#f92672">--</span>all<span style="color:#f92672">-</span>namespaces <span style="color:#f92672">-</span>o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{range .items[*]}{.metadata.namespace} {.metadata.name}: {.spec.containers[*].name}{&#34;\n&#34;}{end}&#39;</span></span></span></code></pre></div>
+<h3 id="define-environment-variables-for-a-container">Define Environment Variables for a Container</h3>
+<p>A Kubernetes environment variable is a dynamic value that configures some aspect of the environment in which a Kubernetes-based application runs.</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>env: 
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">-</span> name: SERVICE_PORT 
+</span></span><span style="display:flex;"><span>        value: <span style="color:#e6db74">&#34;8080&#34;</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">-</span> name: SERVICE_IP 
+</span></span><span style="display:flex;"><span>        value: <span style="color:#e6db74">&#34;192.168.100.1&#34;</span></span></span></code></pre></div>
+<h4 id="problem-statement-if-the-pod-is-failing-becuase-of-environment-variable">Problem Statement if the pod is failing becuase of environment variable</h4>
+<ul>
+<li>Deploy one mysql pod and see if the pod is  failing</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl run mysql <span style="color:#f92672">--</span>image<span style="color:#f92672">=</span>mysql:5<span style="color:#ae81ff">.6</span></span></span></code></pre></div>
+<ul>
+<li>Check the logs and fix the issue</li>
+</ul>
+<h4 id="environment-variables">Environment Variables</h4>
+<ul>
+<li>Apply required variables using below yaml file</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">kubectl apply -f - &lt;&lt;EOF</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod-with-env</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-container</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">mysql:5.6</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>:  <span style="color:#ae81ff">MYSQL_ROOT_PASSWORD</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">EOF</span></span></span></code></pre></div>
+<h2 id="command-and-arguments-with-kubernetes-pod">Command and Arguments with Kubernetes Pod</h2>
+<p>Here&rsquo;s a table summarizing the field names used by Docker and Kubernetes:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Description</th>
+          <th>Docker field name</th>
+          <th>Kubernetes field name</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>The command run by the container</td>
+          <td>Entrypoint</td>
+          <td>command</td>
+      </tr>
+      <tr>
+          <td>The arguments passed to the command</td>
+          <td>Cmd</td>
+          <td>args</td>
+      </tr>
+  </tbody>
+</table>
+<p>When you override the default Entrypoint and Cmd, these rules apply:</p>
+<ul>
+<li>If you do not supply command or args for a Container, the defaults defined in the Docker image are used.</li>
+<li>If you supply a command but no args for a Container, only the supplied command is used. The default EntryPoint and the default Cmd defined in the Docker image are ignored.</li>
+<li>If you supply only args for a Container, the default Entrypoint defined in the Docker image is run with the args that you supplied.</li>
+<li>If you supply a command and args, the default Entrypoint and the default Cmd defined in the Docker image are ignored. Your command is run with your args.</li>
+</ul>
+<h3 id="example-1-command-override">Example 1: Command Override</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-command
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: my-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    command: [&#34;echo&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    args: [&#34;Hello, Kubernetes!&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h3 id="example-2-command-and-arguments">Example 2: Command and Arguments</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-command-args
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: my-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: busybox:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    command: [&#34;sh&#34;, &#34;-c&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    args: [&#34;echo Hello from Kubernetes! &amp;&amp; sleep 3600&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="example-3-passing-environment-variables-to-commands">Example 3: Passing Environment Variables to Commands</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-env-vars
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: my-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: alpine:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    command: [&#34;/bin/sh&#34;, &#34;-c&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    args: [&#34;echo \$GREETING&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    env:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - name: GREETING
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      value: &#34;Hello, Kubernetes!&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h3 id="example-4-passing-arguments-to-docker-entrypoint">Example 4: Passing Arguments to Docker Entrypoint</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-entrypoint-args
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: my-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: ubuntu:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    command: [&#34;/bin/echo&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    args: [&#34;Hello&#34;, &#34;Kubernetes!&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h3 id="multicontainer-pod">MultiContainer pod</h3>
+<h3 id="use-cases-for-multi-container-pods">Use Cases for Multi-Container Pods</h3>
+<ul>
+<li>
+<p>Pods that run multiple containers that need to work together.</p>
+</li>
+<li>
+<p>A Pod can encapsulate an application composed of multiple co-located containers that are tightly coupled and need to share resources.</p>
+</li>
+<li>
+<p>These co-located containers form a single cohesive unit.
+<a href="#R-image-62cd17fde3f9c438f8d6a3fdcdefbd35" class="lightbox-link"><img alt="MultiContainerpod" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../../images/pod.svg" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-62cd17fde3f9c438f8d6a3fdcdefbd35"><img alt="MultiContainerpod" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../../images/pod.svg"></a></p>
+</li>
+<li>
+<p>Here is an example for multiple container.</p>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: nginx-redis-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: nginx-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - containerPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: redis-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: redis:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - containerPort: 6379
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="initcontainer">InitContainer</h4>
+<ul>
+<li>
+<p>A Pod can have multiple containers running apps within it, but it can also have one or more init containers, which are run before the app containers are started.
+Init containers are exactly like regular containers, except:<!-- raw HTML omitted --></p>
+</li>
+<li>
+<p>Init containers always run to completion.</p>
+</li>
+<li>
+<p>Each init container must complete successfully before the next one starts.</p>
+</li>
+<li>
+<p>If a Pod&rsquo;s init container fails, the kubelet repeatedly restarts that init container until it succeeds.</p>
+</li>
+<li>
+<p>Regular init containers (in other words: excluding sidecar containers) do not support the lifecycle, livenessProbe, readinessProbe, or startupProbe fields.</p>
+</li>
+<li>
+<p>Init containers must run to completion before the Pod can be ready</p>
+</li>
+<li>
+<p>If you specify multiple init containers for a Pod, kubelet runs each init container sequentially</p>
+</li>
+<li>
+<p>Each init container must succeed before the next can run.
+Here is an example for initContainer:</p>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> name: init-container-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> - name: main-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">   image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">   ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">   - containerPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> initContainers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> - name: init-wait-redis
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">   image: busybox:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">   command: [&#34;sh&#34;, &#34;-c&#34;, &#34;until nc -zv nginx 80; do echo &#39;Waiting for Redis to be ready&#39;; sleep 1; done&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Make a test by creating a pod and service</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl run nginx <span style="color:#f92672">--</span>image<span style="color:#f92672">=</span>nginx
+</span></span><span style="display:flex;"><span>kubectl expose pod<span style="color:#f92672">/</span>nginx <span style="color:#f92672">--</span>port <span style="color:#ae81ff">80</span></span></span></code></pre></div>
+<ul>
+<li>Now check the pod status initContainer should be successful</li>
+<li>Also check the logs for initContainer</li>
+</ul>
+<h4 id="sidecar-container">Sidecar container</h4>
+<ul>
+<li>A Sidecar container extends and enhances the functionality of a preexisting container without changing it.</li>
+<li>This pattern is one of the fundamental container patterns that
+allows single-purpose containers to cooperate closely together.</li>
+</ul>
+<h4 id="adapter-container">Adapter Container</h4>
+<ul>
+<li>The Adapter pattern takes a heterogeneous containerized system and makes it conform to a consistent, unified interface with a standardized and normalized format that can be consumed by the outside world.</li>
+<li>The Adapter pattern inherits all its characteristics
+from the Sidecar,</li>
+</ul>
+<h3 id="resources-definition-in-pod">Resources definition in pod</h3>
+<h4 id="burstable-qos">Burstable QOS</h4>
+<ul>
+<li>
+<p>Kubernetes assigns the Burstable class to a Pod when a container in the pod has more resource limit than the request value.</p>
+</li>
+<li>
+<p>A pod in this category will have the following characteristics:</p>
+<ul>
+<li>The Pod has not met the criteria for Guaranteed QoS class.<!-- raw HTML omitted --></li>
+<li>A container in the Pod has an unequal memory or CPU request or limit
+An example is given below</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>resources:
+</span></span><span style="display:flex;"><span>      limits:
+</span></span><span style="display:flex;"><span>        memory: <span style="color:#e6db74">&#34;300Mi&#34;</span>
+</span></span><span style="display:flex;"><span>        cpu: <span style="color:#e6db74">&#34;800m&#34;</span>
+</span></span><span style="display:flex;"><span>      requests:
+</span></span><span style="display:flex;"><span>        memory: <span style="color:#e6db74">&#34;100Mi&#34;</span>
+</span></span><span style="display:flex;"><span>        cpu: <span style="color:#e6db74">&#34;600m&#34;</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-resources
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: my-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      requests:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        memory: &#34;64Mi&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        cpu: &#34;250m&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      limits:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        memory: &#34;128Mi&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        cpu: &#34;500m&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+</li>
+<li>
+<p>Check the pods if this is running</p>
+</li>
+<li>
+<p>check the QOS of the pod</p>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl describe pod <span style="color:#f92672">|</span> grep <span style="color:#f92672">-</span>i qos</span></span></code></pre></div>
+<h4 id="guranteed-qos">Guranteed QOS</h4>
+<ul>
+<li>
+<p>Kubernetes considers Pods classified as Guaranteed as a top priority. It won’t evict them until they exceed their limits.</p>
+</li>
+<li>
+<p>A Pod with a Guaranteed class has the following characteristics:</p>
+<ul>
+<li>All containers in the Pod have a memory limit and request.</li>
+<li>All containers in the Pod have a memory limit equal to the memory request.</li>
+<li>All containers in the Pod have a CPU limit and a CPU request.</li>
+<li>All containers in the Pod have a CPU limit equal to the CPU request.</li>
+</ul>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-resources
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: my-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      requests:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        memory: &#34;64Mi&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        cpu: &#34;250m&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      limits:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        memory: &#34;64Mi&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        cpu: &#34;250m&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="best-efforts">Best Efforts</h4>
+<ul>
+<li>Kubernetes assigns the Burstable class to a Pod when a container in the pod has more resource limit than the request value.</li>
+<li>A pod in this category will have the following characteristics:
+<ul>
+<li>The Pod has not met the criteria for Guaranteed QoS class.</li>
+<li>A container in the Pod has an unequal memory or CPU request or limit</li>
+<li>Pod without resourcs section are considered best efforts</li>
+</ul>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-resources
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: my-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">   
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="imagepullsecret">imagepullSecret</h4>
+<ul>
+<li>Pod that uses a Secret to pull an image from a private container image registry or repository.</li>
+<li>There are many private registries in use.</li>
+<li>This task uses Docker Hub as an example registry.</li>
+</ul>
+<h5 id="steps-to-use-a-pull-secret-in-a-pod-yaml">Steps to Use a Pull Secret in a Pod YAML:</h5>
+<ul>
+<li><strong>Create Docker Config JSON File:</strong>
+<ul>
+<li>Create a Docker configuration file (<code>~/.docker/config.json</code>) with the credentials for your private registry.</li>
+<li>You can use the <code>docker login</code> command to generate this file.</li>
+</ul>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>   docker login</span></span></code></pre></div>
+<h3 id="create-a-kubernetes-secret">Create a Kubernetes Secret:</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create secret generic my-pull-secret --from-file<span style="color:#f92672">=</span>.dockerconfigjson<span style="color:#f92672">=</span>$HOME/.docker/config.json --type<span style="color:#f92672">=</span>kubernetes.io/dockerconfigjson</span></span></code></pre></div>
+<ul>
+<li>use the yaml to create pod with private registry</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-pull-secret
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: my-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: myregistry.example.com/my-image:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  imagePullSecrets:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: my-pull-secret
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Give permission to serviceAccount to pull image so that you will not have to mention in pod Spec</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl patch serviceaccount default <span style="color:#f92672">-</span>p <span style="color:#e6db74">&#39;{&#34;imagePullSecrets&#34;: [{&#34;name&#34;: &#34;mySecret&#34;}]}&#39;</span></span></span></code></pre></div>
+<p><a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/" rel="external" target="_blank">Learn about ServiceAccount</a></p>
+<h2 id="imagepullpolicy-examples">imagePullPolicy Examples</h2>
+<h3 id="1-ifnotpresent">1. IfNotPresent</h3>
+<ul>
+<li><strong>Description</strong>: Pull the image only if it does not already exist locally.</li>
+<li><strong>Usage</strong>: Use this policy when you want to minimize image pulls and rely on locally cached images.</li>
+<li><strong>Example</strong>:
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-container</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">my-image:latest</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">imagePullPolicy</span>: <span style="color:#ae81ff">IfNotPresent</span></span></span></code></pre></div>
+</li>
+</ul>
+<h3 id="1-ifnotpresent-1">1. IfNotPresent</h3>
+<ul>
+<li><strong>Description</strong>: Pull the image only if it does not already exist locally.</li>
+<li><strong>Usage</strong>: Use this policy when you want to minimize image pulls and rely on locally cached images.</li>
+<li><strong>Example</strong>:
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-container</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">my-image:latest</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">imagePullPolicy</span>: <span style="color:#ae81ff">IfNotPresent</span></span></span></code></pre></div>
+</li>
+</ul>
+<h3 id="2-always">2. Always</h3>
+<ul>
+<li><strong>Description</strong> : Always pull the latest version of the image, even if it already exists locally.</li>
+<li><strong>Usage</strong>: Use this policy when you want to ensure that the container runs the latest version of the image.</li>
+<li><strong>Example</strong>:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span><span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-container</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">image</span>: <span style="color:#ae81ff">my-image:latest</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">imagePullPolicy</span>: <span style="color:#ae81ff">Always</span></span></span></code></pre></div>
+<h3 id="3-never">3. Never</h3>
+<ul>
+<li>
+<p><strong>Description</strong>: Never pull the image, and only use the locally cached version if available.</p>
+</li>
+<li>
+<p><strong>Usage</strong> : Use this policy when you want to prevent Kubernetes from pulling the image, even if it does not exist locally.</p>
+</li>
+<li>
+<p><strong>Example</strong>:</p>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span><span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-container</span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">image</span>: <span style="color:#ae81ff">my-image:latest</span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">imagePullPolicy</span>: <span style="color:#ae81ff">Never</span></span></span></code></pre></div>
+<h3 id="4-ifpresent">4. IfPresent</h3>
+<ul>
+<li><strong>Description</strong>: Pull the image only if it already exists locally. If the image does not exist locally, do not pull it.</li>
+<li><strong>Usage</strong>: Use this policy when you want to pull the image only if it is already available locally, otherwise use a cached version.</li>
+<li><strong>Example</strong></li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-container</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">my-image:latest</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">imagePullPolicy</span>: <span style="color:#ae81ff">IfPresent</span></span></span></code></pre></div>
+<h3 id="5-default-ifnotpresent">5. Default (IfNotPresent)</h3>
+<ul>
+<li>Description: Kubernetes default behavior if imagePullPolicy is not explicitly set.</li>
+<li>Pull the image only if it does not already exist locally.</li>
+<li>Usage: This is the default behavior, and it is suitable for many use cases where you want to minimize image pulls.
+<strong>Example</strong> :</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span><span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-container</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">image</span>: <span style="color:#ae81ff">my-image:latest</span></span></span></code></pre></div>
+<h3 id="container-restartpolicy-in-pod-block">Container RestartPolicy in Pod block</h3>
+<h3 id="1-always">1. Always</h3>
+<ul>
+<li><strong>Description</strong>: Always restart the container regardless of the exit status or reason.</li>
+<li><strong>Usage</strong>: Use this policy for critical services that should always be running.</li>
+<li><strong>Example</strong>:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>  <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">restartPolicy</span>: <span style="color:#ae81ff">Always</span></span></span></code></pre></div>
+<h3 id="2-onfailure">2. OnFailure</h3>
+<ul>
+<li>Description: Restart the container only if it exits with a non-zero status.</li>
+<li>Usage: Use this policy for jobs or batch processes that should be retried on failure.</li>
+</ul>
+<p>Example:</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">restartPolicy</span>: <span style="color:#ae81ff">OnFailure</span></span></span></code></pre></div>
+<h3 id="3-never-1">3. Never</h3>
+<ul>
+<li>Description: Never restart the container, regardless of the exit status or reason.</li>
+<li>Usage: Use this policy for containers that are expected to run to completion and not be restarted.</li>
+</ul>
+<p>Example:</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">restartPolicy</span>: <span style="color:#ae81ff">Never</span></span></span></code></pre></div>
+<h3 id="4-default-always">4. Default (Always)</h3>
+<ul>
+<li>Description: Kubernetes default behavior if restartPolicy is not explicitly set. Always restart the container.</li>
+<li>Usage: This is the default behavior and is suitable for many long-running services.</li>
+</ul>
+<p>Example</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">restartPolicy</span>: <span style="color:#ae81ff">Always (default behavior)</span></span></span></code></pre></div>
+<h2 id="advance-scheduling-of--pod">Advance Scheduling of  pod</h2>
+<h4 id="using-nodename">Using nodeName</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-scheduled-node
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  nodeName: &lt;mentionhere nodename&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: my-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="steps-to-use-nodeselector">Steps to Use nodeSelector:</h4>
+<ul>
+<li><strong>Label the node</strong></li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl label nodes specific-node-name diskType<span style="color:#f92672">=</span>ssd</span></span></code></pre></div>
+<ul>
+<li>
+<p><strong>Use this label to schedule the pod</strong></p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Pod
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: pod-with-node-selector
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  containers:
+</span></span><span style="display:flex;"><span>  - name: my-container
+</span></span><span style="display:flex;"><span>    image: nginx:latest
+</span></span><span style="display:flex;"><span>  nodeSelector:
+</span></span><span style="display:flex;"><span>    diskType: ssd</span></span></code></pre></div>
+</li>
+<li>
+<p><strong>Check where this pod has been schduled</strong></p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get pods <span style="color:#f92672">-</span>o wide</span></span></code></pre></div>
+</li>
+</ul>
+<h4 id="taint-and-toleration">Taint and Toleration</h4>
+<ul>
+<li>A taint allows a node to refuse pod to be scheduled unless that pod has a matching toleration.</li>
+<li>You apply taints to a node through the node specification (NodeSpec) and apply tolerations to a pod through the pod specification (PodSpec). A taint on a node instructs the node to repel all pods that do not tolerate the taint.</li>
+<li>Taints and tolerations consist of a key, value, and effect. An operator allows you to leave one of these parameters empty.</li>
+</ul>
+<p>Taint and Toleration key points</p>
+<table>
+  <thead>
+      <tr>
+          <th>Parameter</th>
+          <th>Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>key</td>
+          <td>Any string, up to 253 characters. Must begin with a letter or number, and may contain letters, numbers, hyphens, dots, and underscores.</td>
+      </tr>
+      <tr>
+          <td>value</td>
+          <td>Any string, up to 63 characters. Must begin with a letter or number, and may contain letters, numbers, hyphens, dots, and underscores.</td>
+      </tr>
+      <tr>
+          <td>effect</td>
+          <td>One of: NoSchedule, PreferNoSchedule, NoExecute</td>
+      </tr>
+      <tr>
+          <td>operator</td>
+          <td>One of: Equal, Exists</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li><strong>How to apply taint on a node</strong></li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl taint nodes &lt;node-name&gt; &lt;key&gt;<span style="color:#f92672">=</span>&lt;value&gt;:&lt;effect&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl taint nodes specific-node-name disktype<span style="color:#f92672">=</span>ssd:NoSchedule</span></span></code></pre></div>
+<ul>
+<li><strong>Now use this in pod yaml</strong></li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: toleration-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: my-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  tolerations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - key: disktype
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    operator: Equal
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    value: ssd
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    effect: NoSchedule
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="example--notequal-operator">Example : NotEqual Operator</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: toleration-not-equal-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: my-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  tolerations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - key: disktype
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    operator: NotEqual
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    value: ssd
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    effect: NoSchedule
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="example-exists-operator-with-key">Example Exists Operator with Key</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: toleration-exists-key-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: my-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  tolerations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - key: disktype
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    operator: Exists
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    effect: NoSchedule
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Check the pods where are they schedules</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get pod <span style="color:#f92672">-</span>o wide</span></span></code></pre></div>
+<h3 id="node-affinity">Node Affinity</h3>
+<ul>
+<li>Label Nodes</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl label nodes kworker1 example-label<span style="color:#f92672">=</span>value1
+</span></span><span style="display:flex;"><span>kubectl label nodes kworker2 example-label<span style="color:#f92672">=</span>value2</span></span></code></pre></div>
+<ul>
+<li>Yaml for pod creation</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; pod-with-node-affinity.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-node-affinity
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: nginx-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  affinity:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    nodeAffinity:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      requiredDuringSchedulingIgnoredDuringExecution:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        nodeSelectorTerms:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - matchExpressions:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          - key: example-label
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            operator: In
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            values:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - value1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - value2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h3 id="example-2-with-operator-notin">Example 2 with operator notin</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; pod-with-node-affinity.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-node-affinity
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: nginx-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  affinity:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    nodeAffinity:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      requiredDuringSchedulingIgnoredDuringExecution:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        nodeSelectorTerms:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - matchExpressions:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          - key: example-label
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            operator: NotIn
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            values:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - value3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - value4
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="example-using-exists-operator">Example Using Exists Operator</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; pod-with-node-affinity.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-node-affinity
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: nginx-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  affinity:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    nodeAffinity:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      requiredDuringSchedulingIgnoredDuringExecution:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        nodeSelectorTerms:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - matchExpressions:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          - key: example-label
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            operator: Exists
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Check the pods status</li>
+</ul>
+<h3 id="example-with-preferred-affinity">Example with Preferred Affinity</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; pod-with-preferred-node-affinity.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-preferred-node-affinity
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: nginx-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  affinity:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    nodeAffinity:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      preferredDuringSchedulingIgnoredDuringExecution:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - weight: 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        preference:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          matchExpressions:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          - key: example-label
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            operator: Exists
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="pod-affinity-and-anti-affinity">Pod Affinity and Anti Affinity</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-pod-affinity
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: web
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: nginx-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: pod-with-pod-affinity-rule
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  affinity:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    podAffinity:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      requiredDuringSchedulingIgnoredDuringExecution:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - labelSelector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          matchExpressions:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          - key: app
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            operator: In
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            values:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - web
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        topologyKey: kubernetes.io/hostname
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: nginx-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h4 id="another-example-with-weight">Another Example with weight</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">kubectl apply -f - &lt;&lt;EOF</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod-with-preferred-pod-affinity</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">database</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">postgres-container</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">postgres</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod-with-preferred-pod-affinity-rule</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">affinity</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">podAffinity</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">preferredDuringSchedulingIgnoredDuringExecution</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">weight</span>: <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">podAffinityTerm</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">labelSelector</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">matchExpressions</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">key</span>: <span style="color:#ae81ff">app</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">operator</span>: <span style="color:#ae81ff">In</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">values</span>:
+</span></span><span style="display:flex;"><span>              - <span style="color:#ae81ff">database</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">topologyKey</span>: <span style="color:#ae81ff">kubernetes.io/hostname</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx-container</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">EOF</span></span></span></code></pre></div>
+<h4 id="pod-antiaffinity">Pod antiAffinity</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">kubectl apply -f - &lt;&lt;EOF</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod-with-anti-affinity</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">web</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx-container</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod-with-anti-affinity-rule</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">affinity</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">podAntiAffinity</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">requiredDuringSchedulingIgnoredDuringExecution</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">labelSelector</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">matchExpressions</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#f92672">key</span>: <span style="color:#ae81ff">app</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">operator</span>: <span style="color:#ae81ff">In</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">values</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">web</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">topologyKey</span>: <span style="color:#ae81ff">kubernetes.io/hostname</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx-container</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">EOF</span></span></span></code></pre></div>
+<h4 id="soft-antiaffinity">Soft AntiAffinity</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">kubectl apply -f - &lt;&lt;EOF</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod-with-preferred-anti-affinity</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">database</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">postgres-container</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">postgres</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod-with-preferred-anti-affinity-rule</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">affinity</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">podAntiAffinity</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">preferredDuringSchedulingIgnoredDuringExecution</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">weight</span>: <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">podAffinityTerm</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">labelSelector</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">matchExpressions</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">key</span>: <span style="color:#ae81ff">app</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">operator</span>: <span style="color:#ae81ff">In</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">values</span>:
+</span></span><span style="display:flex;"><span>              - <span style="color:#ae81ff">database</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">topologyKey</span>: <span style="color:#ae81ff">kubernetes.io/hostname</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx-container</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">EOF</span></span></span></code></pre></div>
+<h3 id="pod-priorityhttpskubernetesiodocsconceptsscheduling-evictionpod-priority-preemption"><a href="https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/" rel="external" target="_blank">Pod Priority</a></h3>
+<h4 id="pod-priority-classes">Pod priority classes</h4>
+<ul>
+<li>
+<p>You can assign pods a priority class, which is a non-namespaced object that defines a mapping from a name to the integer value of the priority. The higher the value, the higher the priority.</p>
+</li>
+<li>
+<p>A priority class object can take any 32-bit integer value smaller than or equal to 1000000000 (one billion). Reserve numbers larger than one billion for critical pods that should not be preempted or evicted. By default, OpenShift Container Platform has two reserved priority classes for critical system pods to have guaranteed scheduling.</p>
+</li>
+<li>
+<p>System-node-critical - This priority class has a value of 2000001000 and is used for all pods that should never be evicted from a node. Examples of pods that have this priority class are sdn-ovs, sdn, and so forth.</p>
+</li>
+<li>
+<p>System-cluster-critical - This priority class has a value of 2000000000 (two billion) and is used with pods that are important for the cluster. Pods with this priority class can be evicted from a node in certain circumstances. For example, pods configured with the system-node-critical priority class can take priority. However, this priority class does ensure guaranteed scheduling. Examples of pods that can have this priority class are fluentd, add-on components like descheduler, and so forth.</p>
+</li>
+<li>
+<p>Sample priority class object</p>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: scheduling.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: PriorityClass
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: high-priority 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">value: 1000000 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">globalDefault: false 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">description: &#34;This priority class should be used for XYZ service pods only.&#34; 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>Sample pod specification with priority class name</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    env: test
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    imagePullPolicy: IfNotPresent
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  priorityClassName: high-priority
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span> </span></span></code></pre></div>
+<h2 id="pod-disruptions-budget">Pod Disruptions Budget:</h2>
+<ul>
+<li><a href="https://kubernetes.io/docs/concepts/workloads/pods/disruptions/" rel="external" target="_blank">Learn more about Disruptions Budget </a></li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: policy/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: PodDisruptionBudget
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: example-pdb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  minAvailable: 2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: example-app
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h3 id="use-of-pdb-with-deployment">Use of pdb with Deployment</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: example-deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: example-app
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: example-app
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: nginx-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: policy/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: PodDisruptionBudget
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: example-pdb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  minAvailable: 2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: example-app
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h3 id="pod-preemption-and-pod-distruption-budget">Pod Preemption and Pod Distruption Budget</h3>
+<ul>
+<li>Pod preemption and other scheduler settings
+If you enable pod priority and preemption, consider your other scheduler settings:</li>
+</ul>
+<h4 id="pod-priority-and-pod-disruption-budget">Pod priority and pod disruption budget</h4>
+<ul>
+<li>A pod disruption budget specifies the minimum number or percentage of replicas that must be up at a time. If you specify pod disruption budgets, OpenShift Container Platform respects them when preempting pods at a best effort level. The scheduler attempts to preempt pods without violating the pod disruption budget. If no such pods are found, lower-priority pods might be preempted despite their pod disruption budget requirements.</li>
+</ul>
+<h4 id="pod-priority-and-pod-affinity">Pod priority and pod affinity</h4>
+<p>Pod affinity requires a new pod to be scheduled on the same node as other pods with the same label.</p>
+<h4 id="pointer-regarding-pod-scheduling">Pointer Regarding Pod Scheduling</h4>
+<ul>
+<li>
+<p>Preemption removes existing Pods from a cluster under resource pressure to make room for higher priority pending Pods</p>
+</li>
+<li>
+<p>The default priority for all pods is zero ( 0 )</p>
+</li>
+<li>
+<p>Supported Operators for Affinity</p>
+<ul>
+<li>
+<p>The operator represents the relationship between the label on the node and the set of values in the matchExpression parameters in the pod specification.</p>
+</li>
+<li>
+<p>This value can be below:</p>
+<ul>
+<li>In,</li>
+<li>NotIn,</li>
+<li>Exists</li>
+<li>DoesNotExist</li>
+<li>Lt</li>
+<li>Gt</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Specify a weight for the node, 1-100. The node that with highest weight is preferred.</p>
+</li>
+<li>
+<p>A taint on a node instructs the node to repel all pods that do not tolerate the taint.</p>
+</li>
+<li>
+<p>Taint Effects are given below:</p>
+</li>
+</ul>
+<h4 id="the-effect-is-one-of-the-following">The effect is one of the following:</h4>
+<h5 id="noschedule">NoSchedule</h5>
+<p>New pods that do not match the taint are not scheduled onto that node.
+Existing pods on the node remain.</p>
+<h5 id="prefernoschedule">PreferNoSchedule</h5>
+<p>New pods that do not match the taint might be scheduled onto that node, but the scheduler tries not to.</p>
+<p>Existing pods on the node remain.</p>
+<h4 id="noexecute">NoExecute</h4>
+<p>New pods that do not match the taint cannot be scheduled onto that node.</p>
+<p>Existing pods on the node that do not have a matching toleration are removed.</p>
+<h3 id="operator">operator</h3>
+<h4 id="equal">Equal</h4>
+<p>The key/value/effect parameters must match. This is the default.</p>
+<h4 id="exists">Exists</h4>
+<p>The key/effect parameters must match. You must leave a blank value parameter, which matches any.</p>
+<ul>
+<li><a href="https://github.com/kubernetes-sigs/descheduler" rel="external" target="_blank">Descheduler</a></li>
+</ul>
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+          <a id="R-logo" class="R-default" href="../../index.html">
+Kubernetes Documentation
+          </a>
+        </div>
+        <script>
+          window.index_js_url="../../searchindex.en.js?1734364046";
+        </script>
+        <search><form action="../../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../../js/auto-complete.js?1734364046" defer></script>
+        <script src="../../js/lunr/lunr.min.js?1734364046" defer></script>
+        <script src="../../js/lunr/lunr.stemmer.support.min.js?1734364046" defer></script>
+        <script src="../../js/lunr/lunr.multi.min.js?1734364046" defer></script>
+        <script src="../../js/lunr/lunr.en.min.js?1734364046" defer></script>
+        <script src="../../js/search.js?1734364046" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation homelinks">
+        <ul>
+          <li><a class="padding" href="../../index.html"><i class="fa-fw fas fa-home"></i> Home</a></li>
+        </ul>
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-shortcutmenu-home" class="R-sidebarmenu">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="parent " data-nav-id="/k8s/index.html"><a class="padding" href="../../k8s/index.html">Kubernetes documentation</a><ul id="R-subsections-7466713d447629f279c035593d0e5915" class="collapsible-menu">
+            <li class="" data-nav-id="/k8s/part01/index.html"><a class="padding" href="../../k8s/part01/index.html">Part 1</a></li>
+            <li class="active " data-nav-id="/k8s/part02/index.html"><a class="padding" href="../../k8s/part02/index.html">Part 2</a></li>
+            <li class="" data-nav-id="/k8s/part03/index.html"><a class="padding" href="../../k8s/part03/index.html">Part 3</a></li>
+            <li class="" data-nav-id="/k8s/part04/index.html"><a class="padding" href="../../k8s/part04/index.html">Part 4</a></li>
+            <li class="" data-nav-id="/k8s/part05/index.html"><a class="padding" href="../../k8s/part05/index.html">Part 5</a></li>
+            <li class="" data-nav-id="/k8s/k8s/index.html"><a class="padding" href="../../k8s/k8s/index.html">Kubernetes  Administration</a></li></ul></li>
+          </ul>
+        </div>
+    
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-language"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = this.querySelector( this.value ).dataset.url;">
+                      <option id="R-select-language-en" value="#R-select-language-en" data-url="../../k8s/part02/index.html" lang="en-us" selected></option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-paint-brush"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.relearn.changeVariant( this.value );">
+                      <option id="R-select-variant-auto" value="auto" selected>Auto</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.relearn.markVariant();</script>
+              </li>
+              <li class="footerVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-history"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter showFooter">
+        <p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../../js/clipboard.min.js?1734364046" defer></script>
+    <script src="../../js/perfect-scrollbar.min.js?1734364046" defer></script>
+    <script src="../../js/theme.js?1734364046" defer></script>
+  </body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.139.3">
+    <meta name="generator" content="Relearn 7.2.1+16d4de84becfa2d2e6bdb2394a2f4fa411bc0007">
+    <meta name="description" content="Kubernetes Installation on Centos 9 Common Steps for master and worker node sudo tee /etc/sysctl.d/99-k8s-cri.conf &gt;/dev/null &lt;&lt;EOF net.bridge.bridge-nf-call-iptables=1 net.ipv4.ip_forward=1 net.bridge.bridge-nf-call-ip6tables=1 EOFupdate the setting without restarting the OS sysctl --system modprobe overlay modprobe br_netfilter echo -e overlay\\nbr_netfilter &gt; /etc/modules-load.d/k8s.conf install from EPELInstall iptables legacy dnf --enablerepo=epel -y install iptables-legacy alternatives --config iptables There are 2 programs which provide &#39;iptables&#39;. Selection Command ----------------------------------------------- *&#43; 1 /usr/sbin/iptables-nft 2 /usr/sbin/iptables-legacy switch to [iptables-legacy] Enter to keep the current selection[&#43;], or type selection number: 2set Swap off setting swapoff -a vi /etc/fstab comment out the Swap line /dev/mapper/cs-swap none swap defaults 0 0Install Cri and other software dnf -y install centos-release-okd-4.14 sed -i -e &#34;s/enabled=1/enabled=0/g&#34; /etc/yum.repos.d/CentOS-OKD-4.14.repo dnf --enablerepo=centos-okd-4.14 -y install cri-o systemctl enable --now crio cat &lt;&lt;&#39;EOF&#39; &gt; /etc/yum.repos.d/kubernetes.repo [kubernetes] name=Kubernetes baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch enabled=0 gpgcheck=1 repo_gpgcheck=1 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg EOFInstall kubelet and cri-tools dnf --enablerepo=kubernetes -y install kubeadm kubelet cri-tools iproute-tc container-selinuxRestart kubelet systemctl enable kubelet On Master node: Bootstrap Kubernetes Cluster kubeadm init --apiserver-advertise-address=10.224.29.85 --pod-network-cidr=192.168.0.0/16 --cri-socket=unix:///var/run/crio/crio.sockRun the below command on master nodes to run kubectl command To start using your cluster, you need to run the following as a regular user: mkdir -p $HOME/.kube sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config sudo chown $(id -u):$(id -g) $HOME/.kube/config Alternatively, if you are the root user, you can run: export KUBECONFIG=/etc/kubernetes/admin.confExecute the below command on worker nodes">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Kubernetes-on-Centos :: Kubernetes Documentation">
+    <meta name="twitter:description" content="Kubernetes Installation on Centos 9 Common Steps for master and worker node sudo tee /etc/sysctl.d/99-k8s-cri.conf &gt;/dev/null &lt;&lt;EOF net.bridge.bridge-nf-call-iptables=1 net.ipv4.ip_forward=1 net.bridge.bridge-nf-call-ip6tables=1 EOFupdate the setting without restarting the OS sysctl --system modprobe overlay modprobe br_netfilter echo -e overlay\\nbr_netfilter &gt; /etc/modules-load.d/k8s.conf install from EPELInstall iptables legacy dnf --enablerepo=epel -y install iptables-legacy alternatives --config iptables There are 2 programs which provide &#39;iptables&#39;. Selection Command ----------------------------------------------- *&#43; 1 /usr/sbin/iptables-nft 2 /usr/sbin/iptables-legacy switch to [iptables-legacy] Enter to keep the current selection[&#43;], or type selection number: 2set Swap off setting swapoff -a vi /etc/fstab comment out the Swap line /dev/mapper/cs-swap none swap defaults 0 0Install Cri and other software dnf -y install centos-release-okd-4.14 sed -i -e &#34;s/enabled=1/enabled=0/g&#34; /etc/yum.repos.d/CentOS-OKD-4.14.repo dnf --enablerepo=centos-okd-4.14 -y install cri-o systemctl enable --now crio cat &lt;&lt;&#39;EOF&#39; &gt; /etc/yum.repos.d/kubernetes.repo [kubernetes] name=Kubernetes baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch enabled=0 gpgcheck=1 repo_gpgcheck=1 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg EOFInstall kubelet and cri-tools dnf --enablerepo=kubernetes -y install kubeadm kubelet cri-tools iproute-tc container-selinuxRestart kubelet systemctl enable kubelet On Master node: Bootstrap Kubernetes Cluster kubeadm init --apiserver-advertise-address=10.224.29.85 --pod-network-cidr=192.168.0.0/16 --cri-socket=unix:///var/run/crio/crio.sockRun the below command on master nodes to run kubectl command To start using your cluster, you need to run the following as a regular user: mkdir -p $HOME/.kube sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config sudo chown $(id -u):$(id -g) $HOME/.kube/config Alternatively, if you are the root user, you can run: export KUBECONFIG=/etc/kubernetes/admin.confExecute the below command on worker nodes">
+    <meta property="og:url" content="https://khushiramsingh680.github.io/k8s/kubernetes-on-centos/index.html">
+    <meta property="og:site_name" content="Kubernetes Documentation">
+    <meta property="og:title" content="Kubernetes-on-Centos :: Kubernetes Documentation">
+    <meta property="og:description" content="Kubernetes Installation on Centos 9 Common Steps for master and worker node sudo tee /etc/sysctl.d/99-k8s-cri.conf &gt;/dev/null &lt;&lt;EOF net.bridge.bridge-nf-call-iptables=1 net.ipv4.ip_forward=1 net.bridge.bridge-nf-call-ip6tables=1 EOFupdate the setting without restarting the OS sysctl --system modprobe overlay modprobe br_netfilter echo -e overlay\\nbr_netfilter &gt; /etc/modules-load.d/k8s.conf install from EPELInstall iptables legacy dnf --enablerepo=epel -y install iptables-legacy alternatives --config iptables There are 2 programs which provide &#39;iptables&#39;. Selection Command ----------------------------------------------- *&#43; 1 /usr/sbin/iptables-nft 2 /usr/sbin/iptables-legacy switch to [iptables-legacy] Enter to keep the current selection[&#43;], or type selection number: 2set Swap off setting swapoff -a vi /etc/fstab comment out the Swap line /dev/mapper/cs-swap none swap defaults 0 0Install Cri and other software dnf -y install centos-release-okd-4.14 sed -i -e &#34;s/enabled=1/enabled=0/g&#34; /etc/yum.repos.d/CentOS-OKD-4.14.repo dnf --enablerepo=centos-okd-4.14 -y install cri-o systemctl enable --now crio cat &lt;&lt;&#39;EOF&#39; &gt; /etc/yum.repos.d/kubernetes.repo [kubernetes] name=Kubernetes baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch enabled=0 gpgcheck=1 repo_gpgcheck=1 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg EOFInstall kubelet and cri-tools dnf --enablerepo=kubernetes -y install kubeadm kubelet cri-tools iproute-tc container-selinuxRestart kubelet systemctl enable kubelet On Master node: Bootstrap Kubernetes Cluster kubeadm init --apiserver-advertise-address=10.224.29.85 --pod-network-cidr=192.168.0.0/16 --cri-socket=unix:///var/run/crio/crio.sockRun the below command on master nodes to run kubectl command To start using your cluster, you need to run the following as a regular user: mkdir -p $HOME/.kube sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config sudo chown $(id -u):$(id -g) $HOME/.kube/config Alternatively, if you are the root user, you can run: export KUBECONFIG=/etc/kubernetes/admin.confExecute the below command on worker nodes">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="/">
+    <meta itemprop="name" content="Kubernetes-on-Centos :: Kubernetes Documentation">
+    <meta itemprop="description" content="Kubernetes Installation on Centos 9 Common Steps for master and worker node sudo tee /etc/sysctl.d/99-k8s-cri.conf &gt;/dev/null &lt;&lt;EOF net.bridge.bridge-nf-call-iptables=1 net.ipv4.ip_forward=1 net.bridge.bridge-nf-call-ip6tables=1 EOFupdate the setting without restarting the OS sysctl --system modprobe overlay modprobe br_netfilter echo -e overlay\\nbr_netfilter &gt; /etc/modules-load.d/k8s.conf install from EPELInstall iptables legacy dnf --enablerepo=epel -y install iptables-legacy alternatives --config iptables There are 2 programs which provide &#39;iptables&#39;. Selection Command ----------------------------------------------- *&#43; 1 /usr/sbin/iptables-nft 2 /usr/sbin/iptables-legacy switch to [iptables-legacy] Enter to keep the current selection[&#43;], or type selection number: 2set Swap off setting swapoff -a vi /etc/fstab comment out the Swap line /dev/mapper/cs-swap none swap defaults 0 0Install Cri and other software dnf -y install centos-release-okd-4.14 sed -i -e &#34;s/enabled=1/enabled=0/g&#34; /etc/yum.repos.d/CentOS-OKD-4.14.repo dnf --enablerepo=centos-okd-4.14 -y install cri-o systemctl enable --now crio cat &lt;&lt;&#39;EOF&#39; &gt; /etc/yum.repos.d/kubernetes.repo [kubernetes] name=Kubernetes baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch enabled=0 gpgcheck=1 repo_gpgcheck=1 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg EOFInstall kubelet and cri-tools dnf --enablerepo=kubernetes -y install kubeadm kubelet cri-tools iproute-tc container-selinuxRestart kubelet systemctl enable kubelet On Master node: Bootstrap Kubernetes Cluster kubeadm init --apiserver-advertise-address=10.224.29.85 --pod-network-cidr=192.168.0.0/16 --cri-socket=unix:///var/run/crio/crio.sockRun the below command on master nodes to run kubectl command To start using your cluster, you need to run the following as a regular user: mkdir -p $HOME/.kube sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config sudo chown $(id -u):$(id -g) $HOME/.kube/config Alternatively, if you are the root user, you can run: export KUBECONFIG=/etc/kubernetes/admin.confExecute the below command on worker nodes">
+    <meta itemprop="wordCount" content="236">
+    <title>Kubernetes-on-Centos :: Kubernetes Documentation</title>
+    <link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet"></noscript>
+    <link href="../css/auto-complete.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1734364594" rel="stylesheet"></noscript>
+    <link href="../css/perfect-scrollbar.min.css?1734364594" rel="stylesheet">
+    <link href="../css/theme.min.css?1734364594" rel="stylesheet">
+    <link href="../css/format-html.min.css?1734364594" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.relBasePath='..';
+      window.relearn.relBaseUri='..';
+      window.relearn.absBaseUri='https:\/\/khushiramsingh680.github.io\/k8s';
+      window.relearn.min = `.min`;
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant");
+        var select = document.querySelector("#R-select-variant");
+        if (select) {
+          select.value = variant;
+        }
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script>
+  </head>
+  <body class="mobile-support html" data-url="../kubernetes-on-centos/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#kubernetes-installation-on-centos-9">Kubernetes Installation on Centos 9</a></li>
+        <li><a href="#common-steps-for-master-and-worker-node">Common Steps for master and worker node</a></li>
+        <li><a href="#on-master-node">On Master node:</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">/</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Kubernetes-on-Centos</span><meta itemprop="position" content="2"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../kubernetes-rbac/index.html" title="Kubernetes RBAC (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../kuberneteshardway/index.html" title="Kubernets Installation From Scatch on rocky 9 (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable page" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+
+<h1 id="kubernetes-on-centos">Kubernetes-on-Centos</h1>
+
+<h3 id="kubernetes-installation-on-centos-9">Kubernetes Installation on Centos 9</h3>
+<h3 id="common-steps-for-master-and-worker-node">Common Steps for master and worker node</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>sudo tee <span style="color:#e6db74">/etc/s</span>ysctl<span style="color:#f92672">.</span>d<span style="color:#e6db74">/99-k8s-cri.conf &gt;/</span>dev<span style="color:#f92672">/</span>null <span style="color:#f92672">&lt;&lt;</span>EOF
+</span></span><span style="display:flex;"><span>net<span style="color:#f92672">.</span>bridge<span style="color:#f92672">.</span>bridge<span style="color:#f92672">-</span>nf<span style="color:#f92672">-</span>call<span style="color:#f92672">-</span>iptables<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>net<span style="color:#f92672">.</span>ipv4<span style="color:#f92672">.</span>ip_forward<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>net<span style="color:#f92672">.</span>bridge<span style="color:#f92672">.</span>bridge<span style="color:#f92672">-</span>nf<span style="color:#f92672">-</span>call<span style="color:#f92672">-</span>ip6tables<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>EOF</span></span></code></pre></div>
+<ul>
+<li>update the setting without restarting the OS</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span> sysctl <span style="color:#f92672">--</span>system
+</span></span><span style="display:flex;"><span> modprobe overlay
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> modprobe br_netfilter
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> echo <span style="color:#f92672">-</span>e overlay<span style="color:#f92672">\\</span>nbr_netfilter <span style="color:#f92672">&gt;</span> <span style="color:#e6db74">/etc/mo</span>dules<span style="color:#f92672">-</span>load<span style="color:#f92672">.</span>d<span style="color:#f92672">/</span>k8s<span style="color:#f92672">.</span>conf
+</span></span><span style="display:flex;"><span> install from EPEL</span></span></code></pre></div>
+<ul>
+<li>Install iptables legacy</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span> dnf <span style="color:#f92672">--</span>enablerepo<span style="color:#f92672">=</span>epel <span style="color:#f92672">-</span>y install iptables<span style="color:#f92672">-</span>legacy
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> alternatives <span style="color:#f92672">--</span>config iptables
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>There are <span style="color:#ae81ff">2</span> programs which provide <span style="color:#e6db74">&#39;iptables&#39;</span><span style="color:#f92672">.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  Selection    Command
+</span></span><span style="display:flex;"><span><span style="color:#f92672">-----------------------------------------------</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">*+</span> <span style="color:#ae81ff">1</span>           <span style="color:#e6db74">/usr/s</span>bin<span style="color:#f92672">/</span>iptables<span style="color:#f92672">-</span>nft
+</span></span><span style="display:flex;"><span>   <span style="color:#ae81ff">2</span>           <span style="color:#e6db74">/usr/s</span>bin<span style="color:#f92672">/</span>iptables<span style="color:#f92672">-</span>legacy
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> switch to [iptables<span style="color:#f92672">-</span>legacy]
+</span></span><span style="display:flex;"><span>Enter to keep the current selection[<span style="color:#f92672">+</span>], <span style="color:#f92672">or</span> type selection number: <span style="color:#ae81ff">2</span></span></span></code></pre></div>
+<ul>
+<li>set Swap off setting</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>swapoff <span style="color:#f92672">-</span>a
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>vi <span style="color:#e6db74">/etc/</span>fstab
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>comment out the Swap line
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">/dev/m</span>apper<span style="color:#f92672">/</span>cs<span style="color:#f92672">-</span>swap     none                    swap    defaults        <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">0</span></span></span></code></pre></div>
+<ul>
+<li>Install Cri and other software</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span> dnf <span style="color:#f92672">-</span>y install centos<span style="color:#f92672">-</span>release<span style="color:#f92672">-</span>okd<span style="color:#f92672">-</span><span style="color:#ae81ff">4.14</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> sed <span style="color:#f92672">-</span>i <span style="color:#f92672">-</span>e <span style="color:#e6db74">&#34;s/enabled=1/enabled=0/g&#34;</span> <span style="color:#e6db74">/etc/</span>yum<span style="color:#f92672">.</span>repos<span style="color:#f92672">.</span>d<span style="color:#f92672">/</span>CentOS<span style="color:#f92672">-</span>OKD<span style="color:#f92672">-</span><span style="color:#ae81ff">4.14</span><span style="color:#f92672">.</span>repo
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> dnf <span style="color:#f92672">--</span>enablerepo<span style="color:#f92672">=</span>centos<span style="color:#f92672">-</span>okd<span style="color:#f92672">-</span><span style="color:#ae81ff">4.14</span> <span style="color:#f92672">-</span>y install cri<span style="color:#f92672">-</span>o
+</span></span><span style="display:flex;"><span> systemctl enable <span style="color:#f92672">--</span>now crio
+</span></span><span style="display:flex;"><span> cat <span style="color:#f92672">&lt;&lt;</span><span style="color:#e6db74">&#39;EOF&#39;</span> <span style="color:#f92672">&gt;</span> <span style="color:#e6db74">/etc/</span>yum<span style="color:#f92672">.</span>repos<span style="color:#f92672">.</span>d<span style="color:#f92672">/</span>kubernetes<span style="color:#f92672">.</span>repo
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[kubernetes]
+</span></span><span style="display:flex;"><span>name<span style="color:#f92672">=</span>Kubernetes
+</span></span><span style="display:flex;"><span>baseurl<span style="color:#f92672">=</span>https:<span style="color:#e6db74">//</span>packages<span style="color:#f92672">.</span>cloud<span style="color:#f92672">.</span>google<span style="color:#f92672">.</span>com<span style="color:#e6db74">/yum/</span>repos<span style="color:#f92672">/</span>kubernetes<span style="color:#f92672">-</span>el7<span style="color:#f92672">-</span>$basearch
+</span></span><span style="display:flex;"><span>enabled<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>gpgcheck<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>repo_gpgcheck<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>gpgkey<span style="color:#f92672">=</span>https:<span style="color:#e6db74">//</span>packages<span style="color:#f92672">.</span>cloud<span style="color:#f92672">.</span>google<span style="color:#f92672">.</span>com<span style="color:#e6db74">/yum/</span>doc<span style="color:#e6db74">/yum-key.gpg https://packages.cloud.google.com/</span>yum<span style="color:#e6db74">/doc/</span>rpm<span style="color:#f92672">-</span><span style="color:#66d9ef">package</span><span style="color:#f92672">-</span>key<span style="color:#f92672">.</span>gpg
+</span></span><span style="display:flex;"><span>EOF</span></span></code></pre></div>
+<ul>
+<li>Install kubelet and cri-tools</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span> dnf <span style="color:#f92672">--</span>enablerepo<span style="color:#f92672">=</span>kubernetes <span style="color:#f92672">-</span>y install kubeadm kubelet cri<span style="color:#f92672">-</span>tools iproute<span style="color:#f92672">-</span>tc container<span style="color:#f92672">-</span>selinux</span></span></code></pre></div>
+<ul>
+<li>Restart kubelet</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>systemctl enable kubelet </span></span></code></pre></div>
+<h3 id="on-master-node">On Master node:</h3>
+<ul>
+<li>Bootstrap Kubernetes Cluster</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span> kubeadm init <span style="color:#f92672">--</span>apiserver<span style="color:#f92672">-</span>advertise<span style="color:#f92672">-</span>address<span style="color:#f92672">=</span><span style="color:#ae81ff">10.224.29.85</span>  <span style="color:#f92672">--</span>pod<span style="color:#f92672">-</span>network<span style="color:#f92672">-</span>cidr<span style="color:#f92672">=</span><span style="color:#ae81ff">192.168.0.0</span><span style="color:#e6db74">/16 --cri-socket=unix:///</span>var<span style="color:#e6db74">/run/c</span>rio<span style="color:#f92672">/</span>crio<span style="color:#f92672">.</span>sock</span></span></code></pre></div>
+<ul>
+<li>Run the below command on master nodes to run kubectl command</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>To start using your cluster, you need to run the following as a regular user:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  mkdir <span style="color:#f92672">-</span>p $HOME<span style="color:#f92672">/.</span>kube
+</span></span><span style="display:flex;"><span>  sudo cp <span style="color:#f92672">-</span>i <span style="color:#e6db74">/etc/</span>kubernetes<span style="color:#e6db74">/admin.conf $HOME/</span><span style="color:#f92672">.</span>kube<span style="color:#f92672">/</span>config
+</span></span><span style="display:flex;"><span>  sudo chown $<span style="color:#960050;background-color:#1e0010">(</span>id <span style="color:#f92672">-</span>u):$<span style="color:#960050;background-color:#1e0010">(</span>id <span style="color:#f92672">-</span>g) $HOME<span style="color:#e6db74">/.kube/co</span>nfig
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Alternatively, <span style="color:#66d9ef">if</span> you are the root user, you can run:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  export KUBECONFIG<span style="color:#f92672">=</span><span style="color:#e6db74">/etc/</span>kubernetes<span style="color:#f92672">/</span>admin<span style="color:#f92672">.</span>conf</span></span></code></pre></div>
+<ul>
+<li>
+<p>Execute the below command on worker nodes</p>
+<ul>
+<li>On worker  node</li>
+</ul>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubeadm join <span style="color:#ae81ff">10.224.29.85</span>:<span style="color:#ae81ff">6443</span> <span style="color:#f92672">--</span>token sfkbuw<span style="color:#f92672">.</span>h6oloizivsdsovbs <span style="color:#f92672">\</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">--</span>discovery<span style="color:#f92672">-</span>token<span style="color:#f92672">-</span>ca<span style="color:#f92672">-</span>cert<span style="color:#f92672">-</span>hash sha256:664454f0d923630af2ac8e65bf14ff1e63bd1040b6d8aaf5665d016d3a6dbdf8</span></span></code></pre></div>
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+          <a id="R-logo" class="R-default" href="../index.html">
+Kubernetes Documentation
+          </a>
+        </div>
+        <script>
+          window.index_js_url="../searchindex.en.js?1734364594";
+        </script>
+        <search><form action="../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../js/auto-complete.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.stemmer.support.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.multi.min.js?1734364594" defer></script>
+        <script src="../js/lunr/lunr.en.min.js?1734364594" defer></script>
+        <script src="../js/search.js?1734364594" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation homelinks">
+        <ul>
+          <li><a class="padding" href="../index.html"><i class="fa-fw fas fa-home"></i> Home</a></li>
+        </ul>
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-shortcutmenu-home" class="R-sidebarmenu">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes documentation</a></li>
+            <li class="" data-nav-id="/part01/index.html"><a class="padding" href="../part01/index.html">Part 1</a></li>
+            <li class="" data-nav-id="/part02/index.html"><a class="padding" href="../part02/index.html">Part 2</a></li>
+            <li class="" data-nav-id="/part03/index.html"><a class="padding" href="../part03/index.html">Part 3</a></li>
+            <li class="" data-nav-id="/part04/index.html"><a class="padding" href="../part04/index.html">Part 4</a></li>
+            <li class="" data-nav-id="/part05/index.html"><a class="padding" href="../part05/index.html">Part 5</a></li>
+            <li class="" data-nav-id="/containerbasics/index.html"><a class="padding" href="../containerbasics/index.html">Container Basics</a></li>
+            <li class="" data-nav-id="/helm-overview/index.html"><a class="padding" href="../helm-overview/index.html">Helm Overview</a></li>
+            <li class="" data-nav-id="/imp/index.html"><a class="padding" href="../imp/index.html">Imp Commands </a></li>
+            <li class="" data-nav-id="/external-etcd/index.html"><a class="padding" href="../external-etcd/index.html">kubeadm-external-etcd</a></li>
+            <li class="" data-nav-id="/kubernetes-rbac/index.html"><a class="padding" href="../kubernetes-rbac/index.html">Kubernetes RBAC</a></li>
+            <li class="active " data-nav-id="/kubernetes-on-centos/index.html"><a class="padding" href="../kubernetes-on-centos/index.html">Kubernetes-on-Centos</a></li>
+            <li class="" data-nav-id="/kuberneteshardway/index.html"><a class="padding" href="../kuberneteshardway/index.html">Kubernets Installation From Scatch on rocky 9</a></li>
+            <li class="" data-nav-id="/multimaster/index.html"><a class="padding" href="../multimaster/index.html">Multi Master kubernetes</a></li>
+            <li class="" data-nav-id="/minio/index.html"><a class="padding" href="../minio/index.html">The Object Store for AI Data Infrastructure</a></li>
+            <li class="" data-nav-id="/cks/index.html"><a class="padding" href="../cks/index.html">CKS</a></li>
+            <li class="" data-nav-id="/eks/index.html"><a class="padding" href="../eks/index.html">EKS</a></li>
+            <li class="" data-nav-id="/gke/index.html"><a class="padding" href="../gke/index.html">GKE</a></li>
+            <li class="" data-nav-id="/kuberntes-backup/index.html"><a class="padding" href="../kuberntes-backup/index.html">Kubernetes Data Protection</a></li>
+            <li class="" data-nav-id="/kubernetesloggin-monitoring/index.html"><a class="padding" href="../kubernetesloggin-monitoring/index.html">KUBERNETES LOGGING AND MONITORING</a></li>
+            <li class="" data-nav-id="/neuvector/index.html"><a class="padding" href="../neuvector/index.html">Kubernetes Security</a></li>
+          </ul>
+        </div>
+    
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-language"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = this.querySelector( this.value ).dataset.url;">
+                      <option id="R-select-language-en" value="#R-select-language-en" data-url="../kubernetes-on-centos/index.html" lang="en-us" selected></option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-paint-brush"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.relearn.changeVariant( this.value );">
+                      <option id="R-select-variant-auto" value="auto" selected>Auto</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.relearn.markVariant();</script>
+              </li>
+              <li class="footerVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-history"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter showFooter">
+        <p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../js/clipboard.min.js?1734364594" defer></script>
+    <script src="../js/perfect-scrollbar.min.js?1734364594" defer></script>
+    <script src="../js/theme.js?1734364594" defer></script>
+  </body>
+</html>

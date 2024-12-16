@@ -1,7 +1,7 @@
-baseURL = 'https://khushiramsingh680.github.io/Azure/'
+baseURL = 'https://khushiramsingh680.github.io/k8s/'
 languageCode = 'en-us'
-title = 'Azure Cloud Documentation'
-theme = 'hugo-theme-relearn'
+title = 'Kubernetes Documentation'
+theme = 'relearn'
 relativeURLs = true
 canonifyURLs = true
 

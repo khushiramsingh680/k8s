@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head><script src="/k8s/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=k8s/livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.139.3">
+    <meta name="generator" content="Relearn 7.2.1+16d4de84becfa2d2e6bdb2394a2f4fa411bc0007">
+    <meta name="description" content="Topics Kubernetes Overview Kubernetes Architecture Kubernetes Components Kubernetes Installation Kubernetes SSL Certificates Kubernetes Static Pods Kubernetes Configuration files Kubernetes Upgrade Etcd backup and restore Kubernetes Node related commands CIS Benchmark Kubernetes Overview Kubernetes or k8s is an open-source orchestration and cluster management for container-based applications maintained by the Cloud Native Computing Foundation. Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Part 1 :: Kubernetes Documentation">
+    <meta name="twitter:description" content="Topics Kubernetes Overview Kubernetes Architecture Kubernetes Components Kubernetes Installation Kubernetes SSL Certificates Kubernetes Static Pods Kubernetes Configuration files Kubernetes Upgrade Etcd backup and restore Kubernetes Node related commands CIS Benchmark Kubernetes Overview Kubernetes or k8s is an open-source orchestration and cluster management for container-based applications maintained by the Cloud Native Computing Foundation. Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery">
+    <meta property="og:url" content="http://localhost:1313/k8s/k8s/part01/index.html">
+    <meta property="og:site_name" content="Kubernetes Documentation">
+    <meta property="og:title" content="Part 1 :: Kubernetes Documentation">
+    <meta property="og:description" content="Topics Kubernetes Overview Kubernetes Architecture Kubernetes Components Kubernetes Installation Kubernetes SSL Certificates Kubernetes Static Pods Kubernetes Configuration files Kubernetes Upgrade Etcd backup and restore Kubernetes Node related commands CIS Benchmark Kubernetes Overview Kubernetes or k8s is an open-source orchestration and cluster management for container-based applications maintained by the Cloud Native Computing Foundation. Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="Kubernetes documentation">
+    <meta itemprop="name" content="Part 1 :: Kubernetes Documentation">
+    <meta itemprop="description" content="Topics Kubernetes Overview Kubernetes Architecture Kubernetes Components Kubernetes Installation Kubernetes SSL Certificates Kubernetes Static Pods Kubernetes Configuration files Kubernetes Upgrade Etcd backup and restore Kubernetes Node related commands CIS Benchmark Kubernetes Overview Kubernetes or k8s is an open-source orchestration and cluster management for container-based applications maintained by the Cloud Native Computing Foundation. Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery">
+    <meta itemprop="wordCount" content="2480">
+    <title>Part 1 :: Kubernetes Documentation</title>
+    <link href="../../css/fontawesome-all.min.css?1734364046" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/fontawesome-all.min.css?1734364046" rel="stylesheet"></noscript>
+    <link href="../../css/auto-complete.css?1734364046" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/auto-complete.css?1734364046" rel="stylesheet"></noscript>
+    <link href="../../css/perfect-scrollbar.min.css?1734364046" rel="stylesheet">
+    <link href="../../css/theme.css?1734364046" rel="stylesheet">
+    <link href="../../css/format-html.css?1734364046" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.relBasePath='..\/..';
+      window.relearn.relBaseUri='..\/..';
+      window.relearn.absBaseUri='http:\/\/localhost:1313\/k8s';
+      window.relearn.min = ``;
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant");
+        var select = document.querySelector("#R-select-variant");
+        if (select) {
+          select.value = variant;
+        }
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script>
+  </head>
+  <body class="mobile-support html" data-url="../../k8s/part01/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#topics">Topics</a></li>
+    <li><a href="#kubernetes-overview">Kubernetes Overview</a></li>
+    <li><a href="#kubernetes-architecture--components">Kubernetes Architecture &amp; Components</a>
+      <ul>
+        <li><a href="#kubernetes-has-two-type-of-nodes">Kubernetes has two type of nodes</a></li>
+        <li><a href="#control-plane">Control Plane</a></li>
+        <li><a href="#worker-node">Worker Node</a></li>
+        <li><a href="#control-plane-components">Control Plane Components:</a></li>
+        <li><a href="#cloud-controller-manager-ccm">Cloud Controller Manager (CCM)</a></li>
+        <li><a href="#kubernetes-worker-node-components">Kubernetes Worker Node Components</a></li>
+        <li><a href="#kubernetes-cluster-addon-components">Kubernetes Cluster Addon Components</a></li>
+      </ul>
+    </li>
+    <li><a href="#virual-machine-setup-for-kubernetes-installation">Virual Machine setup for Kubernetes Installation.</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#create-two-vms-using-vagrant-on-virtualbox">Create two VMS using vagrant on virtualbox</a></li>
+      </ul>
+    </li>
+    <li><a href="#kubernetes-cluster-setup-documentation">Kubernetes Cluster Setup Documentation</a>
+      <ul>
+        <li><a href="#documentation-link">Documentation Link:</a></li>
+        <li><a href="#installation-of-kubeadm-kubelet-etc-will-be-done-on-master-and-worker-nodes">Installation of kubeadm ,kubelet etc will be done on master and worker nodes.</a></li>
+        <li><a href="#installing-a-container-runtime">Installing a container runtime</a></li>
+        <li><a href="#kubernetes-cluster-configurations">Kubernetes Cluster Configurations</a></li>
+        <li><a href="#kubelet-configurations">Kubelet Configurations</a></li>
+        <li><a href="#node-related-commands">Node Related commands</a></li>
+        <li><a href="#upgrade-kubeadm-cluster">Upgrade Kubeadm Cluster</a></li>
+        <li><a href="#kubens--kubectx">Kubens &amp; Kubectx</a></li>
+        <li><a href="#install-kubernetes-cluster-automatically">Install kubernetes Cluster Automatically</a></li>
+        <li><a href="#common-kubeadm-commands">Common Kubeadm Commands</a></li>
+        <li><a href="#what-is-a-kubeconfig-file">What is a Kubeconfig file?</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../index.html"><span itemprop="name">/</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../k8s/index.html"><span itemprop="name">Kubernetes documentation</span></a><meta itemprop="position" content="2">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Part 1</span><meta itemprop="position" content="3"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../k8s/index.html" title="Kubernetes documentation (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../k8s/part02/index.html" title="Part 2 (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable k8s" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+
+<h1 id="part-1">Part 1</h1>
+
+<h2 id="topics">Topics</h2>
+<ul>
+<li><a href="../../k8s/part01/index.html#kubernetes-overview">Kubernetes Overview</a></li>
+<li><a href="../../k8s/part01/index.html#kubernetes-architecture--components">Kubernetes Architecture</a></li>
+<li><a href="../../k8s/part01/index.html#kubernetes-worker-node-components">Kubernetes Components</a></li>
+<li><a href="../../k8s/part01/index.html#step-upgrade-kubeadm-cluster">Kubernetes Installation</a></li>
+<li><a href="../../k8s/part01/index.html#kubernetes-cluster-configurations">Kubernetes SSL Certificates</a></li>
+<li><a href="../../k8s/part01/index.html#kubernetes-cluster-configurations">Kubernetes Static Pods</a></li>
+<li><a href="../../k8s/part01/index.html#kubernetes-cluster-configurations">Kubernetes Configuration files</a></li>
+<li><a href="../../k8s/part01/index.html#step-upgrade-kubeadm-cluster">Kubernetes Upgrade</a></li>
+<li><a href="Day05.md#etcd-backup-and-restore-on-kubernetes-cluster">Etcd backup and restore</a></li>
+<li><a href="../../k8s/part01/index.html#node-related-commands">Kubernetes Node related commands</a></li>
+<li><a href="https://learn.cisecurity.org/benchmarks" rel="external" target="_blank">CIS Benchmark</a></li>
+</ul>
+<h2 id="kubernetes-overview">Kubernetes Overview</h2>
+<p>Kubernetes or k8s is an open-source orchestration and cluster management for container-based applications maintained by the Cloud Native Computing Foundation.<!-- raw HTML omitted -->
+Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.<!-- raw HTML omitted -->
+It groups containers that make up an application into logical units for easy management and discovery</p>
+<h2 id="kubernetes-architecture--components">Kubernetes Architecture &amp; Components</h2>
+<ul>
+<li>Managed Kubernetes Cluster (We do not have on control Plane) e.g
+<ul>
+<li>AKS on Azure Cloud</li>
+<li>EKS on AWS cloud</li>
+<li>GKE on Google Cloud</li>
+</ul>
+</li>
+<li>Self Managed kubernetes Cluster (Installed on VMs)</li>
+</ul>
+<h3 id="kubernetes-has-two-type-of-nodes">Kubernetes has two type of nodes</h3>
+<ul>
+<li>Master Nodes (Control Plane)</li>
+<li>Worker Nodes</li>
+</ul>
+<h3 id="control-plane">Control Plane</h3>
+<p>The control plane is responsible for container orchestration and maintaining the desired state of the cluster. It has the following components.</p>
+<ul>
+<li>kube-apiserver</li>
+<li>etcd</li>
+<li>kube-scheduler</li>
+<li>kube-controller-manager</li>
+<li>cloud-controller-manager</li>
+</ul>
+<h3 id="worker-node">Worker Node</h3>
+<p>The Worker nodes are responsible for running containerized applications. The worker Node has the following components.</p>
+<ul>
+<li>kubelet</li>
+<li>kube-proxy</li>
+<li>Container runtime</li>
+</ul>
+<h3 id="control-plane-components">Control Plane Components:</h3>
+<h4 id="kube-apiserver">kube-apiserver</h4>
+<ul>
+<li>The kube-api server is the central hub of the Kubernetes cluster that exposes the Kubernetes API.<!-- raw HTML omitted --></li>
+<li>End users, and other cluster components, talk to the cluster via the API server.<!-- raw HTML omitted --></li>
+<li>So when you use kubectl to manage the cluster, at the backend you are actually communicating with the API server through HTTP REST APIs.<!-- raw HTML omitted --></li>
+<li>The communication between the API server and other components in the cluster happens over TLS to prevent unauthorized access to the cluster.<!-- raw HTML omitted --></li>
+<li>It is the only component that communicates with etcd.<!-- raw HTML omitted --></li>
+</ul>
+<h4 id="etcd">etcd</h4>
+<ul>
+<li>etcd is an open-source strongly consistent, distributed key-value store.</li>
+<li>etcd is designed to run on multiple nodes as a cluster without sacrificing consistency.</li>
+<li>etcd stores all configurations, states, and metadata of Kubernetes objects (pods, secrets, daemonsets, deployments, configmaps, statefulsets, etc).</li>
+<li>etcd it is the only Statefulset component in the control plane.</li>
+<li>Only kube-apiserver can talk to etcd.</li>
+</ul>
+<h4 id="kube-scheduler">kube-scheduler:</h4>
+<ul>
+<li>The kube-scheduler is responsible for scheduling Kubernetes pods on worker nodes.</li>
+<li>It is a controller that listens to pod creation events in the API server.</li>
+<li>The scheduler has two phases. Scheduling cycle and the Binding cycle. Together it is called the scheduling context. The scheduling cycle selects a worker node and the binding cycle applies that change to the cluster.</li>
+</ul>
+<h4 id="kube-controller-manager">Kube Controller Manager</h4>
+<ul>
+<li>Controllers are programs that run infinite control loops. Meaning it runs continuously and watches the actual and desired state of objects.</li>
+<li>Kube controller manager is a component that manages all the Kubernetes controllers. Kubernetes resources/objects like pods, namespaces, jobs, replicaset are managed by respective controllers.</li>
+<li>the Kube scheduler is also a controller managed by the Kube controller manager.</li>
+</ul>
+<h5 id="built-in-kubernetes-controllers">built-in Kubernetes controllers.</h5>
+<ul>
+<li>Deployment controller</li>
+<li>Replicaset controller</li>
+<li>DaemonSet controller</li>
+<li>Job Controller (Kubernetes Jobs)</li>
+<li>CronJob Controller</li>
+<li>endpoints controller</li>
+<li>namespace controller</li>
+<li>service accounts controller.</li>
+<li>Node controller</li>
+</ul>
+<h3 id="cloud-controller-manager-ccm">Cloud Controller Manager (CCM)</h3>
+<ul>
+<li>
+<p>When kubernetes is deployed in cloud environments, the cloud controller manager acts as a bridge between Cloud Platform APIs and the Kubernetes cluster.</p>
+</li>
+<li>
+<p>Cloud controller integration allows Kubernetes cluster to provision cloud resources like instances (for nodes), Load Balancers (for services), and Storage Volumes (for persistent volumes).<!-- raw HTML omitted --></p>
+<p><!-- raw HTML omitted -->3 main controllers that are part of the cloud controller manager.<!-- raw HTML omitted --></p>
+</li>
+<li>
+<p><strong>Node controller:</strong> This controller updates node-related information by talking to the cloud provider API. For example, node labeling &amp; annotation, getting hostname, CPU &amp; memory availability, nodes health, etc.</p>
+</li>
+<li>
+<p><strong>Route controller:</strong> It is responsible for configuring networking routes on a cloud platform. So that pods in different nodes can talk to each other.</p>
+</li>
+<li>
+<p><strong>Service controller</strong>: It takes care of deploying load balancers for kubernetes services, assigning IP addresses, etc.
+<a href="#R-image-baadc5fb6daf9b34174b8f922d16908d" class="lightbox-link"><img alt="Kubernetes cluster architecture" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../../images/kubernetes-cluster-architecture.svg" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-baadc5fb6daf9b34174b8f922d16908d"><img alt="Kubernetes cluster architecture" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../../images/kubernetes-cluster-architecture.svg"></a></p>
+</li>
+</ul>
+<h3 id="kubernetes-worker-node-components">Kubernetes Worker Node Components</h3>
+<h4 id="kubelet">Kubelet</h4>
+<ul>
+<li>Kubelet is an agent component that runs on every node in the cluster.</li>
+<li>It does not run as a container instead runs as a daemon, managed by systemd.</li>
+<li>It is responsible for registering worker nodes with the API server.</li>
+<li>It then brings the podSpec to the desired state by creating containers.</li>
+<li>Creating, modifying, and deleting containers for the pod.</li>
+<li>Responsible for handling liveliness, readiness, and startup probes.
+Responsible for Mounting volumes by reading pod configuration and creating respective directories on the host for the volume mount.</li>
+<li>Kubelet is also a controller that watches for pod changes and utilizes the node’s container runtime to pull images, run containers, etc.</li>
+<li>Static pods are controlled by kubelet, not the API servers.</li>
+<li>Static pods from podSpecs located at /etc/kubernetes/manifests</li>
+</ul>
+<p><a href="#R-image-fde6b185e964e217acc7e4e65fd39f90" class="lightbox-link"><img alt="Kubelet" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../../images/kubelet-architecture.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-fde6b185e964e217acc7e4e65fd39f90"><img alt="Kubelet" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../../images/kubelet-architecture.png"></a></p>
+<h4 id="kube-proxy">Kube proxy</h4>
+<ul>
+<li>Kube-Proxy is a network proxy that runs on each node in a Kubernetes cluster.</li>
+<li>It is responsible for maintaining network connectivity between services and pods.</li>
+<li>Kube-Proxy does this by translating service definitions into actionable networking rules.</li>
+<li>Kube-proxy uses iptables as a default mode.</li>
+</ul>
+<h4 id="container-runtime">Container Runtime</h4>
+<ul>
+<li>
+<p>Container runtime runs on all the nodes in the Kubernetes cluster. It is responsible for pulling images from container registries, running containers, allocating and isolating resources for containers, and managing the entire lifecycle of a container on a host.</p>
+</li>
+<li>
+<p>Kubernetes supports multiple container runtimes (CRI-O, Docker Engine, containerd, etc) that are compliant with Container Runtime Interface (CRI). This means, all these container runtimes implement the CRI interface and expose gRPC CRI APIs (runtime and image service endpoints).
+<a href="#R-image-7c6c49f116b823db5148618bce3f0c0b" class="lightbox-link"><img alt="Container runtime" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../../images/containeruntime.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-7c6c49f116b823db5148618bce3f0c0b"><img alt="Container runtime" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../../images/containeruntime.png"></a></p>
+</li>
+<li>
+<p>When there is a new request for a pod from the API server, the kubelet talks to CRI-O daemon to launch the required containers via Kubernetes Container Runtime Interface.</p>
+</li>
+<li>
+<p>CRI-O checks and pulls the required container image from the configured container registry using containers/image library.</p>
+</li>
+<li>
+<p>CRI-O then generates OCI runtime specification (JSON) for a container.</p>
+</li>
+<li>
+<p>CRI-O then launches an OCI-compatible runtime (runc) to start the container process as per the runtime specification.</p>
+</li>
+</ul>
+<h3 id="kubernetes-cluster-addon-components">Kubernetes Cluster Addon Components</h3>
+<ul>
+<li>CNI Plugin (Container Network Interface)</li>
+<li>CoreDNS (For DNS server): CoreDNS acts as a DNS server within the Kubernetes cluster. By enabling this addon, you can enable DNS-based service discovery.</li>
+<li>Metrics Server (For Resource Metrics): This addon helps you collect performance data and resource usage of Nodes and pods in the cluster.</li>
+<li>Web UI (Kubernetes Dashboard): This addon enables the Kubernetes dashboard to manage the object via web UI.</li>
+</ul>
+<h2 id="virual-machine-setup-for-kubernetes-installation">Virual Machine setup for Kubernetes Installation.</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<ul>
+<li>Virtualbox installed on Windows vm.</li>
+<li>Internet connectivity has to be there.</li>
+<li>Vscode should be installed</li>
+<li>Gitbash should also be available on Windows machine</li>
+</ul>
+<h3 id="create-two-vms-using-vagrant-on-virtualbox">Create two VMS using vagrant on virtualbox</h3>
+<ul>
+<li>Create a folder in Windows OS</li>
+<li>Open folder in vscode</li>
+<li>Open Terminal in vscode and run the below commands</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span> <span style="color:#ae81ff">git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git</span>
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">cd kubernetes-2024/two-vms</span>
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">vagrant up</span></span></span></code></pre></div>
+<ul>
+<li>Check your virtualbox and see if you have two vms (kmaster &amp; kworker1) with below ips</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kmaster: <span style="color:#ae81ff">172.16.16.100</span>
+</span></span><span style="display:flex;"><span>kworker1: <span style="color:#ae81ff">172.16.16.101</span></span></span></code></pre></div>
+<ul>
+<li>Try to login to each vms using the command below usinf vscode terminal</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>ssh vagrant@172<span style="color:#ae81ff">.16.16.100</span>
+</span></span><span style="display:flex;"><span>ssh vagrant@172<span style="color:#ae81ff">.16.16.101</span></span></span></code></pre></div>
+<h2 id="kubernetes-cluster-setup-documentation">Kubernetes Cluster Setup Documentation</h2>
+<h3 id="documentation-link">Documentation Link:</h3>
+<p><a href="https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/" rel="external" target="_blank">https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/</a></p>
+<h3 id="installation-of-kubeadm-kubelet-etc-will-be-done-on-master-and-worker-nodes">Installation of kubeadm ,kubelet etc will be done on master and worker nodes.</h3>
+<h4 id="setup-containerd">Setup containerd</h4>
+<h4 id="prerequisites-1">Prerequisites</h4>
+<ul>
+<li>
+<p>A compatible Linux host.</p>
+</li>
+<li>
+<p>2 GB or more of RAM per machine (any less will leave little room for your apps).</p>
+</li>
+<li>
+<p>2 CPUs or more.</p>
+</li>
+<li>
+<p>Full network connectivity between all machines in the cluster (public or private network is fine).</p>
+</li>
+<li>
+<p>Unique hostname, MAC address, and product_uuid for every node. See here for more details.</p>
+</li>
+<li>
+<p>Certain ports are open on your machines. See here for more details.</p>
+</li>
+<li>
+<p>Swap configuration. The default behavior of a kubelet was to fail to start if swap memory was detected on a node.</p>
+</li>
+<li>
+<p><input disabled="" type="checkbox"> Verify the MAC address and product_uuid are unique for every node</p>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>ip link 
+</span></span><span style="display:flex;"><span>ip addr show 
+</span></span><span style="display:flex;"><span>ifconfig <span style="color:#f92672">-</span>a
+</span></span><span style="display:flex;"><span>sudo cat <span style="color:#e6db74">/sys/c</span>lass<span style="color:#e6db74">/dmi/i</span>d<span style="color:#f92672">/</span>product_uuid</span></span></code></pre></div>
+<ul>
+<li>Check <a href="https://kubernetes.io/docs/reference/networking/ports-and-protocols/" rel="external" target="_blank">Required Ports</a></li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>nc <span style="color:#ae81ff">127.0.0.1</span> <span style="color:#ae81ff">6443</span></span></span></code></pre></div>
+<ul>
+<li>Disable swap</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>sudo swapoff <span style="color:#f92672">-</span>a
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo sed <span style="color:#f92672">-</span>i <span style="color:#e6db74">&#39;/ swap / s/^\(.*\)$/#\1/g&#39;</span> <span style="color:#e6db74">/etc/</span>fstab</span></span></code></pre></div>
+<h3 id="installing-a-container-runtime">Installing a container runtime</h3>
+<ul>
+<li>
+<p>To run containers in Pods, Kubernetes uses a container runtime.</p>
+</li>
+<li>
+<p>By default, Kubernetes uses the Container Runtime Interface (CRI) to interface with your chosen container runtime.</p>
+</li>
+<li>
+<p>If you don&rsquo;t specify a runtime, kubeadm automatically tries to detect an installed container runtime by scanning through a list of known <strong>endpoints</strong>.</p>
+</li>
+<li>
+<p>If multiple or no <strong>container runtimes</strong> are detected kubeadm will throw an error and will request that you specify which one you want to use.</p>
+</li>
+<li>
+<p>The tables below include the known endpoints for supported operating systems:</p>
+</li>
+<li>
+<p>Runtime	Path to Unix domain socket</p>
+<table>
+  <thead>
+      <tr>
+          <th>Container Runtime</th>
+          <th>Socket</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>containerd</td>
+          <td>unix:///var/run/containerd/containerd.sock</td>
+      </tr>
+      <tr>
+          <td>CRI-O</td>
+          <td>unix:///var/run/crio/crio.sock</td>
+      </tr>
+      <tr>
+          <td>Docker Engine (cri-dockerd)</td>
+          <td>unix:///var/run/cri-dockerd.sock</td>
+      </tr>
+  </tbody>
+</table>
+</li>
+</ul>
+<h4 id="install-containerd">Install containerd</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>apt update -y
+</span></span><span style="display:flex;"><span>apt-get install -y containerd
+</span></span><span style="display:flex;"><span>mkdir -p /etc/containerd
+</span></span><span style="display:flex;"><span>containerd config default &gt; /etc/containerd/config.toml</span></span></code></pre></div>
+<h4 id="update-systemdcgroup-settings">Update SystemdCgroup Settings</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#39;s/SystemdCgroup \= false/SystemdCgroup \= true/g&#39;</span> /etc/containerd/config.toml</span></span></code></pre></div>
+<h4 id="restart-containerd">Restart containerd</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>systemctl restart containerd</span></span></code></pre></div>
+<h4 id="kernel-parameter-configuration">Kernel Parameter Configuration</h4>
+<ul>
+<li>Forwarding IPv4 and letting iptables see bridged traffic</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>cat <span style="color:#f92672">&lt;&lt;</span>EOF <span style="color:#f92672">|</span> sudo tee <span style="color:#e6db74">/etc/mo</span>dules<span style="color:#f92672">-</span>load<span style="color:#f92672">.</span>d<span style="color:#f92672">/</span>k8s<span style="color:#f92672">.</span>conf
+</span></span><span style="display:flex;"><span>overlay
+</span></span><span style="display:flex;"><span>br_netfilter
+</span></span><span style="display:flex;"><span>EOF
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo modprobe overlay
+</span></span><span style="display:flex;"><span>sudo modprobe br_netfilter</span></span></code></pre></div>
+<ul>
+<li>sysctl params required by setup, params persist across reboots</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>cat <span style="color:#f92672">&lt;&lt;</span>EOF <span style="color:#f92672">|</span> sudo tee <span style="color:#e6db74">/etc/s</span>ysctl<span style="color:#f92672">.</span>d<span style="color:#f92672">/</span>k8s<span style="color:#f92672">.</span>conf
+</span></span><span style="display:flex;"><span>net<span style="color:#f92672">.</span>bridge<span style="color:#f92672">.</span>bridge<span style="color:#f92672">-</span>nf<span style="color:#f92672">-</span>call<span style="color:#f92672">-</span>iptables  <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>net<span style="color:#f92672">.</span>bridge<span style="color:#f92672">.</span>bridge<span style="color:#f92672">-</span>nf<span style="color:#f92672">-</span>call<span style="color:#f92672">-</span>ip6tables <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>net<span style="color:#f92672">.</span>ipv4<span style="color:#f92672">.</span>ip_forward                 <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>EOF</span></span></code></pre></div>
+<ul>
+<li>Apply sysctl params without reboot</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>sudo sysctl <span style="color:#f92672">--</span>system</span></span></code></pre></div>
+<h4 id="installing-kubeadm-kubelet-and-kubectl">Installing kubeadm, kubelet and kubectl</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sudo apt-get update
+</span></span><span style="display:flex;"><span>sudo apt-get install -y apt-transport-https ca-certificates curl
+</span></span><span style="display:flex;"><span>sudo curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main&#34;</span> | sudo tee /etc/apt/sources.list.d/kubernetes.list
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo apt-get update
+</span></span><span style="display:flex;"><span>apt-cache madison kubeadm
+</span></span><span style="display:flex;"><span>sudo apt-get install -y kubelet<span style="color:#f92672">=</span>1.24.0-00 kubeadm<span style="color:#f92672">=</span>1.24.0-00 kubectl<span style="color:#f92672">=</span>1.24.0-00 cri-tools<span style="color:#f92672">=</span>1.24.2-00
+</span></span><span style="display:flex;"><span>sudo apt-mark hold kubelet kubeadm kubectl</span></span></code></pre></div>
+<h4 id="initialize-cluster-with-kubeadm-only-master-node">Initialize Cluster with kubeadm (Only master node)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubeadm init --pod-network-cidr<span style="color:#f92672">=</span>10.244.0.0/16 --kubernetes-version<span style="color:#f92672">=</span>1.24.0 --apiserver-advertise-address<span style="color:#f92672">=</span>172.16.16.100</span></span></code></pre></div>
+<h4 id="execute-the-below-command-to-run-kubectl-commands-as-you-will-require-kubeconfig-file-to-connect-to-kubernetes-cluster">Execute the below command to run kubectl commands as you will require kubeconfig file to connect to kubernetes cluster</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mkdir -p $HOME/.kube
+</span></span><span style="display:flex;"><span>sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+</span></span><span style="display:flex;"><span>sudo chown <span style="color:#66d9ef">$(</span>id -u<span style="color:#66d9ef">)</span>:<span style="color:#66d9ef">$(</span>id -g<span style="color:#66d9ef">)</span> $HOME/.kube/config</span></span></code></pre></div>
+<p><a href="../../k8s/part01/index.html#what-is-a-kubeconfig-file">Click Here to know more about kubeconfig</a></p>
+<h4 id="check-nodes-status">Check nodes status</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get nodes</span></span></code></pre></div>
+<h4 id="install-network-addon-flannel-master-node">Install Network Addon (flannel) (master node)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml</span></span></code></pre></div>
+<h4 id="connect-worker-node-only-worker-node">Connect Worker Node (Only worker node)</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubeadm join 172.16.16.100:6443 --token qmw5dj.ljdh8r74ce3y85ad <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        --discovery-token-ca-cert-hash sha256:83374ec05088fa7efe9c31cce63326ae7037210ab049048ef08f8c961a048ddf</span></span></code></pre></div>
+<h4 id="verification">Verification</h4>
+<ul>
+<li>check node status</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl get nodes</span></span></code></pre></div>
+<ul>
+<li>run a pod</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl run nginx <span style="color:#f92672">--</span>image<span style="color:#f92672">=</span>nginx</span></span></code></pre></div>
+<ul>
+<li>check running pod</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get pods <span style="color:#f92672">-</span>o wide</span></span></code></pre></div>
+<h3 id="kubernetes-cluster-configurations">Kubernetes Cluster Configurations</h3>
+<ul>
+<li>Static Pod Manifests: /etc/kubernetes/manifests</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span><span style="color:#e6db74">/etc/</span>kubernetes<span style="color:#f92672">/</span>manifests
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">├──</span> etcd<span style="color:#f92672">.</span>yaml
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">├──</span> kube<span style="color:#f92672">-</span>apiserver<span style="color:#f92672">.</span>yaml
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">├──</span> kube<span style="color:#f92672">-</span>controller<span style="color:#f92672">-</span>manager<span style="color:#f92672">.</span>yaml
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">└──</span> kube<span style="color:#f92672">-</span>scheduler<span style="color:#f92672">.</span>yaml</span></span></code></pre></div>
+<ul>
+<li>
+<p>TLS Certificates <!-- raw HTML omitted -->
+All the components talk to each other over mTLS. Under the PKI folder, you will find all the TLS certificates and keys
+<a href="#R-image-271b890322a8d58764c2a785957d47c1" class="lightbox-link"><img class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../../images/tls.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-271b890322a8d58764c2a785957d47c1"><img class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../../images/tls.png"></a></p>
+</li>
+<li>
+<p>Kubeconfig Files<!-- raw HTML omitted --></p>
+</li>
+<li>
+<p>Any components that need to authenticate to the API server need the kubeconfig file.</p>
+</li>
+<li>
+<p>All the cluster Kubeconfig files are present in the /etc/kubernetes folder (.conf files). You will find the following files.<!-- raw HTML omitted --></p>
+<ul>
+<li>admin.conf</li>
+<li>controller-manager.conf</li>
+<li>kubelet.conf</li>
+<li>scheduler.conf</li>
+</ul>
+</li>
+<li>
+<p>It contains the API server endpoint, cluster CA certificate, cluster client certificate, and other information.<!-- raw HTML omitted --></p>
+</li>
+<li>
+<p>The admin.conf, file, which is the admin kubeconfig file used by end users to access the API server to manage the clusters.<!-- raw HTML omitted --></p>
+</li>
+<li>
+<p>The Kubeconfig for the Controller manager <strong>controller-manager.conf</strong>, scheduler, and Kubelet is used for API server authentication and authorization.</p>
+</li>
+</ul>
+<h3 id="kubelet-configurations">Kubelet Configurations</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>    <span style="color:#f92672">kubelet kubeconfig file</span>: <span style="color:#ae81ff">/etc/kubernetes/kubelet.conf</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kubelet config file</span>: <span style="color:#ae81ff">/var/lib/kubelet/config.yaml</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env</span></span></span></code></pre></div>
+<ul>
+<li>The /var/lib/kubelet/config.yaml contains all the kubelet-related configurations. The static pod manifest location is added as part of the staticPodPath parameter.
+/var/lib/kubelet/kubeadm-flags.env file contains the container runtime environment Linux socket and the infra container (pause container) image.</li>
+<li>CoreDNS Configurations</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get configmap <span style="color:#f92672">--</span>namespace<span style="color:#f92672">=</span>kube<span style="color:#f92672">-</span>system</span></span></code></pre></div>
+<h3 id="node-related-commands">Node Related commands</h3>
+<ul>
+<li>Check all nodes which are the part of kubernetes cluster</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get nodes</span></span></code></pre></div>
+<ul>
+<li>Cordon a node (prevent new pods from being scheduled)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl cordon  &lt;node-name&gt;</span></span></code></pre></div>
+<ul>
+<li>Uncordon a node (allow new pods to be scheduled):</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl uncordon <span style="color:#e6db74">&lt;node-name&gt;</span></span></span></code></pre></div>
+<ul>
+<li>Drain a node (evacuate all pods, reschedule them elsewhere)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl drain <span style="color:#e6db74">&lt;node-name&gt;</span></span></span></code></pre></div>
+<ul>
+<li>Sort Nodes by CPU Capacity</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get nodes <span style="color:#f92672">--</span>sort<span style="color:#f92672">-</span>by<span style="color:#f92672">=.</span>status<span style="color:#f92672">.</span>capacity<span style="color:#f92672">.</span>cpu</span></span></code></pre></div>
+<ul>
+<li>Sort by memory</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get nodes <span style="color:#f92672">--</span>sort<span style="color:#f92672">-</span>by<span style="color:#f92672">=.</span>status<span style="color:#f92672">.</span>capacity<span style="color:#f92672">.</span>memory</span></span></code></pre></div>
+<ul>
+<li>How to label a node</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl label node <span style="color:#e6db74">&lt;nodename&gt;</span> key<span style="color:#f92672">=</span>value</span></span></code></pre></div>
+<ul>
+<li>check nodes with label</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get nodes <span style="color:#f92672">-</span>l key<span style="color:#f92672">=</span>value</span></span></code></pre></div>
+<ul>
+<li>check the nodes which does not label key=value</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get nodes key<span style="color:#f92672">!=</span>value</span></span></code></pre></div>
+<ul>
+<li>Check detailed information about a node</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get nodes <span style="color:#f92672">-</span>o wide</span></span></code></pre></div>
+<h3 id="upgrade-kubeadm-cluster">Upgrade Kubeadm Cluster</h3>
+<ul>
+<li>
+<p>Before upgrade kubernetes cluster Do not forgot to study kubernetes release</p>
+</li>
+<li>
+<p>Check the <a href="https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.29.md" rel="external" target="_blank">release notes</a> before you upgrade your kubernetes cluster</p>
+</li>
+<li>
+<p>Also drain a node and uncordon after the upgrade is successful</p>
+</li>
+<li>
+<p>Check the upgrade plan using below commands</p>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubeadm upgrade plan
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl -n kube-system get cm kubeadm-config -o yaml</span></span></code></pre></div>
+<ul>
+<li>Check the kubeadm version available</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>apt-cache madison kubeadm</span></span></code></pre></div>
+<ul>
+<li>Unhold the packages to be upgraded</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>apt<span style="color:#f92672">-</span>mark unhold kubelet kubectl kubeadm</span></span></code></pre></div>
+<ul>
+<li>Upgrade the available packages</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span> apt-get update <span style="color:#f92672">&amp;&amp;</span> apt-get install -y kubelet<span style="color:#f92672">=</span>1.25.0-00    kubectl<span style="color:#f92672">=</span>1.25.0-00  kubeadm<span style="color:#f92672">=</span>1.25.0-00 </span></span></code></pre></div>
+<ul>
+<li>Lock again the below packages</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>apt-mark hold kubelet kubectl</span></span></code></pre></div>
+<ul>
+<li>Check new kubeadm version</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubeadm version</span></span></code></pre></div>
+<ul>
+<li>Upgrade the kubernetes cluster</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubeadm upgrade apply 1.25.0</span></span></code></pre></div>
+<ul>
+<li>Restart the services</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>systemctl daemon-reload
+</span></span><span style="display:flex;"><span>systemctl restart kubelet</span></span></code></pre></div>
+<ul>
+<li>Check the kubernetes version</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl version</span></span></code></pre></div>
+<h3 id="kubens--kubectx">Kubens &amp; Kubectx</h3>
+<ul>
+<li>Login to master node and run the command there</li>
+</ul>
+<h4 id="install-kubens-to-switch-from-one-namespace-to-another">Install Kubens to switch from one namespace to another</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>wget https://raw.githubusercontent.com/ahmetb/kubectx/master/kubens
+</span></span><span style="display:flex;"><span>chmod +x kubens
+</span></span><span style="display:flex;"><span>cp kubens /bin</span></span></code></pre></div>
+<h4 id="install-kubectx-to-switch-from-one-kubernetes-cluster-to-another">Install kubectx to switch from one Kubernetes cluster to another</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>wget https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx
+</span></span><span style="display:flex;"><span>chmod +x kubectx
+</span></span><span style="display:flex;"><span>cp kubectx /bin</span></span></code></pre></div>
+<h4 id="kubernetes-initial-commands-for-cluster-verification">Kubernetes Initial commands for cluster verification</h4>
+<ul>
+<li>How to check nodes in cluster</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get nodes</span></span></code></pre></div>
+<ul>
+<li>Cluster api info</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl api<span style="color:#f92672">-</span>resources</span></span></code></pre></div>
+<ul>
+<li>Cluster info</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubect cluster<span style="color:#f92672">-</span>info</span></span></code></pre></div>
+<ul>
+<li>Kubernetes nodes information</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl describe nodes <span style="color:#e6db74">&lt;nodename&gt;</span></span></span></code></pre></div>
+<ul>
+<li>Update worker node role as a worker</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl label node &lt;node-name&gt; kubernetes.io/role<span style="color:#f92672">=</span>worker</span></span></code></pre></div>
+<ul>
+<li>Make a test after creating one pod</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl run mypod <span style="color:#f92672">--</span>image<span style="color:#f92672">=</span>nginx</span></span></code></pre></div>
+<ul>
+<li>Check newly created pod</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get pods</span></span></code></pre></div>
+<h3 id="install-kubernetes-cluster-automatically">Install kubernetes Cluster Automatically</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git
+</span></span><span style="display:flex;"><span>cd kubernetes-2024/
+</span></span><span style="display:flex;"><span>cd kubernetes-with-vagrant/
+</span></span><span style="display:flex;"><span>vagrant up</span></span></code></pre></div>
+<h3 id="common-kubeadm-commands">Common Kubeadm Commands</h3>
+<ul>
+<li>kubeadm init (initialize kubernetes)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubeadm init <span style="color:#f92672">--</span>pod<span style="color:#f92672">-</span>network<span style="color:#f92672">-</span>cidr<span style="color:#f92672">=</span><span style="color:#ae81ff">192.168.0.0</span><span style="color:#f92672">/</span><span style="color:#ae81ff">16</span></span></span></code></pre></div>
+<ul>
+<li>kubeadm join (To join a worker node)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubeadm join <span style="color:#e6db74">&lt;master-node-ip&gt;</span>:<span style="color:#e6db74">&lt;master-node-port&gt;</span> <span style="color:#f92672">--</span>token <span style="color:#e6db74">&lt;token&gt;</span> <span style="color:#f92672">--</span>discovery<span style="color:#f92672">-</span>token<span style="color:#f92672">-</span>ca<span style="color:#f92672">-</span>cert<span style="color:#f92672">-</span>hash <span style="color:#e6db74">&lt;hash&gt;</span></span></span></code></pre></div>
+<ul>
+<li>kubeadm reset( removing all installed Kubernetes components and returning it to its pre-Kubernetes state. )</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubeadm <span style="color:#66d9ef">reset</span> <span style="color:#f92672">--</span>force</span></span></code></pre></div>
+<ul>
+<li>kubeadm upgrade (check available upgrades)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubeadm upgrade plan</span></span></code></pre></div>
+<ul>
+<li>kubeadm token (Token management)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubeadm token create</span></span></code></pre></div>
+<ul>
+<li>Print Token along with command</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubeadm token create <span style="color:#f92672">--</span><span style="color:#66d9ef">print</span><span style="color:#f92672">-</span>join<span style="color:#f92672">-</span>command</span></span></code></pre></div>
+<ul>
+<li>kubeadm token list (Check all token along with expiration date)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubeadm token list</span></span></code></pre></div>
+<ul>
+<li>kubeadm token delete</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubeadm token delete <span style="color:#e6db74">&lt;token_value&gt;</span></span></span></code></pre></div>
+<ul>
+<li>kubeadm config migrate</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubeadm config migrate <span style="color:#f92672">--</span>old<span style="color:#f92672">-</span>config kubeadm<span style="color:#f92672">.</span>conf <span style="color:#f92672">--</span><span style="color:#66d9ef">new</span><span style="color:#f92672">-</span>config kubeadm<span style="color:#f92672">.</span>yaml</span></span></code></pre></div>
+<ul>
+<li>kubeadm config (Print default config files)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubeadm config <span style="color:#66d9ef">print</span> init<span style="color:#f92672">-</span>defaults</span></span></code></pre></div>
+<ul>
+<li>kubeadm config images(List all required images)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubeadm config images list</span></span></code></pre></div>
+<ul>
+<li>kubeadm certs(Check certificate status)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubeadm certs check<span style="color:#f92672">-</span>expiration
+</span></span><span style="display:flex;"><span>kubeadm certs certificate<span style="color:#f92672">-</span>key</span></span></code></pre></div>
+<ul>
+<li>kubeadm upgrade node(upgrades the kubelet and kube-proxy on a worker node to match the control plane&rsquo;s version.)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubeadm upgrade node</span></span></code></pre></div>
+<p><a href="#R-image-1d23575b922f2fe73260ce64d4aff7b8" class="lightbox-link"><img alt="kubeadm Process to bootstrap kubernetes" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../../images/Kubeadm.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-1d23575b922f2fe73260ce64d4aff7b8"><img alt="kubeadm Process to bootstrap kubernetes" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../../images/Kubeadm.png"></a></p>
+<h3 id="what-is-a-kubeconfig-file">What is a Kubeconfig file?</h3>
+<ul>
+<li>A Kubeconfig is a YAML file with all the Kubernetes cluster details, certificates, and secret tokens to authenticate the cluster. <!-- raw HTML omitted --></li>
+<li>You might get this config file directly from the cluster administrator or from a cloud platform if you are using a managed Kubernetes cluster.</li>
+<li>When you use kubectl, it uses the information in the kubeconfig file to connect to the kubernetes cluster API. The default location of the Kubeconfig file is $HOME/.kube/config</li>
+<li>Example Kubeconfig File
+<ul>
+<li>certificate-authority-data: Cluster CA</li>
+<li>server: Cluster endpoint (IP/DNS of the master node)</li>
+<li>name: Cluster name</li>
+<li>user: name of the user/service account.</li>
+<li>token: Secret token of the user/service account.</li>
+</ul>
+</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>clusters:
+</span></span><span style="display:flex;"><span><span style="color:#f92672">-</span> cluster:
+</span></span><span style="display:flex;"><span>    certificate<span style="color:#f92672">-</span>authority<span style="color:#f92672">-</span>data: <span style="color:#e6db74">&lt;ca-data-here&gt;</span>
+</span></span><span style="display:flex;"><span>    server: https:<span style="color:#e6db74">//</span>your<span style="color:#f92672">-</span>k8s<span style="color:#f92672">-</span>cluster<span style="color:#f92672">.</span>com
+</span></span><span style="display:flex;"><span>  name: <span style="color:#e6db74">&lt;cluster-name&gt;</span>
+</span></span><span style="display:flex;"><span>contexts:
+</span></span><span style="display:flex;"><span><span style="color:#f92672">-</span> context:
+</span></span><span style="display:flex;"><span>    cluster:  <span style="color:#e6db74">&lt;cluster-name&gt;</span>
+</span></span><span style="display:flex;"><span>    user:  <span style="color:#e6db74">&lt;cluster-name-user&gt;</span>
+</span></span><span style="display:flex;"><span>  name:  <span style="color:#e6db74">&lt;cluster-name&gt;</span>
+</span></span><span style="display:flex;"><span>current<span style="color:#f92672">-</span>context:  <span style="color:#e6db74">&lt;cluster-name&gt;</span>
+</span></span><span style="display:flex;"><span>kind: Config
+</span></span><span style="display:flex;"><span>preferences: {}
+</span></span><span style="display:flex;"><span>users:
+</span></span><span style="display:flex;"><span><span style="color:#f92672">-</span> name:  <span style="color:#e6db74">&lt;cluster-name-user&gt;</span>
+</span></span><span style="display:flex;"><span>  user:
+</span></span><span style="display:flex;"><span>    token: <span style="color:#e6db74">&lt;secret-token-here&gt;</span></span></span></code></pre></div>
+<ul>
+<li>List all cluster contexts</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl config get<span style="color:#f92672">-</span>contexts <span style="color:#f92672">-</span>o<span style="color:#f92672">=</span>name</span></span></code></pre></div>
+<ul>
+<li>Set the current context</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl config <span style="color:#66d9ef">use</span><span style="color:#f92672">-</span>context <span style="color:#e6db74">&lt;cluster-name&gt;</span>  </span></span></code></pre></div>
+<ul>
+<li>Using Environment variable (KUBECONFIG)</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>export KUBECONFIG<span style="color:#f92672">=&lt;</span>kubeconfig filename<span style="color:#f92672">&gt;</span></span></span></code></pre></div>
+<ul>
+<li>Using Kubeconfig File With Kubectl</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get nodes <span style="color:#f92672">--</span>kubeconfig<span style="color:#f92672">=</span><span style="color:#e6db74">&lt;filepath&gt;</span></span></span></code></pre></div>
+<ul>
+<li>How to merge multiple kubeconfig into one</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>KUBECONFIG<span style="color:#f92672">=</span>config:dev_config:test_config kubectl config view <span style="color:#f92672">--</span>merge <span style="color:#f92672">--</span>flatten <span style="color:#f92672">&gt;</span> config<span style="color:#f92672">.</span><span style="color:#66d9ef">new</span></span></span></code></pre></div>
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+          <a id="R-logo" class="R-default" href="../../index.html">
+Kubernetes Documentation
+          </a>
+        </div>
+        <script>
+          window.index_js_url="../../searchindex.en.js?1734364046";
+        </script>
+        <search><form action="../../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../../js/auto-complete.js?1734364046" defer></script>
+        <script src="../../js/lunr/lunr.min.js?1734364046" defer></script>
+        <script src="../../js/lunr/lunr.stemmer.support.min.js?1734364046" defer></script>
+        <script src="../../js/lunr/lunr.multi.min.js?1734364046" defer></script>
+        <script src="../../js/lunr/lunr.en.min.js?1734364046" defer></script>
+        <script src="../../js/search.js?1734364046" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation homelinks">
+        <ul>
+          <li><a class="padding" href="../../index.html"><i class="fa-fw fas fa-home"></i> Home</a></li>
+        </ul>
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-shortcutmenu-home" class="R-sidebarmenu">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="parent " data-nav-id="/k8s/index.html"><a class="padding" href="../../k8s/index.html">Kubernetes documentation</a><ul id="R-subsections-7466713d447629f279c035593d0e5915" class="collapsible-menu">
+            <li class="active " data-nav-id="/k8s/part01/index.html"><a class="padding" href="../../k8s/part01/index.html">Part 1</a></li>
+            <li class="" data-nav-id="/k8s/part02/index.html"><a class="padding" href="../../k8s/part02/index.html">Part 2</a></li>
+            <li class="" data-nav-id="/k8s/part03/index.html"><a class="padding" href="../../k8s/part03/index.html">Part 3</a></li>
+            <li class="" data-nav-id="/k8s/part04/index.html"><a class="padding" href="../../k8s/part04/index.html">Part 4</a></li>
+            <li class="" data-nav-id="/k8s/part05/index.html"><a class="padding" href="../../k8s/part05/index.html">Part 5</a></li>
+            <li class="" data-nav-id="/k8s/k8s/index.html"><a class="padding" href="../../k8s/k8s/index.html">Kubernetes  Administration</a></li></ul></li>
+          </ul>
+        </div>
+    
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-language"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = this.querySelector( this.value ).dataset.url;">
+                      <option id="R-select-language-en" value="#R-select-language-en" data-url="../../k8s/part01/index.html" lang="en-us" selected></option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-paint-brush"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.relearn.changeVariant( this.value );">
+                      <option id="R-select-variant-auto" value="auto" selected>Auto</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.relearn.markVariant();</script>
+              </li>
+              <li class="footerVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-history"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter showFooter">
+        <p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../../js/clipboard.min.js?1734364046" defer></script>
+    <script src="../../js/perfect-scrollbar.min.js?1734364046" defer></script>
+    <script src="../../js/theme.js?1734364046" defer></script>
+  </body>
+</html>
