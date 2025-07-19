@@ -16,16 +16,16 @@
     <meta property="og:description" content="Kubernetes Installation on Centos 9 Common Steps for master and worker node sudo tee /etc/sysctl.d/99-k8s-cri.conf &gt;/dev/null &lt;&lt;EOF net.bridge.bridge-nf-call-iptables=1 net.ipv4.ip_forward=1 net.bridge.bridge-nf-call-ip6tables=1 EOFupdate the setting without restarting the OS sysctl --system modprobe overlay modprobe br_netfilter echo -e overlay\\nbr_netfilter &gt; /etc/modules-load.d/k8s.conf install from EPELInstall iptables legacy dnf --enablerepo=epel -y install iptables-legacy alternatives --config iptables There are 2 programs which provide &#39;iptables&#39;. Selection Command ----------------------------------------------- *&#43; 1 /usr/sbin/iptables-nft 2 /usr/sbin/iptables-legacy switch to [iptables-legacy] Enter to keep the current selection[&#43;], or type selection number: 2set Swap off setting swapoff -a vi /etc/fstab comment out the Swap line /dev/mapper/cs-swap none swap defaults 0 0Install Cri and other software dnf -y install centos-release-okd-4.14 sed -i -e &#34;s/enabled=1/enabled=0/g&#34; /etc/yum.repos.d/CentOS-OKD-4.14.repo dnf --enablerepo=centos-okd-4.14 -y install cri-o systemctl enable --now crio cat &lt;&lt;&#39;EOF&#39; &gt; /etc/yum.repos.d/kubernetes.repo [kubernetes] name=Kubernetes baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch enabled=0 gpgcheck=1 repo_gpgcheck=1 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg EOFInstall kubelet and cri-tools dnf --enablerepo=kubernetes -y install kubeadm kubelet cri-tools iproute-tc container-selinuxRestart kubelet systemctl enable kubelet On Master node: Bootstrap Kubernetes Cluster kubeadm init --apiserver-advertise-address=10.224.29.85 --pod-network-cidr=192.168.0.0/16 --cri-socket=unix:///var/run/crio/crio.sockRun the below command on master nodes to run kubectl command To start using your cluster, you need to run the following as a regular user: mkdir -p $HOME/.kube sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config sudo chown $(id -u):$(id -g) $HOME/.kube/config Alternatively, if you are the root user, you can run: export KUBECONFIG=/etc/kubernetes/admin.confExecute the below command on worker nodes">
     <meta property="og:locale" content="en_us">
     <meta property="og:type" content="article">
-    <meta property="article:section" content="/">
+    <meta property="article:section" content="Home">
     <meta itemprop="name" content="Kubernetes-on-Centos :: Kubernetes Documentation">
     <meta itemprop="description" content="Kubernetes Installation on Centos 9 Common Steps for master and worker node sudo tee /etc/sysctl.d/99-k8s-cri.conf &gt;/dev/null &lt;&lt;EOF net.bridge.bridge-nf-call-iptables=1 net.ipv4.ip_forward=1 net.bridge.bridge-nf-call-ip6tables=1 EOFupdate the setting without restarting the OS sysctl --system modprobe overlay modprobe br_netfilter echo -e overlay\\nbr_netfilter &gt; /etc/modules-load.d/k8s.conf install from EPELInstall iptables legacy dnf --enablerepo=epel -y install iptables-legacy alternatives --config iptables There are 2 programs which provide &#39;iptables&#39;. Selection Command ----------------------------------------------- *&#43; 1 /usr/sbin/iptables-nft 2 /usr/sbin/iptables-legacy switch to [iptables-legacy] Enter to keep the current selection[&#43;], or type selection number: 2set Swap off setting swapoff -a vi /etc/fstab comment out the Swap line /dev/mapper/cs-swap none swap defaults 0 0Install Cri and other software dnf -y install centos-release-okd-4.14 sed -i -e &#34;s/enabled=1/enabled=0/g&#34; /etc/yum.repos.d/CentOS-OKD-4.14.repo dnf --enablerepo=centos-okd-4.14 -y install cri-o systemctl enable --now crio cat &lt;&lt;&#39;EOF&#39; &gt; /etc/yum.repos.d/kubernetes.repo [kubernetes] name=Kubernetes baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch enabled=0 gpgcheck=1 repo_gpgcheck=1 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg EOFInstall kubelet and cri-tools dnf --enablerepo=kubernetes -y install kubeadm kubelet cri-tools iproute-tc container-selinuxRestart kubelet systemctl enable kubelet On Master node: Bootstrap Kubernetes Cluster kubeadm init --apiserver-advertise-address=10.224.29.85 --pod-network-cidr=192.168.0.0/16 --cri-socket=unix:///var/run/crio/crio.sockRun the below command on master nodes to run kubectl command To start using your cluster, you need to run the following as a regular user: mkdir -p $HOME/.kube sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config sudo chown $(id -u):$(id -g) $HOME/.kube/config Alternatively, if you are the root user, you can run: export KUBECONFIG=/etc/kubernetes/admin.confExecute the below command on worker nodes">
     <meta itemprop="wordCount" content="236">
     <title>Kubernetes-on-Centos :: Kubernetes Documentation</title>
-    <link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet"></noscript>
-    <link href="../css/auto-complete.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1734364594" rel="stylesheet"></noscript>
-    <link href="../css/perfect-scrollbar.min.css?1734364594" rel="stylesheet">
-    <link href="../css/theme.min.css?1734364594" rel="stylesheet">
-    <link href="../css/format-html.min.css?1734364594" rel="stylesheet" id="R-format-style">
+    <link href="../css/fontawesome-all.min.css?1752918557" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1752918557" rel="stylesheet"></noscript>
+    <link href="../css/auto-complete.css?1752918557" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1752918557" rel="stylesheet"></noscript>
+    <link href="../css/perfect-scrollbar.min.css?1752918557" rel="stylesheet">
+    <link href="../css/theme.min.css?1752918557" rel="stylesheet">
+    <link href="../css/format-html.min.css?1752918557" rel="stylesheet" id="R-format-style">
     <script>
       window.relearn = window.relearn || {};
       window.relearn.relBasePath='..';
@@ -102,7 +102,7 @@
             </div>
           </div>
           <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
-            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">/</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">Home</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
             itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Kubernetes-on-Centos</span><meta itemprop="position" content="2"></li>
           </ol>
           <div class="topbar-area topbar-area-end" data-area="end">
@@ -243,7 +243,7 @@ Kubernetes Documentation
           </a>
         </div>
         <script>
-          window.index_js_url="../searchindex.en.js?1734364594";
+          window.index_js_url="../searchindex.en.js?1752918557";
         </script>
         <search><form action="../search/index.html" method="get">
           <div class="searchbox default-animation">
@@ -256,12 +256,12 @@ Kubernetes Documentation
         <script>
           var contentLangs=['en'];
         </script>
-        <script src="../js/auto-complete.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.stemmer.support.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.multi.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.en.min.js?1734364594" defer></script>
-        <script src="../js/search.js?1734364594" defer></script>
+        <script src="../js/auto-complete.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.stemmer.support.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.multi.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.en.min.js?1752918557" defer></script>
+        <script src="../js/search.js?1752918557" defer></script>
       </div>
       <div id="R-homelinks" class="default-animation homelinks">
         <ul>
@@ -272,7 +272,7 @@ Kubernetes Documentation
       <div id="R-content-wrapper" class="highlightable">
         <div id="R-shortcutmenu-home" class="R-sidebarmenu">
           <ul class="enlarge morespace collapsible-menu">
-            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes documentation</a></li>
+            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes Documentation</a></li>
             <li class="" data-nav-id="/part01/index.html"><a class="padding" href="../part01/index.html">Part 1</a></li>
             <li class="" data-nav-id="/part02/index.html"><a class="padding" href="../part02/index.html">Part 2</a></li>
             <li class="" data-nav-id="/part03/index.html"><a class="padding" href="../part03/index.html">Part 3</a></li>
@@ -346,8 +346,8 @@ Kubernetes Documentation
         </div>
       </div>
     </aside>
-    <script src="../js/clipboard.min.js?1734364594" defer></script>
-    <script src="../js/perfect-scrollbar.min.js?1734364594" defer></script>
-    <script src="../js/theme.js?1734364594" defer></script>
+    <script src="../js/clipboard.min.js?1752918557" defer></script>
+    <script src="../js/perfect-scrollbar.min.js?1752918557" defer></script>
+    <script src="../js/theme.js?1752918557" defer></script>
   </body>
 </html>

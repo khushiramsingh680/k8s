@@ -16,16 +16,16 @@
     <meta property="og:description" content="Topics Kubernetes Overview Kubernetes Architecture Kubernetes Components Kubernetes Installation Kubernetes SSL Certificates Kubernetes Static Pods Kubernetes Configuration files Kubernetes Upgrade Etcd backup and restore Kubernetes Node related commands CIS Benchmark Kubernetes Overview Kubernetes or k8s is an open-source orchestration and cluster management for container-based applications maintained by the Cloud Native Computing Foundation. Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery">
     <meta property="og:locale" content="en_us">
     <meta property="og:type" content="article">
-    <meta property="article:section" content="/">
+    <meta property="article:section" content="Home">
     <meta itemprop="name" content="Part 1 :: Kubernetes Documentation">
     <meta itemprop="description" content="Topics Kubernetes Overview Kubernetes Architecture Kubernetes Components Kubernetes Installation Kubernetes SSL Certificates Kubernetes Static Pods Kubernetes Configuration files Kubernetes Upgrade Etcd backup and restore Kubernetes Node related commands CIS Benchmark Kubernetes Overview Kubernetes or k8s is an open-source orchestration and cluster management for container-based applications maintained by the Cloud Native Computing Foundation. Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery">
     <meta itemprop="wordCount" content="2480">
     <title>Part 1 :: Kubernetes Documentation</title>
-    <link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet"></noscript>
-    <link href="../css/auto-complete.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1734364594" rel="stylesheet"></noscript>
-    <link href="../css/perfect-scrollbar.min.css?1734364594" rel="stylesheet">
-    <link href="../css/theme.min.css?1734364594" rel="stylesheet">
-    <link href="../css/format-html.min.css?1734364594" rel="stylesheet" id="R-format-style">
+    <link href="../css/fontawesome-all.min.css?1752918557" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1752918557" rel="stylesheet"></noscript>
+    <link href="../css/auto-complete.css?1752918557" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1752918557" rel="stylesheet"></noscript>
+    <link href="../css/perfect-scrollbar.min.css?1752918557" rel="stylesheet">
+    <link href="../css/theme.min.css?1752918557" rel="stylesheet">
+    <link href="../css/format-html.min.css?1752918557" rel="stylesheet" id="R-format-style">
     <script>
       window.relearn = window.relearn || {};
       window.relearn.relBasePath='..';
@@ -129,11 +129,11 @@
             </div>
           </div>
           <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
-            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">/</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">Home</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
             itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Part 1</span><meta itemprop="position" content="2"></li>
           </ol>
           <div class="topbar-area topbar-area-end" data-area="end">
-            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../k8s/index.html" title="Kubernetes documentation (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../k8s/index.html" title="Kubernetes Documentation (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
             </div>
             <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../part02/index.html" title="Part 2 (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
             </div>
@@ -265,8 +265,8 @@ It groups containers that make up an application into logical units for easy man
 </li>
 <li>
 <p><strong>Service controller</strong>: It takes care of deploying load balancers for kubernetes services, assigning IP addresses, etc.
-<a href="#R-image-6485a9bd0a0e8407daa022640bc3e153" class="lightbox-link"><img alt="Kubernetes cluster architecture" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/kubernetes-cluster-architecture.svg" style=" height: auto; width: auto;"></a>
-<a href="javascript:history.back();" class="lightbox-back" id="R-image-6485a9bd0a0e8407daa022640bc3e153"><img alt="Kubernetes cluster architecture" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/kubernetes-cluster-architecture.svg"></a></p>
+<a href="#R-image-d9795d38d6faea747acbab7a5528b562" class="lightbox-link"><img alt="Kubernetes cluster architecture" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/kubernetes-cluster-architecture.svg" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-d9795d38d6faea747acbab7a5528b562"><img alt="Kubernetes cluster architecture" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/kubernetes-cluster-architecture.svg"></a></p>
 </li>
 </ul>
 <h3 id="kubernetes-worker-node-components">Kubernetes Worker Node Components</h3>
@@ -283,8 +283,8 @@ Responsible for Mounting volumes by reading pod configuration and creating respe
 <li>Static pods are controlled by kubelet, not the API servers.</li>
 <li>Static pods from podSpecs located at /etc/kubernetes/manifests</li>
 </ul>
-<p><a href="#R-image-b68fcd9e7f1d0df58caa724da0e555d4" class="lightbox-link"><img alt="Kubelet" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/kubelet-architecture.png" style=" height: auto; width: auto;"></a>
-<a href="javascript:history.back();" class="lightbox-back" id="R-image-b68fcd9e7f1d0df58caa724da0e555d4"><img alt="Kubelet" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/kubelet-architecture.png"></a></p>
+<p><a href="#R-image-83b3dd1f233c05c0236db2ed0097fc72" class="lightbox-link"><img alt="Kubelet" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/kubelet-architecture.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-83b3dd1f233c05c0236db2ed0097fc72"><img alt="Kubelet" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/kubelet-architecture.png"></a></p>
 <h4 id="kube-proxy">Kube proxy</h4>
 <ul>
 <li>Kube-Proxy is a network proxy that runs on each node in a Kubernetes cluster.</li>
@@ -299,8 +299,8 @@ Responsible for Mounting volumes by reading pod configuration and creating respe
 </li>
 <li>
 <p>Kubernetes supports multiple container runtimes (CRI-O, Docker Engine, containerd, etc) that are compliant with Container Runtime Interface (CRI). This means, all these container runtimes implement the CRI interface and expose gRPC CRI APIs (runtime and image service endpoints).
-<a href="#R-image-80252205e22fc675669956615ae374aa" class="lightbox-link"><img alt="Container runtime" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/containeruntime.png" style=" height: auto; width: auto;"></a>
-<a href="javascript:history.back();" class="lightbox-back" id="R-image-80252205e22fc675669956615ae374aa"><img alt="Container runtime" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/containeruntime.png"></a></p>
+<a href="#R-image-69194c2453ad52ecb36e9f2cd052d71f" class="lightbox-link"><img alt="Container runtime" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/containeruntime.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-69194c2453ad52ecb36e9f2cd052d71f"><img alt="Container runtime" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/containeruntime.png"></a></p>
 </li>
 <li>
 <p>When there is a new request for a pod from the API server, the kubelet talks to CRI-O daemon to launch the required containers via Kubernetes Container Runtime Interface.</p>
@@ -520,8 +520,8 @@ Responsible for Mounting volumes by reading pod configuration and creating respe
 <li>
 <p>TLS Certificates <!-- raw HTML omitted -->
 All the components talk to each other over mTLS. Under the PKI folder, you will find all the TLS certificates and keys
-<a href="#R-image-f9c3761317cfdd06e1eddc31f84945bf" class="lightbox-link"><img class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/tls.png" style=" height: auto; width: auto;"></a>
-<a href="javascript:history.back();" class="lightbox-back" id="R-image-f9c3761317cfdd06e1eddc31f84945bf"><img class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/tls.png"></a></p>
+<a href="#R-image-a512b9fd0b1f7db60dedc8726bdd4448" class="lightbox-link"><img class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/tls.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-a512b9fd0b1f7db60dedc8726bdd4448"><img class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/tls.png"></a></p>
 </li>
 <li>
 <p>Kubeconfig Files<!-- raw HTML omitted --></p>
@@ -750,8 +750,8 @@ All the components talk to each other over mTLS. Under the PKI folder, you will 
 <li>kubeadm upgrade node(upgrades the kubelet and kube-proxy on a worker node to match the control plane&rsquo;s version.)</li>
 </ul>
 <div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubeadm upgrade node</span></span></code></pre></div>
-<p><a href="#R-image-782b382e65f8a27cc0f1b32b50a44b42" class="lightbox-link"><img alt="kubeadm Process to bootstrap kubernetes" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/Kubeadm.png" style=" height: auto; width: auto;"></a>
-<a href="javascript:history.back();" class="lightbox-back" id="R-image-782b382e65f8a27cc0f1b32b50a44b42"><img alt="kubeadm Process to bootstrap kubernetes" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/Kubeadm.png"></a></p>
+<p><a href="#R-image-3b66aafe2664f1f0174fb94e63d7b830" class="lightbox-link"><img alt="kubeadm Process to bootstrap kubernetes" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/Kubeadm.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-3b66aafe2664f1f0174fb94e63d7b830"><img alt="kubeadm Process to bootstrap kubernetes" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/Kubeadm.png"></a></p>
 <h3 id="what-is-a-kubeconfig-file">What is a Kubeconfig file?</h3>
 <ul>
 <li>A Kubeconfig is a YAML file with all the Kubernetes cluster details, certificates, and secret tokens to authenticate the cluster. <!-- raw HTML omitted --></li>
@@ -821,7 +821,7 @@ Kubernetes Documentation
           </a>
         </div>
         <script>
-          window.index_js_url="../searchindex.en.js?1734364594";
+          window.index_js_url="../searchindex.en.js?1752918557";
         </script>
         <search><form action="../search/index.html" method="get">
           <div class="searchbox default-animation">
@@ -834,12 +834,12 @@ Kubernetes Documentation
         <script>
           var contentLangs=['en'];
         </script>
-        <script src="../js/auto-complete.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.stemmer.support.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.multi.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.en.min.js?1734364594" defer></script>
-        <script src="../js/search.js?1734364594" defer></script>
+        <script src="../js/auto-complete.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.stemmer.support.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.multi.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.en.min.js?1752918557" defer></script>
+        <script src="../js/search.js?1752918557" defer></script>
       </div>
       <div id="R-homelinks" class="default-animation homelinks">
         <ul>
@@ -850,7 +850,7 @@ Kubernetes Documentation
       <div id="R-content-wrapper" class="highlightable">
         <div id="R-shortcutmenu-home" class="R-sidebarmenu">
           <ul class="enlarge morespace collapsible-menu">
-            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes documentation</a></li>
+            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes Documentation</a></li>
             <li class="active " data-nav-id="/part01/index.html"><a class="padding" href="../part01/index.html">Part 1</a></li>
             <li class="" data-nav-id="/part02/index.html"><a class="padding" href="../part02/index.html">Part 2</a></li>
             <li class="" data-nav-id="/part03/index.html"><a class="padding" href="../part03/index.html">Part 3</a></li>
@@ -924,8 +924,8 @@ Kubernetes Documentation
         </div>
       </div>
     </aside>
-    <script src="../js/clipboard.min.js?1734364594" defer></script>
-    <script src="../js/perfect-scrollbar.min.js?1734364594" defer></script>
-    <script src="../js/theme.js?1734364594" defer></script>
+    <script src="../js/clipboard.min.js?1752918557" defer></script>
+    <script src="../js/perfect-scrollbar.min.js?1752918557" defer></script>
+    <script src="../js/theme.js?1752918557" defer></script>
   </body>
 </html>

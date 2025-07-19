@@ -5,31 +5,31 @@
     <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <meta name="generator" content="Hugo 0.139.3">
     <meta name="generator" content="Relearn 7.2.1+16d4de84becfa2d2e6bdb2394a2f4fa411bc0007">
-    <meta name="description" content="Topics Service CLusterIP NodePort LoadBalancer Headless Service METALLB DNS Troubleshooting Deployment ReplicaSet Daemonset Labels and Selector Type of Selector Equality based Set based selector Job CronJob Metric Server HPA(pod Autoscaling) Helm Overview Service A Service is a method for exposing a network application that is running as one or more Pods in your cluster.
-A key aim of Services in Kubernetes is that you don’t need to modify your existing application to use an unfamiliar service discovery mechanism. A Kubernetes service is a logical abstraction for a deployed group of pods in a cluster What are the types of Kubernetes services? ClusterIP: Exposes a service which is only accessible from within the cluster. NodePort: Exposes a service via a static port on each node’s IP. NodePorts are in the 30000-32767 range by default LoadBalancer: Exposes the service via the cloud provider’s load balancer. ExternalName Maps a service to a predefined externalName field by returning a value for the CNAME record. Create a service of Type(ClusterIp) kubectl apply -f - &lt;&lt;EOF apiVersion: v1 kind: Service metadata: name: myapp-service spec: selector: app: myapp ports: - protocol: TCP port: 80 targetPort: 8080 EOFCreate a service of Type (NodePort) kubectl expose pod/&lt;name&gt; --port 80 --target-port=80 --name &lt;Svc&gt;Create a type of service (LoadBalancer) kubectl expose pod/name --port=80 --type=LoadBalancerCheck the endpoint kubectl get epAchieve the blue green Delete a service Exchange the service selector Metallb A LoadBalancer Solution for OnPrem Kubernetes Deploying Metallb Steps: git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ cd metallb kubectl apply -f 01 01_metallb.yaml kubectl apply -f 02_metallb-config.yamlMake a test after creating a service kubectl apply -f 03_test-load-balancer.yamlCheck the service kubectl get svcMetric Server Metric Server Github Link">
+    <meta name="description" content="Topics Service CLusterIP NodePort LoadBalancer Headless Service METALLB DNS Troubleshooting Kubernetes IngressController ReplicaSet Deployment Daemonset Type of Selector Equality based Set based selector Job CronJob Metric Server HPA(pod Autoscaling) Helm Overview Service A Service is a method for exposing a network application that is running as one or more Pods in your cluster.
+A key aim of Services in Kubernetes is that you don’t need to modify your existing application to use an unfamiliar service discovery mechanism. A Kubernetes service is a logical abstraction for a deployed group of pods in a cluster What are the types of Kubernetes services? ClusterIP: Exposes a service which is only accessible from within the cluster. NodePort: Exposes a service via a static port on each node’s IP. NodePorts are in the 30000-32767 range by default LoadBalancer: Exposes the service via the cloud provider’s load balancer. ExternalName Maps a service to a predefined externalName field by returning a value for the CNAME record. Create a service of Type(ClusterIp) kubectl apply -f - &lt;&lt;EOF apiVersion: v1 kind: Service metadata: name: myapp-service spec: selector: app: myapp ports: - protocol: TCP port: 80 targetPort: 8080 EOFCreate a service of Type (NodePort) kubectl expose pod/&lt;name&gt; --port 80 --target-port=80 --name &lt;Svc&gt;Create a type of service (LoadBalancer) kubectl expose pod/name --port=80 --type=LoadBalancerCheck the endpoint kubectl get epAchieve the blue green Delete a service Exchange the service selector Metallb A LoadBalancer Solution for OnPrem Kubernetes Deploying Metallb Steps: git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ cd metallb kubectl apply -f 01 01_metallb.yaml kubectl apply -f 02_metallb-config.yamlMake a test after creating a service kubectl apply -f 03_test-load-balancer.yamlCheck the service kubectl get svcIngressController Documentation Referred: https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/">
     <meta name="author" content="">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Part 3 :: Kubernetes Documentation">
-    <meta name="twitter:description" content="Topics Service CLusterIP NodePort LoadBalancer Headless Service METALLB DNS Troubleshooting Deployment ReplicaSet Daemonset Labels and Selector Type of Selector Equality based Set based selector Job CronJob Metric Server HPA(pod Autoscaling) Helm Overview Service A Service is a method for exposing a network application that is running as one or more Pods in your cluster.
-A key aim of Services in Kubernetes is that you don’t need to modify your existing application to use an unfamiliar service discovery mechanism. A Kubernetes service is a logical abstraction for a deployed group of pods in a cluster What are the types of Kubernetes services? ClusterIP: Exposes a service which is only accessible from within the cluster. NodePort: Exposes a service via a static port on each node’s IP. NodePorts are in the 30000-32767 range by default LoadBalancer: Exposes the service via the cloud provider’s load balancer. ExternalName Maps a service to a predefined externalName field by returning a value for the CNAME record. Create a service of Type(ClusterIp) kubectl apply -f - &lt;&lt;EOF apiVersion: v1 kind: Service metadata: name: myapp-service spec: selector: app: myapp ports: - protocol: TCP port: 80 targetPort: 8080 EOFCreate a service of Type (NodePort) kubectl expose pod/&lt;name&gt; --port 80 --target-port=80 --name &lt;Svc&gt;Create a type of service (LoadBalancer) kubectl expose pod/name --port=80 --type=LoadBalancerCheck the endpoint kubectl get epAchieve the blue green Delete a service Exchange the service selector Metallb A LoadBalancer Solution for OnPrem Kubernetes Deploying Metallb Steps: git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ cd metallb kubectl apply -f 01 01_metallb.yaml kubectl apply -f 02_metallb-config.yamlMake a test after creating a service kubectl apply -f 03_test-load-balancer.yamlCheck the service kubectl get svcMetric Server Metric Server Github Link">
+    <meta name="twitter:description" content="Topics Service CLusterIP NodePort LoadBalancer Headless Service METALLB DNS Troubleshooting Kubernetes IngressController ReplicaSet Deployment Daemonset Type of Selector Equality based Set based selector Job CronJob Metric Server HPA(pod Autoscaling) Helm Overview Service A Service is a method for exposing a network application that is running as one or more Pods in your cluster.
+A key aim of Services in Kubernetes is that you don’t need to modify your existing application to use an unfamiliar service discovery mechanism. A Kubernetes service is a logical abstraction for a deployed group of pods in a cluster What are the types of Kubernetes services? ClusterIP: Exposes a service which is only accessible from within the cluster. NodePort: Exposes a service via a static port on each node’s IP. NodePorts are in the 30000-32767 range by default LoadBalancer: Exposes the service via the cloud provider’s load balancer. ExternalName Maps a service to a predefined externalName field by returning a value for the CNAME record. Create a service of Type(ClusterIp) kubectl apply -f - &lt;&lt;EOF apiVersion: v1 kind: Service metadata: name: myapp-service spec: selector: app: myapp ports: - protocol: TCP port: 80 targetPort: 8080 EOFCreate a service of Type (NodePort) kubectl expose pod/&lt;name&gt; --port 80 --target-port=80 --name &lt;Svc&gt;Create a type of service (LoadBalancer) kubectl expose pod/name --port=80 --type=LoadBalancerCheck the endpoint kubectl get epAchieve the blue green Delete a service Exchange the service selector Metallb A LoadBalancer Solution for OnPrem Kubernetes Deploying Metallb Steps: git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ cd metallb kubectl apply -f 01 01_metallb.yaml kubectl apply -f 02_metallb-config.yamlMake a test after creating a service kubectl apply -f 03_test-load-balancer.yamlCheck the service kubectl get svcIngressController Documentation Referred: https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/">
     <meta property="og:url" content="https://khushiramsingh680.github.io/k8s/part03/index.html">
     <meta property="og:site_name" content="Kubernetes Documentation">
     <meta property="og:title" content="Part 3 :: Kubernetes Documentation">
-    <meta property="og:description" content="Topics Service CLusterIP NodePort LoadBalancer Headless Service METALLB DNS Troubleshooting Deployment ReplicaSet Daemonset Labels and Selector Type of Selector Equality based Set based selector Job CronJob Metric Server HPA(pod Autoscaling) Helm Overview Service A Service is a method for exposing a network application that is running as one or more Pods in your cluster.
-A key aim of Services in Kubernetes is that you don’t need to modify your existing application to use an unfamiliar service discovery mechanism. A Kubernetes service is a logical abstraction for a deployed group of pods in a cluster What are the types of Kubernetes services? ClusterIP: Exposes a service which is only accessible from within the cluster. NodePort: Exposes a service via a static port on each node’s IP. NodePorts are in the 30000-32767 range by default LoadBalancer: Exposes the service via the cloud provider’s load balancer. ExternalName Maps a service to a predefined externalName field by returning a value for the CNAME record. Create a service of Type(ClusterIp) kubectl apply -f - &lt;&lt;EOF apiVersion: v1 kind: Service metadata: name: myapp-service spec: selector: app: myapp ports: - protocol: TCP port: 80 targetPort: 8080 EOFCreate a service of Type (NodePort) kubectl expose pod/&lt;name&gt; --port 80 --target-port=80 --name &lt;Svc&gt;Create a type of service (LoadBalancer) kubectl expose pod/name --port=80 --type=LoadBalancerCheck the endpoint kubectl get epAchieve the blue green Delete a service Exchange the service selector Metallb A LoadBalancer Solution for OnPrem Kubernetes Deploying Metallb Steps: git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ cd metallb kubectl apply -f 01 01_metallb.yaml kubectl apply -f 02_metallb-config.yamlMake a test after creating a service kubectl apply -f 03_test-load-balancer.yamlCheck the service kubectl get svcMetric Server Metric Server Github Link">
+    <meta property="og:description" content="Topics Service CLusterIP NodePort LoadBalancer Headless Service METALLB DNS Troubleshooting Kubernetes IngressController ReplicaSet Deployment Daemonset Type of Selector Equality based Set based selector Job CronJob Metric Server HPA(pod Autoscaling) Helm Overview Service A Service is a method for exposing a network application that is running as one or more Pods in your cluster.
+A key aim of Services in Kubernetes is that you don’t need to modify your existing application to use an unfamiliar service discovery mechanism. A Kubernetes service is a logical abstraction for a deployed group of pods in a cluster What are the types of Kubernetes services? ClusterIP: Exposes a service which is only accessible from within the cluster. NodePort: Exposes a service via a static port on each node’s IP. NodePorts are in the 30000-32767 range by default LoadBalancer: Exposes the service via the cloud provider’s load balancer. ExternalName Maps a service to a predefined externalName field by returning a value for the CNAME record. Create a service of Type(ClusterIp) kubectl apply -f - &lt;&lt;EOF apiVersion: v1 kind: Service metadata: name: myapp-service spec: selector: app: myapp ports: - protocol: TCP port: 80 targetPort: 8080 EOFCreate a service of Type (NodePort) kubectl expose pod/&lt;name&gt; --port 80 --target-port=80 --name &lt;Svc&gt;Create a type of service (LoadBalancer) kubectl expose pod/name --port=80 --type=LoadBalancerCheck the endpoint kubectl get epAchieve the blue green Delete a service Exchange the service selector Metallb A LoadBalancer Solution for OnPrem Kubernetes Deploying Metallb Steps: git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ cd metallb kubectl apply -f 01 01_metallb.yaml kubectl apply -f 02_metallb-config.yamlMake a test after creating a service kubectl apply -f 03_test-load-balancer.yamlCheck the service kubectl get svcIngressController Documentation Referred: https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/">
     <meta property="og:locale" content="en_us">
     <meta property="og:type" content="article">
-    <meta property="article:section" content="/">
+    <meta property="article:section" content="Home">
     <meta itemprop="name" content="Part 3 :: Kubernetes Documentation">
-    <meta itemprop="description" content="Topics Service CLusterIP NodePort LoadBalancer Headless Service METALLB DNS Troubleshooting Deployment ReplicaSet Daemonset Labels and Selector Type of Selector Equality based Set based selector Job CronJob Metric Server HPA(pod Autoscaling) Helm Overview Service A Service is a method for exposing a network application that is running as one or more Pods in your cluster.
-A key aim of Services in Kubernetes is that you don’t need to modify your existing application to use an unfamiliar service discovery mechanism. A Kubernetes service is a logical abstraction for a deployed group of pods in a cluster What are the types of Kubernetes services? ClusterIP: Exposes a service which is only accessible from within the cluster. NodePort: Exposes a service via a static port on each node’s IP. NodePorts are in the 30000-32767 range by default LoadBalancer: Exposes the service via the cloud provider’s load balancer. ExternalName Maps a service to a predefined externalName field by returning a value for the CNAME record. Create a service of Type(ClusterIp) kubectl apply -f - &lt;&lt;EOF apiVersion: v1 kind: Service metadata: name: myapp-service spec: selector: app: myapp ports: - protocol: TCP port: 80 targetPort: 8080 EOFCreate a service of Type (NodePort) kubectl expose pod/&lt;name&gt; --port 80 --target-port=80 --name &lt;Svc&gt;Create a type of service (LoadBalancer) kubectl expose pod/name --port=80 --type=LoadBalancerCheck the endpoint kubectl get epAchieve the blue green Delete a service Exchange the service selector Metallb A LoadBalancer Solution for OnPrem Kubernetes Deploying Metallb Steps: git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ cd metallb kubectl apply -f 01 01_metallb.yaml kubectl apply -f 02_metallb-config.yamlMake a test after creating a service kubectl apply -f 03_test-load-balancer.yamlCheck the service kubectl get svcMetric Server Metric Server Github Link">
-    <meta itemprop="wordCount" content="1419">
+    <meta itemprop="description" content="Topics Service CLusterIP NodePort LoadBalancer Headless Service METALLB DNS Troubleshooting Kubernetes IngressController ReplicaSet Deployment Daemonset Type of Selector Equality based Set based selector Job CronJob Metric Server HPA(pod Autoscaling) Helm Overview Service A Service is a method for exposing a network application that is running as one or more Pods in your cluster.
+A key aim of Services in Kubernetes is that you don’t need to modify your existing application to use an unfamiliar service discovery mechanism. A Kubernetes service is a logical abstraction for a deployed group of pods in a cluster What are the types of Kubernetes services? ClusterIP: Exposes a service which is only accessible from within the cluster. NodePort: Exposes a service via a static port on each node’s IP. NodePorts are in the 30000-32767 range by default LoadBalancer: Exposes the service via the cloud provider’s load balancer. ExternalName Maps a service to a predefined externalName field by returning a value for the CNAME record. Create a service of Type(ClusterIp) kubectl apply -f - &lt;&lt;EOF apiVersion: v1 kind: Service metadata: name: myapp-service spec: selector: app: myapp ports: - protocol: TCP port: 80 targetPort: 8080 EOFCreate a service of Type (NodePort) kubectl expose pod/&lt;name&gt; --port 80 --target-port=80 --name &lt;Svc&gt;Create a type of service (LoadBalancer) kubectl expose pod/name --port=80 --type=LoadBalancerCheck the endpoint kubectl get epAchieve the blue green Delete a service Exchange the service selector Metallb A LoadBalancer Solution for OnPrem Kubernetes Deploying Metallb Steps: git clone https://gitlab.com/container-and-kubernetes/kubernetes-2024.git cd kubernetes-2024/ cd metallb kubectl apply -f 01 01_metallb.yaml kubectl apply -f 02_metallb-config.yamlMake a test after creating a service kubectl apply -f 03_test-load-balancer.yamlCheck the service kubectl get svcIngressController Documentation Referred: https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/">
+    <meta itemprop="wordCount" content="1937">
     <title>Part 3 :: Kubernetes Documentation</title>
-    <link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet"></noscript>
-    <link href="../css/auto-complete.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1734364594" rel="stylesheet"></noscript>
-    <link href="../css/perfect-scrollbar.min.css?1734364594" rel="stylesheet">
-    <link href="../css/theme.min.css?1734364594" rel="stylesheet">
-    <link href="../css/format-html.min.css?1734364594" rel="stylesheet" id="R-format-style">
+    <link href="../css/fontawesome-all.min.css?1752918557" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1752918557" rel="stylesheet"></noscript>
+    <link href="../css/auto-complete.css?1752918557" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1752918557" rel="stylesheet"></noscript>
+    <link href="../css/perfect-scrollbar.min.css?1752918557" rel="stylesheet">
+    <link href="../css/theme.min.css?1752918557" rel="stylesheet">
+    <link href="../css/format-html.min.css?1752918557" rel="stylesheet" id="R-format-style">
     <script>
       window.relearn = window.relearn || {};
       window.relearn.relBasePath='..';
@@ -102,6 +102,11 @@ A key aim of Services in Kubernetes is that you don’t need to modify your exis
     <li><a href="#deploying-metallbhttpsmetallbuniversetf">Deploying <a href="https://metallb.universe.tf/">Metallb</a></a>
       <ul>
         <li><a href="#steps">Steps:</a></li>
+      </ul>
+    </li>
+    <li><a href="#ingresscontroller">IngressController</a>
+      <ul>
+        <li></li>
         <li><a href="#metric-server">Metric Server</a></li>
         <li><a href="#steps-1">Steps</a></li>
       </ul>
@@ -112,16 +117,26 @@ A key aim of Services in Kubernetes is that you don’t need to modify your exis
         <li><a href="#prerequisites">Prerequisites</a></li>
       </ul>
     </li>
-    <li><a href="#deployment">Deployment</a></li>
+    <li><a href="#replicaset">ReplicaSet</a>
+      <ul>
+        <li><a href="#replicaset-overview">Replicaset Overview</a></li>
+      </ul>
+    </li>
+    <li><a href="#-key-features">🔑 Key Features</a></li>
+    <li><a href="#-replicaset-vs-deployment">⚖️ ReplicaSet vs Deployment</a>
+      <ul>
+        <li><a href="#replicasset-yaml-example">ReplicasSet Yaml example</a></li>
+      </ul>
+    </li>
+    <li><a href="#-deployment">🚀 Deployment</a>
+      <ul>
+        <li><a href="#--deployment-overview">🚀  Deployment Overview</a></li>
+      </ul>
+    </li>
     <li><a href="#job">job</a>
       <ul>
         <li><a href="#job-creation-yaml">Job Creation yaml</a></li>
         <li><a href="#cronjob">cronjob</a></li>
-      </ul>
-    </li>
-    <li><a href="#replicaset">Replicaset</a>
-      <ul>
-        <li><a href="#replicasset-yaml-example">ReplicasSet Yaml example</a></li>
       </ul>
     </li>
     <li><a href="#daemonsethttpskubernetesiodocsconceptsworkloadscontrollersdaemonset"><a href="https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/">Daemonset</a></a>
@@ -137,7 +152,7 @@ A key aim of Services in Kubernetes is that you don’t need to modify your exis
             </div>
           </div>
           <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
-            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">/</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">Home</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
             itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Part 3</span><meta itemprop="position" content="2"></li>
           </ol>
           <div class="topbar-area topbar-area-end" data-area="end">
@@ -167,7 +182,7 @@ A key aim of Services in Kubernetes is that you don’t need to modify your exis
 
 <h2 id="topics">Topics</h2>
 <ul>
-<li>Service
+<li><a href="../part03/index.html#service">Service</a>
 <ul>
 <li>CLusterIP</li>
 <li>NodePort</li>
@@ -177,10 +192,10 @@ A key aim of Services in Kubernetes is that you don’t need to modify your exis
 </li>
 <li><a href="../part03/index.html#deploying-metallb">METALLB</a></li>
 <li><a href="../part03/index.html#dns-troubleshooting">DNS Troubleshooting</a></li>
-<li>Deployment</li>
-<li>ReplicaSet</li>
-<li>Daemonset</li>
-<li>Labels and Selector</li>
+<li><a href="../part03/index.html#ingresscontroller">Kubernetes IngressController</a></li>
+<li><a href="../part03/index.html#replicaset">ReplicaSet</a></li>
+<li><a href="../part03/index.html#-deployment">Deployment</a></li>
+<li><a href="../part03/index.html#daemonset">Daemonset</a></li>
 <li>Type of <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/" rel="external" target="_blank">Selector</a>
 <ul>
 <li>Equality based</li>
@@ -225,9 +240,10 @@ A key aim of Services in Kubernetes is that you don’t need to modify your exis
 <h4 id="create-a-type-of-service-loadbalancer">Create a type of service (LoadBalancer)</h4>
 <div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl expose pod<span style="color:#f92672">/</span>name <span style="color:#f92672">--</span>port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span> <span style="color:#f92672">--</span>type<span style="color:#f92672">=</span>LoadBalancer</span></span></code></pre></div>
 <ul>
-<li>Check the endpoint
+<li>Check the endpoint</li>
+</ul>
 <div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get ep</span></span></code></pre></div>
-</li>
+<ul>
 <li>Achieve the blue green</li>
 <li>Delete a service</li>
 <li>Exchange the service selector</li>
@@ -248,6 +264,117 @@ A key aim of Services in Kubernetes is that you don’t need to modify your exis
 <li>Check the service</li>
 </ul>
 <div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get svc</span></span></code></pre></div>
+<h2 id="ingresscontroller">IngressController</h2>
+<h4 id="documentation-referred">Documentation Referred:</h4>
+<p><a href="https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/" rel="external" target="_blank">https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/</a></p>
+<p><a href="https://kubernetes.github.io/ingress-nginx/deploy/" rel="external" target="_blank">https://kubernetes.github.io/ingress-nginx/deploy/</a></p>
+<ul>
+<li>Step 1: Install Nginx Ingress Controller:</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace</span></span></code></pre></div>
+<ul>
+<li>Step 2: Verify the Ingress Controller Resource</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>helm list --all-namespaces
+</span></span><span style="display:flex;"><span>kubectl get ingressclass
+</span></span><span style="display:flex;"><span>kubectl get service -n ingress-nginx</span></span></code></pre></div>
+<ul>
+<li>check if the IngressClass is available</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get ingressClassName</span></span></code></pre></div>
+<ul>
+<li>
+<p>Add the Application dns to your hosts in case you are not using DNS service</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>nano /etc/hosts   <span style="color:#66d9ef">for</span> windows it is under C:<span style="color:#ae81ff">\W</span>indows<span style="color:#ae81ff">\S</span>ystem32<span style="color:#ae81ff">\d</span>rivers<span style="color:#ae81ff">\e</span>tc</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>&lt;ADD-LOAD-BALANCER-IP&gt; website01.example.internal website02.example.internal</span></span></code></pre></div>
+</li>
+<li>
+<p>Step 1: Create two Pods</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl run service-pod-1 --image<span style="color:#f92672">=</span>nginx
+</span></span><span style="display:flex;"><span>kubectl run service-pod-2 --image<span style="color:#f92672">=</span>nginx</span></span></code></pre></div>
+</li>
+<li>
+<p>Step 2: Create Service for above created pods</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl expose pod service-pod-1 --name service1 --port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span> --target-port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>kubectl expose pod service-pod-2 --name service2 --port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span> --target-port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>kubectl get services</span></span></code></pre></div>
+</li>
+<li>
+<p>Step 3: Verify Service to POD connectivity</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl run frontend-pod --image<span style="color:#f92672">=</span>ubuntu --command -- sleep <span style="color:#ae81ff">36000</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it frontend-pod -- bash
+</span></span><span style="display:flex;"><span>apt-get update <span style="color:#f92672">&amp;&amp;</span> apt-get -y install curl nano
+</span></span><span style="display:flex;"><span>curl &lt;SERVER-1-IP&gt;
+</span></span><span style="display:flex;"><span>curl &lt;SERVER-1-IP&gt;</span></span></code></pre></div>
+</li>
+<li>
+<p>Check if the application is reachable</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>curl website01.example.internal
+</span></span><span style="display:flex;"><span>curl website02.example.internal</span></span></code></pre></div>
+</li>
+<li>
+<p>Step 5: Change the Default Nginx Page for Each Service</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl exec -it service-pod-1 -- bash
+</span></span><span style="display:flex;"><span>cd /usr/share/nginx/html
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;This is Website 1&#34;</span> &gt; index.html</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl exec -it service-pod-2 -- bash
+</span></span><span style="display:flex;"><span>cd /usr/share/nginx/html
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;This is Website 2&#34;</span> &gt; index.html</span></span></code></pre></div>
+</li>
+<li>
+<p>Step 6: Verification</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl exec -it frontend-pod -- bash
+</span></span><span style="display:flex;"><span>curl website01.example.internal
+</span></span><span style="display:flex;"><span>curl website02.example.internal</span></span></code></pre></div>
+</li>
+</ul>
+<h4 id="documentation-referred-1">Documentation Referred:</h4>
+<p><a href="https://kubernetes.io/docs/concepts/services-networking/ingress/#name-based-virtual-hosting" rel="external" target="_blank"> Lean About name based virtual Hosting</a></p>
+<ul>
+<li>
+<p>Step 7: Create Ingress Resource</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: networking.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Ingress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: name-virtual-host-ingress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ingressClassName: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  rules:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - host: website01.example.internal
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    http:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      paths:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - pathType: Prefix
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        path: &#34;/&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        backend:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          service:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            name: service1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            port:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              number: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - host: website02.example.internal
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    http:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      paths:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - pathType: Prefix
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        path: &#34;/&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        backend:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          service:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            name: service2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            port:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              number: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+</li>
+<li>
+<p>Check newlly created ingress rules</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get ingress</span></span></code></pre></div>
+</li>
+<li>
+<p>Check more information for ingress</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl describe ingress name<span style="color:#f92672">-</span>virtual<span style="color:#f92672">-</span>host<span style="color:#f92672">-</span>ingress created</span></span></code></pre></div>
+</li>
+<li>
+<p>Now check if the application is opening in browser</p>
+</li>
+</ul>
 <h3 id="metric-server">Metric Server</h3>
 <p><a href="https://github.com/kubernetes-sigs/metrics-server" rel="external" target="_blank">Metric Server Github Link</a></p>
 <h3 id="steps-1">Steps</h3>
@@ -277,18 +404,125 @@ A key aim of Services in Kubernetes is that you don’t need to modify your exis
 <li>check hpa</li>
 </ul>
 <div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get hpa</span></span></code></pre></div>
-<h2 id="deployment">Deployment</h2>
+<h2 id="replicaset">ReplicaSet</h2>
 <ul>
-<li>Create Deployment</li>
-<li>Update secret for a deployment</li>
-<li>Set resource block for a deployment</li>
-<li>Set Environment Variables in Deployment</li>
-<li>Perform Rollout</li>
-<li>Perform Rollback</li>
-<li>Rolled back to another revision</li>
-<li>Check the max rs for a deployment</li>
-<li>Deployment strategy</li>
-<li>Create a deployment</li>
+<li>✅ Create a ReplicaSet</li>
+<li>📏 Scale a ReplicaSet</li>
+<li>🔍 Check the image used by a ReplicaSet</li>
+<li>🔄 Update the image for a ReplicaSet</li>
+<li>🌐 Create a Service to expose the ReplicaSet</li>
+<li>🔁 Forward a port from the ReplicaSet Pod to local machine</li>
+<li>🧪 Test if the application is accessible</li>
+</ul>
+<h3 id="replicaset-overview">Replicaset Overview</h3>
+<p>A ReplicaSet is used to maintain a stable set of replica Pods running at any given time. If a Pod goes down or is deleted, the ReplicaSet will automatically create a new one to replace it.</p>
+<h2 id="-key-features">🔑 Key Features</h2>
+<ul>
+<li>✅ Ensures <strong>high availability</strong> by maintaining the desired count of Pods.</li>
+<li>🔁 Provides <strong>self-healing</strong> by recreating missing Pods.</li>
+<li>🔢 Supports <strong>scaling</strong>: You can increase or decrease the number of replicas.</li>
+<li>🎯 Uses <strong>label selectors</strong> (<code>matchLabels</code>) to manage the right set of Pods.</li>
+</ul>
+<h2 id="-replicaset-vs-deployment">⚖️ ReplicaSet vs Deployment</h2>
+<table>
+  <thead>
+      <tr>
+          <th>Feature</th>
+          <th>ReplicaSet</th>
+          <th>Deployment</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Pod Management</td>
+          <td>✔️</td>
+          <td>✔️</td>
+      </tr>
+      <tr>
+          <td>Rolling Update</td>
+          <td>❌</td>
+          <td>✔️</td>
+      </tr>
+      <tr>
+          <td>Rollback</td>
+          <td>❌</td>
+          <td>✔️</td>
+      </tr>
+      <tr>
+          <td>Recommended</td>
+          <td>❌ (low-level)</td>
+          <td>✔️ (preferred for most cases)</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="replicasset-yaml-example">ReplicasSet Yaml example</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ReplicaSet
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: my-replicaset
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: myapp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: myapp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: myapp-container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>View Replicaset</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get replicasets
+</span></span><span style="display:flex;"><span>kubectl get rs</span></span></code></pre></div>
+<ul>
+<li>Scale up/down a replicaset</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl scale replicaset <span style="color:#66d9ef">my</span><span style="color:#f92672">-</span>replicaset <span style="color:#f92672">--</span>replicas<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span></span></span></code></pre></div>
+<ul>
+<li>Create a service for Replicaset</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: my-service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: myapp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - protocol: TCP
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    port: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    targetPort: 8080
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  type: LoadBalancer
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<ul>
+<li>configure port forward for replicaset</li>
+</ul>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl port-forward replicaset/my-replicaset 8080:80</span></span></code></pre></div>
+<h2 id="-deployment">🚀 Deployment</h2>
+<ul>
+<li>🆕 <strong>Create a Deployment</strong></li>
+<li>🔐 <strong>Update Secrets Used by a Deployment</strong></li>
+<li>⚙️ <strong>Configure Resource Requests and Limits in a Deployment</strong></li>
+<li>🌱 <strong>Set Environment Variables in a Deployment</strong></li>
+<li>📦 <strong>Perform a Rollout of a Deployment</strong></li>
+<li>🔁 <strong>Roll Back to the Previous Revision</strong></li>
+<li>⬅️ <strong>Roll Back to a Specific Revision</strong></li>
+<li>📊 <strong>Check the Maximum Number of ReplicaSets Retained for a Deployment</strong></li>
+<li>🛠️ <strong>Understand and Configure Deployment Strategies</strong></li>
+</ul>
+<h3 id="--deployment-overview">🚀  Deployment Overview</h3>
+<ul>
+<li>A Deployment provides declarative updates for Pods and ReplicaSets.</li>
+<li>You describe a desired state in a Deployment, and the Deployment Controller changes the actual state to the desired state at a controlled rate.</li>
+<li>You can define Deployments to create new ReplicaSets, or to remove existing Deployments and adopt all their resources with new Deployments.</li>
+<li><strong>Create a deployment</strong></li>
 </ul>
 <div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create deployment myapp-deployment --image<span style="color:#f92672">=</span>nginx</span></span></code></pre></div>
 <ul>
@@ -371,7 +605,8 @@ A key aim of Services in Kubernetes is that you don’t need to modify your exis
 <ul>
 <li>How to use record option with rollback depoloyment</li>
 </ul>
-<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl rollout undo deployment/&lt;deployment-name&gt; --to-revision<span style="color:#f92672">=</span>&lt;revision-number&gt; --record</span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl set image deployment/nginx-deployment nginx<span style="color:#f92672">=</span>nginx:1.21
+</span></span><span style="display:flex;"><span>kubectl annotate deployment nginx-deployment kubernetes.io/change-cause<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Updated to nginx 1.21&#34;</span></span></span></code></pre></div>
 <h2 id="job">job</h2>
 <ul>
 <li>Create a job</li>
@@ -510,66 +745,6 @@ A key aim of Services in Kubernetes is that you don’t need to modify your exis
 <li>Resume a suspended Job:</li>
 </ul>
 <div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl patch job<span style="color:#f92672">/</span>myjob <span style="color:#f92672">--</span>type<span style="color:#f92672">=</span>strategic <span style="color:#f92672">--</span>patch <span style="color:#e6db74">&#39;{&#34;spec&#34;:{&#34;suspend&#34;:false}}&#39;</span></span></span></code></pre></div>
-<h2 id="replicaset">Replicaset</h2>
-<ul>
-<li>Create a replicaset</li>
-<li>Scale Replicaset</li>
-<li>Check the image used for replicaset</li>
-<li>Change the image for a rs</li>
-<li>Create a service for rs</li>
-<li>Forward the port of a rs</li>
-<li>Test if the app is opening</li>
-</ul>
-<h3 id="replicasset-yaml-example">ReplicasSet Yaml example</h3>
-<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ReplicaSet
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: my-replicaset
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 3
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: myapp
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: myapp
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: myapp-container
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: nginx
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
-<ul>
-<li>View Replicaset</li>
-</ul>
-<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get replicasets
-</span></span><span style="display:flex;"><span>kubectl get rs</span></span></code></pre></div>
-<ul>
-<li>Scale up/down a replicaset</li>
-</ul>
-<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl scale replicaset <span style="color:#66d9ef">my</span><span style="color:#f92672">-</span>replicaset <span style="color:#f92672">--</span>replicas<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span></span></span></code></pre></div>
-<ul>
-<li>Create a service for Replicaset</li>
-</ul>
-<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: my-service
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: myapp
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - protocol: TCP
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    port: 80
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    targetPort: 8080
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  type: LoadBalancer
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
-<ul>
-<li>configure port forward for replicaset</li>
-</ul>
-<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl port-forward replicaset/my-replicaset 8080:80</span></span></code></pre></div>
 <h2 id="daemonsethttpskubernetesiodocsconceptsworkloadscontrollersdaemonset"><a href="https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/" rel="external" target="_blank">Daemonset</a></h2>
 <p>A DaemonSet ensures that all (or some) Nodes run a copy of a Pod. As nodes are added to the cluster, Pods are added to them. As nodes are removed from the cluster, those Pods are garbage collected. Deleting a DaemonSet will clean up the Pods it created.</p>
 <ul>
@@ -707,7 +882,7 @@ Kubernetes Documentation
           </a>
         </div>
         <script>
-          window.index_js_url="../searchindex.en.js?1734364594";
+          window.index_js_url="../searchindex.en.js?1752918557";
         </script>
         <search><form action="../search/index.html" method="get">
           <div class="searchbox default-animation">
@@ -720,12 +895,12 @@ Kubernetes Documentation
         <script>
           var contentLangs=['en'];
         </script>
-        <script src="../js/auto-complete.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.stemmer.support.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.multi.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.en.min.js?1734364594" defer></script>
-        <script src="../js/search.js?1734364594" defer></script>
+        <script src="../js/auto-complete.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.stemmer.support.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.multi.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.en.min.js?1752918557" defer></script>
+        <script src="../js/search.js?1752918557" defer></script>
       </div>
       <div id="R-homelinks" class="default-animation homelinks">
         <ul>
@@ -736,7 +911,7 @@ Kubernetes Documentation
       <div id="R-content-wrapper" class="highlightable">
         <div id="R-shortcutmenu-home" class="R-sidebarmenu">
           <ul class="enlarge morespace collapsible-menu">
-            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes documentation</a></li>
+            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes Documentation</a></li>
             <li class="" data-nav-id="/part01/index.html"><a class="padding" href="../part01/index.html">Part 1</a></li>
             <li class="" data-nav-id="/part02/index.html"><a class="padding" href="../part02/index.html">Part 2</a></li>
             <li class="active " data-nav-id="/part03/index.html"><a class="padding" href="../part03/index.html">Part 3</a></li>
@@ -810,8 +985,8 @@ Kubernetes Documentation
         </div>
       </div>
     </aside>
-    <script src="../js/clipboard.min.js?1734364594" defer></script>
-    <script src="../js/perfect-scrollbar.min.js?1734364594" defer></script>
-    <script src="../js/theme.js?1734364594" defer></script>
+    <script src="../js/clipboard.min.js?1752918557" defer></script>
+    <script src="../js/perfect-scrollbar.min.js?1752918557" defer></script>
+    <script src="../js/theme.js?1752918557" defer></script>
   </body>
 </html>

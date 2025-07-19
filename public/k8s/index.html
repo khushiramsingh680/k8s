@@ -5,27 +5,27 @@
     <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <meta name="generator" content="Hugo 0.139.3">
     <meta name="generator" content="Relearn 7.2.1+16d4de84becfa2d2e6bdb2394a2f4fa411bc0007">
-    <meta name="description" content="Learn by doing">
+    <meta name="description" content="An introduction to Kubernetes with hands-on tutorials and visual aids.">
     <meta name="author" content="">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Kubernetes documentation :: Kubernetes Documentation">
-    <meta name="twitter:description" content="Learn by doing">
+    <meta name="twitter:title" content="Kubernetes Documentation">
+    <meta name="twitter:description" content="An introduction to Kubernetes with hands-on tutorials and visual aids.">
     <meta property="og:url" content="https://khushiramsingh680.github.io/k8s/k8s/index.html">
     <meta property="og:site_name" content="Kubernetes Documentation">
-    <meta property="og:title" content="Kubernetes documentation :: Kubernetes Documentation">
-    <meta property="og:description" content="Learn by doing">
+    <meta property="og:title" content="Kubernetes Documentation">
+    <meta property="og:description" content="An introduction to Kubernetes with hands-on tutorials and visual aids.">
     <meta property="og:locale" content="en_us">
     <meta property="og:type" content="website">
-    <meta itemprop="name" content="Kubernetes documentation :: Kubernetes Documentation">
-    <meta itemprop="description" content="Learn by doing">
-    <meta itemprop="wordCount" content="3">
-    <title>Kubernetes documentation :: Kubernetes Documentation</title>
-    <link href="../k8s/index.xml" rel="alternate" type="application/rss+xml" title="Kubernetes documentation :: Kubernetes Documentation">
-    <link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet"></noscript>
-    <link href="../css/auto-complete.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1734364594" rel="stylesheet"></noscript>
-    <link href="../css/perfect-scrollbar.min.css?1734364594" rel="stylesheet">
-    <link href="../css/theme.min.css?1734364594" rel="stylesheet">
-    <link href="../css/format-html.min.css?1734364594" rel="stylesheet" id="R-format-style">
+    <meta itemprop="name" content="Kubernetes Documentation">
+    <meta itemprop="description" content="An introduction to Kubernetes with hands-on tutorials and visual aids.">
+    <meta itemprop="wordCount" content="13">
+    <title>Kubernetes Documentation</title>
+    <link href="../k8s/index.xml" rel="alternate" type="application/rss+xml" title="Kubernetes Documentation">
+    <link href="../css/fontawesome-all.min.css?1752918557" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1752918557" rel="stylesheet"></noscript>
+    <link href="../css/auto-complete.css?1752918557" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1752918557" rel="stylesheet"></noscript>
+    <link href="../css/perfect-scrollbar.min.css?1752918557" rel="stylesheet">
+    <link href="../css/theme.min.css?1752918557" rel="stylesheet">
+    <link href="../css/format-html.min.css?1752918557" rel="stylesheet" id="R-format-style">
     <script>
       window.relearn = window.relearn || {};
       window.relearn.relBasePath='..';
@@ -85,17 +85,22 @@
             </div>
             <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
               <div class="topbar-content">
-                <div class="topbar-content-wrapper"> 
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#learn-by-doing">Learn by Doing</a></li>
+  </ul>
+</nav>
                 </div>
               </div>
             </div>
           </div>
           <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
-            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">/</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
-            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Kubernetes documentation</span><meta itemprop="position" content="2"></li>
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">Home</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Kubernetes Documentation</span><meta itemprop="position" content="2"></li>
           </ol>
           <div class="topbar-area topbar-area-end" data-area="end">
-            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../index.html" title="/ (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../index.html" title="Home (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
             </div>
             <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../part01/index.html" title="Part 1 (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
             </div>
@@ -118,11 +123,12 @@
   </header>
 <div class="article-subheading">Chapter 1</div>
 
-<h1 id="kubernetes-documentation">Kubernetes documentation</h1>
+<h1 id="kubernetes-documentation">Kubernetes Documentation</h1>
 
-<p>Learn by doing</p>
-<p><a href="#R-image-35a4ca641ac552715ed792f03d6cbf5c" class="lightbox-link"><img alt="AKS01" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/az01.png" style=" height: auto; width: auto;"></a>
-<a href="javascript:history.back();" class="lightbox-back" id="R-image-35a4ca641ac552715ed792f03d6cbf5c"><img alt="AKS01" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/az01.png"></a></p>
+<h2 id="learn-by-doing">Learn by Doing</h2>
+<p>Jump right into Kubernetes with practical examples and visual guides.</p>
+<p><a href="#R-image-a901e9b27305a8881ecae70b78fb2bf6" class="lightbox-link"><img alt="Azure Kubernetes Service architecture diagram" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/az01.png" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-a901e9b27305a8881ecae70b78fb2bf6"><img alt="Azure Kubernetes Service architecture diagram" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/az01.png"></a></p>
 
   <footer class="footline">
   </footer>
@@ -139,7 +145,7 @@ Kubernetes Documentation
           </a>
         </div>
         <script>
-          window.index_js_url="../searchindex.en.js?1734364594";
+          window.index_js_url="../searchindex.en.js?1752918557";
         </script>
         <search><form action="../search/index.html" method="get">
           <div class="searchbox default-animation">
@@ -152,12 +158,12 @@ Kubernetes Documentation
         <script>
           var contentLangs=['en'];
         </script>
-        <script src="../js/auto-complete.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.stemmer.support.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.multi.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.en.min.js?1734364594" defer></script>
-        <script src="../js/search.js?1734364594" defer></script>
+        <script src="../js/auto-complete.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.stemmer.support.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.multi.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.en.min.js?1752918557" defer></script>
+        <script src="../js/search.js?1752918557" defer></script>
       </div>
       <div id="R-homelinks" class="default-animation homelinks">
         <ul>
@@ -168,7 +174,7 @@ Kubernetes Documentation
       <div id="R-content-wrapper" class="highlightable">
         <div id="R-shortcutmenu-home" class="R-sidebarmenu">
           <ul class="enlarge morespace collapsible-menu">
-            <li class="active " data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes documentation</a></li>
+            <li class="active " data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes Documentation</a></li>
             <li class="" data-nav-id="/part01/index.html"><a class="padding" href="../part01/index.html">Part 1</a></li>
             <li class="" data-nav-id="/part02/index.html"><a class="padding" href="../part02/index.html">Part 2</a></li>
             <li class="" data-nav-id="/part03/index.html"><a class="padding" href="../part03/index.html">Part 3</a></li>
@@ -242,8 +248,8 @@ Kubernetes Documentation
         </div>
       </div>
     </aside>
-    <script src="../js/clipboard.min.js?1734364594" defer></script>
-    <script src="../js/perfect-scrollbar.min.js?1734364594" defer></script>
-    <script src="../js/theme.js?1734364594" defer></script>
+    <script src="../js/clipboard.min.js?1752918557" defer></script>
+    <script src="../js/perfect-scrollbar.min.js?1752918557" defer></script>
+    <script src="../js/theme.js?1752918557" defer></script>
   </body>
 </html>

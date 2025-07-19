@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head><script src="/k8s/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=k8s/livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.139.3">
+    <meta name="generator" content="Relearn 7.2.1+16d4de84becfa2d2e6bdb2394a2f4fa411bc0007">
+    <meta name="description" content="Kubernetes Learning Guide Table of Contents Kubernetes Overview Kubernetes Architecture &amp; Components Kubernetes Worker Node Components Kubernetes Cluster Setup Documentation Kubernetes Cluster Configurations Node Related Commands Upgrade Kubeadm Cluster Etcd Backup and Restore on Kubernetes Cluster CIS Benchmark Kubernetes Overview Kubernetes is an open-source container orchestration platform for automating deployment, scaling, and operations of application containers across clusters of hosts.
+Kubernetes Architecture &amp; Components Master Node Components kube-apiserver: Frontend for Kubernetes Control Plane. etcd: Key-value store for all cluster data. kube-scheduler: Watches for new pods and assigns them to nodes. kube-controller-manager: Runs controller processes. cloud-controller-manager: Manages cloud-specific control logic. Kubernetes Worker Node Components kubelet: Ensures containers are running in a pod. kube-proxy: Maintains network rules on nodes. Container Runtime: Software that runs containers (e.g., containerd, CRI-O). Kubernetes Cluster Setup Documentation Requirements Component Minimum Requirements OS CentOS 7 / RHEL / Ubuntu 22.04&#43; RAM 2 GB or more CPU 2 cores Disk 20 GB minimum Internet Required for installation Installation Steps # Disable swap swapoff -a sed -i &#39;/swap/d&#39; /etc/fstab # Set SELinux in permissive mode setenforce 0 sed -i --follow-symlinks &#39;s/^SELINUX=enforcing$/SELINUX=permissive/&#39; /etc/selinux/config # Add Kubernetes repo cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo [kubernetes] name=Kubernetes baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64 enabled=1 gpgcheck=1 repo_gpgcheck=1 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg EOF # Install Kubernetes packages yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes # Enable services systemctl enable --now kubeletKubernetes Cluster Configurations Create Cluster # Initialize cluster (replace --apiserver-advertise-address with your IP) kubeadm init --pod-network-cidr=192.168.0.0/16 \ --apiserver-advertise-address=192.168.1.10 # Configure kubectl for user mkdir -p $HOME/.kube cp -i /etc/kubernetes/admin.conf $HOME/.kube/config chown $(id -u):$(id -g) $HOME/.kube/configInstall Pod Network (e.g., Calico) kubectl apply -f https://docs.projectcalico.org/manifests/calico.yamlNode Related Commands # View nodes kubectl get nodes -o wide # View pods in all namespaces kubectl get pods --all-namespaces # Drain node kubectl drain &lt;node-name&gt; --ignore-daemonsets # Cordon node kubectl cordon &lt;node-name&gt; # Uncordon node kubectl uncordon &lt;node-name&gt; # Delete node kubectl delete node &lt;node-name&gt;Upgrade Kubeadm Cluster # Drain control plane node kubectl drain &lt;node-name&gt; --ignore-daemonsets # Upgrade kubeadm yum install -y kubeadm-1.x.x # Plan upgrade kubeadm upgrade plan # Apply upgrade kubeadm upgrade apply v1.x.x # Upgrade kubelet and kubectl yum install -y kubelet-1.x.x kubectl-1.x.x # Restart kubelet systemctl daemon-reexec systemctl restart kubelet # Uncordon node kubectl uncordon &lt;node-name&gt;Etcd Backup and Restore on Kubernetes Cluster Backup Etcd ETCDCTL_API=3 etcdctl snapshot save snapshot.db \ --endpoints=https://127.0.0.1:2379 \ --cacert=/etc/kubernetes/pki/etcd/ca.crt \ --cert=/etc/kubernetes/pki/etcd/server.crt \ --key=/etc/kubernetes/pki/etcd/server.keyRestore Etcd ETCDCTL_API=3 etcdctl snapshot restore snapshot.db \ --data-dir=/var/lib/etcd-from-backupCIS Benchmark Official CIS Benchmark for Kubernetes:
+https://learn.cisecurity.org/benchmarks You can use tools like kube-bench for scanning:">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Partew 1 :: Kubernetes Documentation">
+    <meta name="twitter:description" content="Kubernetes Learning Guide Table of Contents Kubernetes Overview Kubernetes Architecture &amp; Components Kubernetes Worker Node Components Kubernetes Cluster Setup Documentation Kubernetes Cluster Configurations Node Related Commands Upgrade Kubeadm Cluster Etcd Backup and Restore on Kubernetes Cluster CIS Benchmark Kubernetes Overview Kubernetes is an open-source container orchestration platform for automating deployment, scaling, and operations of application containers across clusters of hosts.
+Kubernetes Architecture &amp; Components Master Node Components kube-apiserver: Frontend for Kubernetes Control Plane. etcd: Key-value store for all cluster data. kube-scheduler: Watches for new pods and assigns them to nodes. kube-controller-manager: Runs controller processes. cloud-controller-manager: Manages cloud-specific control logic. Kubernetes Worker Node Components kubelet: Ensures containers are running in a pod. kube-proxy: Maintains network rules on nodes. Container Runtime: Software that runs containers (e.g., containerd, CRI-O). Kubernetes Cluster Setup Documentation Requirements Component Minimum Requirements OS CentOS 7 / RHEL / Ubuntu 22.04&#43; RAM 2 GB or more CPU 2 cores Disk 20 GB minimum Internet Required for installation Installation Steps # Disable swap swapoff -a sed -i &#39;/swap/d&#39; /etc/fstab # Set SELinux in permissive mode setenforce 0 sed -i --follow-symlinks &#39;s/^SELINUX=enforcing$/SELINUX=permissive/&#39; /etc/selinux/config # Add Kubernetes repo cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo [kubernetes] name=Kubernetes baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64 enabled=1 gpgcheck=1 repo_gpgcheck=1 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg EOF # Install Kubernetes packages yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes # Enable services systemctl enable --now kubeletKubernetes Cluster Configurations Create Cluster # Initialize cluster (replace --apiserver-advertise-address with your IP) kubeadm init --pod-network-cidr=192.168.0.0/16 \ --apiserver-advertise-address=192.168.1.10 # Configure kubectl for user mkdir -p $HOME/.kube cp -i /etc/kubernetes/admin.conf $HOME/.kube/config chown $(id -u):$(id -g) $HOME/.kube/configInstall Pod Network (e.g., Calico) kubectl apply -f https://docs.projectcalico.org/manifests/calico.yamlNode Related Commands # View nodes kubectl get nodes -o wide # View pods in all namespaces kubectl get pods --all-namespaces # Drain node kubectl drain &lt;node-name&gt; --ignore-daemonsets # Cordon node kubectl cordon &lt;node-name&gt; # Uncordon node kubectl uncordon &lt;node-name&gt; # Delete node kubectl delete node &lt;node-name&gt;Upgrade Kubeadm Cluster # Drain control plane node kubectl drain &lt;node-name&gt; --ignore-daemonsets # Upgrade kubeadm yum install -y kubeadm-1.x.x # Plan upgrade kubeadm upgrade plan # Apply upgrade kubeadm upgrade apply v1.x.x # Upgrade kubelet and kubectl yum install -y kubelet-1.x.x kubectl-1.x.x # Restart kubelet systemctl daemon-reexec systemctl restart kubelet # Uncordon node kubectl uncordon &lt;node-name&gt;Etcd Backup and Restore on Kubernetes Cluster Backup Etcd ETCDCTL_API=3 etcdctl snapshot save snapshot.db \ --endpoints=https://127.0.0.1:2379 \ --cacert=/etc/kubernetes/pki/etcd/ca.crt \ --cert=/etc/kubernetes/pki/etcd/server.crt \ --key=/etc/kubernetes/pki/etcd/server.keyRestore Etcd ETCDCTL_API=3 etcdctl snapshot restore snapshot.db \ --data-dir=/var/lib/etcd-from-backupCIS Benchmark Official CIS Benchmark for Kubernetes:
+https://learn.cisecurity.org/benchmarks You can use tools like kube-bench for scanning:">
+    <meta property="og:url" content="http://localhost:1313/k8s/part0101/index.html">
+    <meta property="og:site_name" content="Kubernetes Documentation">
+    <meta property="og:title" content="Partew 1 :: Kubernetes Documentation">
+    <meta property="og:description" content="Kubernetes Learning Guide Table of Contents Kubernetes Overview Kubernetes Architecture &amp; Components Kubernetes Worker Node Components Kubernetes Cluster Setup Documentation Kubernetes Cluster Configurations Node Related Commands Upgrade Kubeadm Cluster Etcd Backup and Restore on Kubernetes Cluster CIS Benchmark Kubernetes Overview Kubernetes is an open-source container orchestration platform for automating deployment, scaling, and operations of application containers across clusters of hosts.
+Kubernetes Architecture &amp; Components Master Node Components kube-apiserver: Frontend for Kubernetes Control Plane. etcd: Key-value store for all cluster data. kube-scheduler: Watches for new pods and assigns them to nodes. kube-controller-manager: Runs controller processes. cloud-controller-manager: Manages cloud-specific control logic. Kubernetes Worker Node Components kubelet: Ensures containers are running in a pod. kube-proxy: Maintains network rules on nodes. Container Runtime: Software that runs containers (e.g., containerd, CRI-O). Kubernetes Cluster Setup Documentation Requirements Component Minimum Requirements OS CentOS 7 / RHEL / Ubuntu 22.04&#43; RAM 2 GB or more CPU 2 cores Disk 20 GB minimum Internet Required for installation Installation Steps # Disable swap swapoff -a sed -i &#39;/swap/d&#39; /etc/fstab # Set SELinux in permissive mode setenforce 0 sed -i --follow-symlinks &#39;s/^SELINUX=enforcing$/SELINUX=permissive/&#39; /etc/selinux/config # Add Kubernetes repo cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo [kubernetes] name=Kubernetes baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64 enabled=1 gpgcheck=1 repo_gpgcheck=1 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg EOF # Install Kubernetes packages yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes # Enable services systemctl enable --now kubeletKubernetes Cluster Configurations Create Cluster # Initialize cluster (replace --apiserver-advertise-address with your IP) kubeadm init --pod-network-cidr=192.168.0.0/16 \ --apiserver-advertise-address=192.168.1.10 # Configure kubectl for user mkdir -p $HOME/.kube cp -i /etc/kubernetes/admin.conf $HOME/.kube/config chown $(id -u):$(id -g) $HOME/.kube/configInstall Pod Network (e.g., Calico) kubectl apply -f https://docs.projectcalico.org/manifests/calico.yamlNode Related Commands # View nodes kubectl get nodes -o wide # View pods in all namespaces kubectl get pods --all-namespaces # Drain node kubectl drain &lt;node-name&gt; --ignore-daemonsets # Cordon node kubectl cordon &lt;node-name&gt; # Uncordon node kubectl uncordon &lt;node-name&gt; # Delete node kubectl delete node &lt;node-name&gt;Upgrade Kubeadm Cluster # Drain control plane node kubectl drain &lt;node-name&gt; --ignore-daemonsets # Upgrade kubeadm yum install -y kubeadm-1.x.x # Plan upgrade kubeadm upgrade plan # Apply upgrade kubeadm upgrade apply v1.x.x # Upgrade kubelet and kubectl yum install -y kubelet-1.x.x kubectl-1.x.x # Restart kubelet systemctl daemon-reexec systemctl restart kubelet # Uncordon node kubectl uncordon &lt;node-name&gt;Etcd Backup and Restore on Kubernetes Cluster Backup Etcd ETCDCTL_API=3 etcdctl snapshot save snapshot.db \ --endpoints=https://127.0.0.1:2379 \ --cacert=/etc/kubernetes/pki/etcd/ca.crt \ --cert=/etc/kubernetes/pki/etcd/server.crt \ --key=/etc/kubernetes/pki/etcd/server.keyRestore Etcd ETCDCTL_API=3 etcdctl snapshot restore snapshot.db \ --data-dir=/var/lib/etcd-from-backupCIS Benchmark Official CIS Benchmark for Kubernetes:
+https://learn.cisecurity.org/benchmarks You can use tools like kube-bench for scanning:">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="Home">
+    <meta itemprop="name" content="Partew 1 :: Kubernetes Documentation">
+    <meta itemprop="description" content="Kubernetes Learning Guide Table of Contents Kubernetes Overview Kubernetes Architecture &amp; Components Kubernetes Worker Node Components Kubernetes Cluster Setup Documentation Kubernetes Cluster Configurations Node Related Commands Upgrade Kubeadm Cluster Etcd Backup and Restore on Kubernetes Cluster CIS Benchmark Kubernetes Overview Kubernetes is an open-source container orchestration platform for automating deployment, scaling, and operations of application containers across clusters of hosts.
+Kubernetes Architecture &amp; Components Master Node Components kube-apiserver: Frontend for Kubernetes Control Plane. etcd: Key-value store for all cluster data. kube-scheduler: Watches for new pods and assigns them to nodes. kube-controller-manager: Runs controller processes. cloud-controller-manager: Manages cloud-specific control logic. Kubernetes Worker Node Components kubelet: Ensures containers are running in a pod. kube-proxy: Maintains network rules on nodes. Container Runtime: Software that runs containers (e.g., containerd, CRI-O). Kubernetes Cluster Setup Documentation Requirements Component Minimum Requirements OS CentOS 7 / RHEL / Ubuntu 22.04&#43; RAM 2 GB or more CPU 2 cores Disk 20 GB minimum Internet Required for installation Installation Steps # Disable swap swapoff -a sed -i &#39;/swap/d&#39; /etc/fstab # Set SELinux in permissive mode setenforce 0 sed -i --follow-symlinks &#39;s/^SELINUX=enforcing$/SELINUX=permissive/&#39; /etc/selinux/config # Add Kubernetes repo cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo [kubernetes] name=Kubernetes baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64 enabled=1 gpgcheck=1 repo_gpgcheck=1 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg EOF # Install Kubernetes packages yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes # Enable services systemctl enable --now kubeletKubernetes Cluster Configurations Create Cluster # Initialize cluster (replace --apiserver-advertise-address with your IP) kubeadm init --pod-network-cidr=192.168.0.0/16 \ --apiserver-advertise-address=192.168.1.10 # Configure kubectl for user mkdir -p $HOME/.kube cp -i /etc/kubernetes/admin.conf $HOME/.kube/config chown $(id -u):$(id -g) $HOME/.kube/configInstall Pod Network (e.g., Calico) kubectl apply -f https://docs.projectcalico.org/manifests/calico.yamlNode Related Commands # View nodes kubectl get nodes -o wide # View pods in all namespaces kubectl get pods --all-namespaces # Drain node kubectl drain &lt;node-name&gt; --ignore-daemonsets # Cordon node kubectl cordon &lt;node-name&gt; # Uncordon node kubectl uncordon &lt;node-name&gt; # Delete node kubectl delete node &lt;node-name&gt;Upgrade Kubeadm Cluster # Drain control plane node kubectl drain &lt;node-name&gt; --ignore-daemonsets # Upgrade kubeadm yum install -y kubeadm-1.x.x # Plan upgrade kubeadm upgrade plan # Apply upgrade kubeadm upgrade apply v1.x.x # Upgrade kubelet and kubectl yum install -y kubelet-1.x.x kubectl-1.x.x # Restart kubelet systemctl daemon-reexec systemctl restart kubelet # Uncordon node kubectl uncordon &lt;node-name&gt;Etcd Backup and Restore on Kubernetes Cluster Backup Etcd ETCDCTL_API=3 etcdctl snapshot save snapshot.db \ --endpoints=https://127.0.0.1:2379 \ --cacert=/etc/kubernetes/pki/etcd/ca.crt \ --cert=/etc/kubernetes/pki/etcd/server.crt \ --key=/etc/kubernetes/pki/etcd/server.keyRestore Etcd ETCDCTL_API=3 etcdctl snapshot restore snapshot.db \ --data-dir=/var/lib/etcd-from-backupCIS Benchmark Official CIS Benchmark for Kubernetes:
+https://learn.cisecurity.org/benchmarks You can use tools like kube-bench for scanning:">
+    <meta itemprop="wordCount" content="424">
+    <title>Partew 1 :: Kubernetes Documentation</title>
+    <link href="../css/fontawesome-all.min.css?1752915542" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1752915542" rel="stylesheet"></noscript>
+    <link href="../css/auto-complete.css?1752915542" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1752915542" rel="stylesheet"></noscript>
+    <link href="../css/perfect-scrollbar.min.css?1752915542" rel="stylesheet">
+    <link href="../css/theme.css?1752915542" rel="stylesheet">
+    <link href="../css/format-html.css?1752915542" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.relBasePath='..';
+      window.relearn.relBaseUri='..';
+      window.relearn.absBaseUri='http:\/\/localhost:1313\/k8s';
+      window.relearn.min = ``;
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant");
+        var select = document.querySelector("#R-select-variant");
+        if (select) {
+          select.value = variant;
+        }
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script>
+  </head>
+  <body class="mobile-support html" data-url="../part0101/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#table-of-contents">Table of Contents</a></li>
+    <li><a href="#kubernetes-overview">Kubernetes Overview</a></li>
+    <li><a href="#kubernetes-architecture--components">Kubernetes Architecture &amp; Components</a>
+      <ul>
+        <li><a href="#master-node-components">Master Node Components</a></li>
+      </ul>
+    </li>
+    <li><a href="#kubernetes-worker-node-components">Kubernetes Worker Node Components</a></li>
+    <li><a href="#kubernetes-cluster-setup-documentation">Kubernetes Cluster Setup Documentation</a>
+      <ul>
+        <li><a href="#requirements">Requirements</a></li>
+        <li><a href="#installation-steps">Installation Steps</a></li>
+      </ul>
+    </li>
+    <li><a href="#kubernetes-cluster-configurations">Kubernetes Cluster Configurations</a>
+      <ul>
+        <li><a href="#create-cluster">Create Cluster</a></li>
+        <li><a href="#install-pod-network-eg-calico">Install Pod Network (e.g., Calico)</a></li>
+      </ul>
+    </li>
+    <li><a href="#node-related-commands">Node Related Commands</a></li>
+    <li><a href="#upgrade-kubeadm-cluster">Upgrade Kubeadm Cluster</a></li>
+    <li><a href="#etcd-backup-and-restore-on-kubernetes-cluster">Etcd Backup and Restore on Kubernetes Cluster</a>
+      <ul>
+        <li><a href="#backup-etcd">Backup Etcd</a></li>
+        <li><a href="#restore-etcd">Restore Etcd</a></li>
+      </ul>
+    </li>
+    <li><a href="#cis-benchmark">CIS Benchmark</a></li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">Home</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Partew 1</span><meta itemprop="position" content="2"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../part01/index.html" title="Part 1 (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../part02/index.html" title="Part 2 (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable page" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+
+<h1 id="partew-1">Partew 1</h1>
+
+<h1 id="kubernetes-learning-guide">Kubernetes Learning Guide</h1>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="../part0101/index.html#kubernetes-overview">Kubernetes Overview</a></li>
+<li><a href="../part0101/index.html#kubernetes-architecture--components">Kubernetes Architecture &amp; Components</a></li>
+<li><a href="../part0101/index.html#kubernetes-worker-node-components">Kubernetes Worker Node Components</a></li>
+<li><a href="../part0101/index.html#kubernetes-cluster-setup-documentation">Kubernetes Cluster Setup Documentation</a></li>
+<li><a href="../part0101/index.html#kubernetes-cluster-configurations">Kubernetes Cluster Configurations</a></li>
+<li><a href="../part0101/index.html#node-related-commands">Node Related Commands</a></li>
+<li><a href="../part0101/index.html#upgrade-kubeadm-cluster">Upgrade Kubeadm Cluster</a></li>
+<li><a href="../part0101/index.html#etcd-backup-and-restore-on-kubernetes-cluster">Etcd Backup and Restore on Kubernetes Cluster</a></li>
+<li><a href="../part0101/index.html#cis-benchmark">CIS Benchmark</a></li>
+</ul>
+<hr>
+<h2 id="kubernetes-overview">Kubernetes Overview</h2>
+<p>Kubernetes is an open-source container orchestration platform for automating deployment, scaling, and operations of application containers across clusters of hosts.</p>
+<hr>
+<h2 id="kubernetes-architecture--components">Kubernetes Architecture &amp; Components</h2>
+<h3 id="master-node-components">Master Node Components</h3>
+<ul>
+<li><strong>kube-apiserver</strong>: Frontend for Kubernetes Control Plane.</li>
+<li><strong>etcd</strong>: Key-value store for all cluster data.</li>
+<li><strong>kube-scheduler</strong>: Watches for new pods and assigns them to nodes.</li>
+<li><strong>kube-controller-manager</strong>: Runs controller processes.</li>
+<li><strong>cloud-controller-manager</strong>: Manages cloud-specific control logic.</li>
+</ul>
+<hr>
+<h2 id="kubernetes-worker-node-components">Kubernetes Worker Node Components</h2>
+<ul>
+<li><strong>kubelet</strong>: Ensures containers are running in a pod.</li>
+<li><strong>kube-proxy</strong>: Maintains network rules on nodes.</li>
+<li><strong>Container Runtime</strong>: Software that runs containers (e.g., containerd, CRI-O).</li>
+</ul>
+<hr>
+<h2 id="kubernetes-cluster-setup-documentation">Kubernetes Cluster Setup Documentation</h2>
+<h3 id="requirements">Requirements</h3>
+<table>
+  <thead>
+      <tr>
+          <th>Component</th>
+          <th>Minimum Requirements</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>OS</td>
+          <td>CentOS 7 / RHEL / Ubuntu 22.04+</td>
+      </tr>
+      <tr>
+          <td>RAM</td>
+          <td>2 GB or more</td>
+      </tr>
+      <tr>
+          <td>CPU</td>
+          <td>2 cores</td>
+      </tr>
+      <tr>
+          <td>Disk</td>
+          <td>20 GB minimum</td>
+      </tr>
+      <tr>
+          <td>Internet</td>
+          <td>Required for installation</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="installation-steps">Installation Steps</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Disable swap</span>
+</span></span><span style="display:flex;"><span>swapoff -a
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#39;/swap/d&#39;</span> /etc/fstab
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Set SELinux in permissive mode</span>
+</span></span><span style="display:flex;"><span>setenforce <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>sed -i --follow-symlinks <span style="color:#e6db74">&#39;s/^SELINUX=enforcing$/SELINUX=permissive/&#39;</span> /etc/selinux/config
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Add Kubernetes repo</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[kubernetes]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">name=Kubernetes
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">enabled=1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">gpgcheck=1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">repo_gpgcheck=1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Install Kubernetes packages</span>
+</span></span><span style="display:flex;"><span>yum install -y kubelet kubeadm kubectl --disableexcludes<span style="color:#f92672">=</span>kubernetes
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Enable services</span>
+</span></span><span style="display:flex;"><span>systemctl enable --now kubelet</span></span></code></pre></div>
+<hr>
+<h2 id="kubernetes-cluster-configurations">Kubernetes Cluster Configurations</h2>
+<h3 id="create-cluster">Create Cluster</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Initialize cluster (replace --apiserver-advertise-address with your IP)</span>
+</span></span><span style="display:flex;"><span>kubeadm init --pod-network-cidr<span style="color:#f92672">=</span>192.168.0.0/16 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --apiserver-advertise-address<span style="color:#f92672">=</span>192.168.1.10
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Configure kubectl for user</span>
+</span></span><span style="display:flex;"><span>mkdir -p $HOME/.kube
+</span></span><span style="display:flex;"><span>cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+</span></span><span style="display:flex;"><span>chown <span style="color:#66d9ef">$(</span>id -u<span style="color:#66d9ef">)</span>:<span style="color:#66d9ef">$(</span>id -g<span style="color:#66d9ef">)</span> $HOME/.kube/config</span></span></code></pre></div>
+<h3 id="install-pod-network-eg-calico">Install Pod Network (e.g., Calico)</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml</span></span></code></pre></div>
+<hr>
+<h2 id="node-related-commands">Node Related Commands</h2>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># View nodes</span>
+</span></span><span style="display:flex;"><span>kubectl get nodes -o wide
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># View pods in all namespaces</span>
+</span></span><span style="display:flex;"><span>kubectl get pods --all-namespaces
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Drain node</span>
+</span></span><span style="display:flex;"><span>kubectl drain &lt;node-name&gt; --ignore-daemonsets
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Cordon node</span>
+</span></span><span style="display:flex;"><span>kubectl cordon &lt;node-name&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Uncordon node</span>
+</span></span><span style="display:flex;"><span>kubectl uncordon &lt;node-name&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Delete node</span>
+</span></span><span style="display:flex;"><span>kubectl delete node &lt;node-name&gt;</span></span></code></pre></div>
+<hr>
+<h2 id="upgrade-kubeadm-cluster">Upgrade Kubeadm Cluster</h2>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Drain control plane node</span>
+</span></span><span style="display:flex;"><span>kubectl drain &lt;node-name&gt; --ignore-daemonsets
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Upgrade kubeadm</span>
+</span></span><span style="display:flex;"><span>yum install -y kubeadm-1.x.x
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Plan upgrade</span>
+</span></span><span style="display:flex;"><span>kubeadm upgrade plan
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Apply upgrade</span>
+</span></span><span style="display:flex;"><span>kubeadm upgrade apply v1.x.x
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Upgrade kubelet and kubectl</span>
+</span></span><span style="display:flex;"><span>yum install -y kubelet-1.x.x kubectl-1.x.x
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Restart kubelet</span>
+</span></span><span style="display:flex;"><span>systemctl daemon-reexec
+</span></span><span style="display:flex;"><span>systemctl restart kubelet
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Uncordon node</span>
+</span></span><span style="display:flex;"><span>kubectl uncordon &lt;node-name&gt;</span></span></code></pre></div>
+<hr>
+<h2 id="etcd-backup-and-restore-on-kubernetes-cluster">Etcd Backup and Restore on Kubernetes Cluster</h2>
+<h3 id="backup-etcd">Backup Etcd</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ETCDCTL_API<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> etcdctl snapshot save snapshot.db <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--endpoints<span style="color:#f92672">=</span>https://127.0.0.1:2379 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--cacert<span style="color:#f92672">=</span>/etc/kubernetes/pki/etcd/ca.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--cert<span style="color:#f92672">=</span>/etc/kubernetes/pki/etcd/server.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--key<span style="color:#f92672">=</span>/etc/kubernetes/pki/etcd/server.key</span></span></code></pre></div>
+<h3 id="restore-etcd">Restore Etcd</h3>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ETCDCTL_API<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> etcdctl snapshot restore snapshot.db <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--data-dir<span style="color:#f92672">=</span>/var/lib/etcd-from-backup</span></span></code></pre></div>
+<hr>
+<h2 id="cis-benchmark">CIS Benchmark</h2>
+<ul>
+<li>Official CIS Benchmark for Kubernetes:<br>
+<a href="https://learn.cisecurity.org/benchmarks" rel="external" target="_blank">https://learn.cisecurity.org/benchmarks</a></li>
+</ul>
+<p>You can use tools like kube-bench for scanning:</p>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Install kube-bench</span>
+</span></span><span style="display:flex;"><span>git clone https://github.com/aquasecurity/kube-bench.git
+</span></span><span style="display:flex;"><span>cd kube-bench
+</span></span><span style="display:flex;"><span>./kube-bench</span></span></code></pre></div>
+<hr>
+<p>🟩 <em>End of Document</em></p>
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+          <a id="R-logo" class="R-default" href="../index.html">
+Kubernetes Documentation
+          </a>
+        </div>
+        <script>
+          window.index_js_url="../searchindex.en.js?1752915542";
+        </script>
+        <search><form action="../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../js/auto-complete.js?1752915542" defer></script>
+        <script src="../js/lunr/lunr.min.js?1752915542" defer></script>
+        <script src="../js/lunr/lunr.stemmer.support.min.js?1752915542" defer></script>
+        <script src="../js/lunr/lunr.multi.min.js?1752915542" defer></script>
+        <script src="../js/lunr/lunr.en.min.js?1752915542" defer></script>
+        <script src="../js/search.js?1752915542" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation homelinks">
+        <ul>
+          <li><a class="padding" href="../index.html"><i class="fa-fw fas fa-home"></i> Home</a></li>
+        </ul>
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-shortcutmenu-home" class="R-sidebarmenu">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes Documentation</a></li>
+            <li class="" data-nav-id="/part01/index.html"><a class="padding" href="../part01/index.html">Part 1</a></li>
+            <li class="active " data-nav-id="/part0101/index.html"><a class="padding" href="../part0101/index.html">Partew 1</a></li>
+            <li class="" data-nav-id="/part02/index.html"><a class="padding" href="../part02/index.html">Part 2</a></li>
+            <li class="" data-nav-id="/part03/index.html"><a class="padding" href="../part03/index.html">Part 3</a></li>
+            <li class="" data-nav-id="/part04/index.html"><a class="padding" href="../part04/index.html">Part 4</a></li>
+            <li class="" data-nav-id="/part05/index.html"><a class="padding" href="../part05/index.html">Part 5</a></li>
+            <li class="" data-nav-id="/containerbasics/index.html"><a class="padding" href="../containerbasics/index.html">Container Basics</a></li>
+            <li class="" data-nav-id="/helm-overview/index.html"><a class="padding" href="../helm-overview/index.html">Helm Overview</a></li>
+            <li class="" data-nav-id="/imp/index.html"><a class="padding" href="../imp/index.html">Imp Commands </a></li>
+            <li class="" data-nav-id="/external-etcd/index.html"><a class="padding" href="../external-etcd/index.html">kubeadm-external-etcd</a></li>
+            <li class="" data-nav-id="/kubernetes-rbac/index.html"><a class="padding" href="../kubernetes-rbac/index.html">Kubernetes RBAC</a></li>
+            <li class="" data-nav-id="/kubernetes-on-centos/index.html"><a class="padding" href="../kubernetes-on-centos/index.html">Kubernetes-on-Centos</a></li>
+            <li class="" data-nav-id="/kuberneteshardway/index.html"><a class="padding" href="../kuberneteshardway/index.html">Kubernets Installation From Scatch on rocky 9</a></li>
+            <li class="" data-nav-id="/multimaster/index.html"><a class="padding" href="../multimaster/index.html">Multi Master kubernetes</a></li>
+            <li class="" data-nav-id="/minio/index.html"><a class="padding" href="../minio/index.html">The Object Store for AI Data Infrastructure</a></li>
+            <li class="" data-nav-id="/cks/index.html"><a class="padding" href="../cks/index.html">CKS</a></li>
+            <li class="" data-nav-id="/eks/index.html"><a class="padding" href="../eks/index.html">EKS</a></li>
+            <li class="" data-nav-id="/gke/index.html"><a class="padding" href="../gke/index.html">GKE</a></li>
+            <li class="" data-nav-id="/kuberntes-backup/index.html"><a class="padding" href="../kuberntes-backup/index.html">Kubernetes Data Protection</a></li>
+            <li class="" data-nav-id="/kubernetesloggin-monitoring/index.html"><a class="padding" href="../kubernetesloggin-monitoring/index.html">KUBERNETES LOGGING AND MONITORING</a></li>
+            <li class="" data-nav-id="/neuvector/index.html"><a class="padding" href="../neuvector/index.html">Kubernetes Security</a></li>
+          </ul>
+        </div>
+    
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showFooter">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-language"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = this.querySelector( this.value ).dataset.url;">
+                      <option id="R-select-language-en" value="#R-select-language-en" data-url="../part0101/index.html" lang="en-us" selected></option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-paint-brush"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.relearn.changeVariant( this.value );">
+                      <option id="R-select-variant-auto" value="auto" selected>Auto</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.relearn.markVariant();</script>
+              </li>
+              <li class="footerVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-history"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter showFooter">
+        <p>Built with <a href="https://github.com/McShelby/hugo-theme-relearn" title="love"><i class="fas fa-heart"></i></a> by <a href="https://gohugo.io/">Hugo</a></p>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../js/clipboard.min.js?1752915542" defer></script>
+    <script src="../js/perfect-scrollbar.min.js?1752915542" defer></script>
+    <script src="../js/theme.js?1752915542" defer></script>
+  </body>
+</html>

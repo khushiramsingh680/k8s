@@ -4,47 +4,59 @@ weight: 20
 ---
 
 
-## Topics:
-### [NameSpace](#namespace)
-- Create a namespace
-- Switch from one ns to another 
-- Resource Quota
-- Resource Limits 
- ### [POD](#pod)
--    Single Container pod
--    MultiContainer pod
--    Login to a pod 
--    Copy to a pod and from a pod(container)
--    How to check logs from a container
--   Environment Variables of pod
--   initContainer
--    Command and Argument of a pod
--    pullSecret of a pod
--    pod restart policy
--    imagePull policy
--    How to delete a pod
--    Pod priority
--    Pod Resources
--    Pod Quality of Services(QOS)
+## 📘 Topics:
 
-### [Advance Scheduling of pod](#advance-scheduling-of-pod)
--  Scheduler
--  Nodename
--  nodeSelector
--  Node Affinity
--  Taints and Tolerations
-- Pod affinity and anti affinity
--  Priority and PriorityClass
--  Preemption
-- Disruption Budget
--  Topology and Constraints
--  Descheduler
-#### Namespace
-- Namespaces are a way to divide cluster resources between multiple users (via resource quota).
-- namespaces provides a mechanism for isolating groups of resources within a single cluster
-- Names of resources need to be unique within a namespace, but not across namespaces. 
--  To achieve multitenancy with Networkpolicy
--  To configure RBAC
+### 🧩 [Namespace](#namespace)
+- 🆕 Create a namespace  
+- 🔁 Switch from one namespace to another  
+- 📊 Set Resource Quota for a namespace  
+- 🚦 Set Resource Limits  
+
+---
+
+### 📦 [Pod](#pod)
+- 🧱 Create a Single Container pod  
+- 🧱➕ Create a Multi-Container pod  
+- 🔐 Login to a pod  
+- 📤📥 Copy to a pod and from a pod (container)  
+- 📝 Check logs from a container  
+- 🌿 Environment Variables of a pod  
+- ⏱️ `initContainer` usage  
+- 🧾 Command and Argument of a pod  
+- 🔑 `imagePullSecret` of a pod  
+- 🔁 Pod `restartPolicy`  
+- 🛒 Pod `imagePullPolicy`  
+- ❌ How to delete a pod  
+- ⚖️ Pod Priority  
+- ⚙️ Pod Resources (Requests and Limits)  
+- 🧮 Pod Quality of Service (QoS)  
+
+
+### 🧠 [Advanced Scheduling of Pod](#advanced-scheduling-of-pod)
+- 🗂️ Scheduler  
+- 🖥️ `nodeName`  
+- 🧩 `nodeSelector`  
+- 🧲 Node Affinity  
+- 🚫➕ Taints and Tolerations  
+- 🧭 Pod Affinity and Anti-Affinity  
+- 🎯 Priority and `PriorityClass`  
+- 🔄 Preemption  
+- 🛡️ Pod Disruption Budget (PDB)  
+- 🌐 Topology and Constraints  
+- 🔃 Descheduler  
+
+
+### 📂 Namespace
+
+Namespaces are a way to divide cluster resources between multiple users using resource quotas.  
+They provide a mechanism for isolating groups of resources within a single cluster.
+
+### 🔑 Key Points
+- 📛 Names of resources must be unique **within** a namespace, but can repeat **across** namespaces.
+- 🧱 Useful for achieving **multitenancy**, often in conjunction with **NetworkPolicies**.
+- 🛡️ Critical for applying **RBAC (Role-Based Access Control)** in a granular manner.
+
+
 -  Check all namespaces
 ```t
 kubectl get ns
@@ -58,18 +70,24 @@ kubectl create ns <name>
 kubens
 kubens <ns name>
 ```
-#### To see which Kubernetes resources are and aren't in a namespace:
-- In a namespace
-```t
+### 🔍 View Namespaced and Non-Namespaced Resources
+
+To see which Kubernetes resources **are in a namespace** and which are **not**, use the following commands:
+
+#### 📦 Namespaced Resources
+```sh
 kubectl api-resources --namespaced=true
 ```
-- Not in a namespace
+
+#### 📦  Non Namespaced Resources
 ```t
 kubectl api-resources --namespaced=false
 ```
-- [Learn About Resource Quota and limits ](https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/)
+# 📊 Resource Quotas
 
-- Configure Memory and CPU Quotas for a Namespace
+Quotas control how much compute or storage a namespace can use.
+
+## 🧮 Create a ResourceQuota
 ```sh
 kubectl apply -f - <<EOF
 apiVersion: v1
@@ -84,34 +102,26 @@ spec:
     limits.memory: 2Gi
 EOF
 ```
-#### As per above Example:
-- The ResourceQuota places these requirements on the quota-mem-cpu-example namespace:
 
-- For every Pod in the namespace, each container must have a memory request, memory limit, cpu request, and cpu limit.
-- The memory request total for all Pods in that namespace must not exceed 1 GiB.
-- The memory limit total for all Pods in that namespace must not exceed 2 GiB.
-- The CPU request total for all Pods in that namespace must not exceed 1 cpu.
-- The CPU limit total for all Pods in that namespace must not exceed 2 cpu.
+## ✅ Quota Impact
+- Pods must define memory & CPU **requests** and **limits**.
+- Max memory requests = `1Gi`
+- Max memory limits = `2Gi`
+- Max CPU requests = `1 CPU`
+- Max CPU limits = `2 CPU`
 
-- **Check applied quota**
-```t
-kubectl get quota 
-```
-- **Create namespace using a yaml file**
-
+## 🔍 Check Applied Quotas
 ```sh
-kubectl apply -f - <<EOF
-kind: Namespace
-apiVersion: v1
-metadata:
-  name: test
-  labels:
-    name: test
-EOF
+kubectl get quota
 ```
-#### Resource Limits
-A Kubernetes cluster can be divided into namespaces. Once you have a namespace that has a default memory limit, and you then try to create a Pod with a container that does not specify its own memory limit, then the control plane assigns the default memory limit to that container.
--  Create a LimitRange
+
+---
+
+### ⚙️ Default Resource Limits via LimitRange
+
+LimitRanges provide default request and limit values to containers in a namespace.
+
+## 🔧 Create a LimitRange
 ```sh
 kubectl apply -f - <<EOF
 apiVersion: v1
@@ -127,23 +137,26 @@ spec:
     type: Container
 EOF
 ```
-- Now create one pod with no resource and check if the default resource has been applied
-```t
-kubectl describe pod <podname>
+
+## 🕵️ Inspect Pod Defaults
+```sh
+kubectl describe pod <podnname>
 ```
-#### POD
-- A pod is the smallest deployable unit in Kubernetes that represents a single instance of an application.
-- For example, if you want to run the Nginx application, you run it in a pod.
-- A container is a single unit. However, a pod can contain more than one container. You can think of pods as a box that can hold one or more containers together.
-- the pod gets a single unique IP address and containers running inside the pod use localhost to connect to each other on different ports.
-- Each pod gets a unique IP address.
-- Pods communicate with each other using the IP address.
-- Containers inside a pod connect using localhost on different ports.
-- Containers running inside a pod should have different port numbers to avoid port clashes.
-- You can set CPU and memory resources for each container running inside the pod.
-- Containers inside a pod share the same volume mount.
-- All the containers inside a pod are scheduled on the same node; It cannot span multiple nodes.
-  - If there is more than one container, during the pod startup all the main containers start in parallel. Whereas the init containers inside the pod run in sequence.
+#### 📦 POD
+
+- A **Pod** is the smallest deployable unit in Kubernetes and represents a single instance of an application.
+- For example, to run an Nginx application, it must be deployed inside a pod.
+- While a container is a standalone execution unit, a **pod can host multiple containers**, making it a logical grouping unit.
+- Each pod is assigned a **unique IP address**, and containers within the same pod communicate with each other using `localhost` and different ports.
+- **Inter-pod communication** occurs through their respective IP addresses.
+- To avoid **port conflicts**, each container within the same pod should use different port numbers.
+- Containers within a pod can share **storage volumes**, making data accessible across all containers in the pod.
+- All containers in a pod are scheduled to run on the **same node**—a pod **cannot span across multiple nodes**.
+- You can define **CPU and memory resource requests and limits** for each container in the pod.
+- If a pod has multiple containers:
+  - **Init containers** run **sequentially** before the main containers start.
+  - **Main containers** then start **in parallel** once all init containers have successfully completed.
+
   - Create a pod
   ```t
   kubectl run pod --image=nginx
@@ -180,35 +193,35 @@ spec:
 EOF
 ```
   
-  - Check Pod Logs
-    ```t
-    kubectl logs <pod-name>
-    ```
-  - Follow Pod Logs in Real-time
+- Check Pod Logs
   ```t
-    kubectl logs -f <pod-name>
+  kubectl logs <pod-name>
+  ```
+- Follow Pod Logs in Real-time
+ ```t
+  kubectl logs -f <pod-name>
+
+ ```
+- How to check logs for a container from multiContainer pod
+```t
+kubectl logs -c <containername> <podname>
+```
+- Check the logs for all containers
+```sh
+kubectl logs <podname> --all-containers=true
+- Execute Command in a Pod:
+```t
+kubectl exec -it <pod-name> -- <command>
+
+```
+-  Copy Files to/from Pod:
+```t
+kubectl cp <local-path> <pod-name>:<pod-path>
+kubectl cp <pod-name>:<pod-path> <local-path>
 
   ```
-  - How to check logs for a container from multiContainer pod
-  ```t
-  kubectl logs -c <containername> <podname>
-  ```
-  - Check the logs for all containers
-  ```sh
-  kubectl logs <podname> --all-containers=true
-  - Execute Command in a Pod:
-  ```t
-  kubectl exec -it <pod-name> -- <command>
 
-  ```
-  -  Copy Files to/from Pod:
-  ```t
-  kubectl cp <local-path> <pod-name>:<pod-path>
-  kubectl cp <pod-name>:<pod-path> <local-path>
-
-  ```
-
-  -  Delete a Pod:
+ -  Delete a Pod:
   ```t
   kubectl delete pod <pod-name>
 
@@ -220,12 +233,11 @@ EOF
   -  Port Forwarding to Pod:
   ```t
   kubectl port-forward <pod-name> <local-port>:<pod-port>
-
   ```
   - Port forwarding on ip address not on the localhost
   ```t
-   kubectl port-forward --address 0.0.0.0 pod/mypod 8888:5000
-   ```
+  kubectl port-forward --address 0.0.0.0 pod/mypod 8888:5000
+  ```
   - Get YAML Definition of a Running Pod:
   ```t
   kubectl get pod <pod-name> -o yaml
@@ -1041,14 +1053,26 @@ EOF
 
 ### [Pod Priority](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/)
 
-#### Pod priority classes
-- You can assign pods a priority class, which is a non-namespaced object that defines a mapping from a name to the integer value of the priority. The higher the value, the higher the priority.
+#### 🚦 Pod Priority Classes
 
-- A priority class object can take any 32-bit integer value smaller than or equal to 1000000000 (one billion). Reserve numbers larger than one billion for critical pods that should not be preempted or evicted. By default, OpenShift Container Platform has two reserved priority classes for critical system pods to have guaranteed scheduling.
+- You can assign **pods a priority class**, which is a non-namespaced object that maps a name to a 32-bit integer value.
+- The **higher the priority value**, the higher the scheduling preference.
+- Valid range: Any 32-bit integer **≤ 1,000,000,000**.
+- **Values > 1,000,000,000** are **reserved for critical system pods** that should never be evicted or preempted.
+- OpenShift provides **two reserved system priority classes** by default:
 
-- System-node-critical - This priority class has a value of 2000001000 and is used for all pods that should never be evicted from a node. Examples of pods that have this priority class are sdn-ovs, sdn, and so forth.
+  - 🔴 **system-node-critical**
+    - Priority value: `2000001000`
+    - Used for pods that **must never be evicted** from a node.
+    - Examples: `sdn-ovs`, `sdn`, etc.
 
-- System-cluster-critical - This priority class has a value of 2000000000 (two billion) and is used with pods that are important for the cluster. Pods with this priority class can be evicted from a node in certain circumstances. For example, pods configured with the system-node-critical priority class can take priority. However, this priority class does ensure guaranteed scheduling. Examples of pods that can have this priority class are fluentd, add-on components like descheduler, and so forth.
+  - 🟠 **system-cluster-critical**
+    - Priority value: `2000000000`
+    - Used for **important cluster components**.
+    - Can be evicted in special conditions (e.g., to make room for system-node-critical pods).
+    - Ensures **guaranteed scheduling**.
+    - Examples: `fluentd`, add-ons like `descheduler`, etc.
+
 
 - Sample priority class object
 ```sh
@@ -1127,60 +1151,73 @@ spec:
       app: example-app
 EOF
 ```
-### Pod Preemption and Pod Distruption Budget
-- Pod preemption and other scheduler settings
+### Pod Preemption and Pod Disruption Budget
+
+#### Pod Preemption and Other Scheduler Settings
 If you enable pod priority and preemption, consider your other scheduler settings:
-#### Pod priority and pod disruption budget
-- A pod disruption budget specifies the minimum number or percentage of replicas that must be up at a time. If you specify pod disruption budgets, OpenShift Container Platform respects them when preempting pods at a best effort level. The scheduler attempts to preempt pods without violating the pod disruption budget. If no such pods are found, lower-priority pods might be preempted despite their pod disruption budget requirements.
 
-#### Pod priority and pod affinity
-Pod affinity requires a new pod to be scheduled on the same node as other pods with the same label.
+---
 
+#### Pod Priority and Pod Disruption Budget
+- A **Pod Disruption Budget (PDB)** specifies the minimum number or percentage of replicas that must be available at any time.
+- OpenShift respects defined PDBs on a best-effort basis during pod preemption.
+- The scheduler attempts to preempt pods **without violating the PDB**.
+- If no suitable pods are found, **lower-priority pods may still be preempted**, even if it violates their PDB requirements.
 
-  #### Pointer Regarding Pod Scheduling 
-  -  Preemption removes existing Pods from a cluster under resource pressure to make room for higher priority pending Pods
-  - The default priority for all pods is zero ( 0 )
-  - Supported Operators for Affinity
-    - The operator represents the relationship between the label on the node and the set of values in the matchExpression parameters in the pod specification.
-    - This value can be below:
+---
 
-      - In,
-      - NotIn, 
-      - Exists
-      - DoesNotExist
-      - Lt
-      - Gt
+#### Pod Priority and Pod Affinity
+- Pod affinity requires a new pod to be scheduled on the **same node** as other pods with the same label.
 
-  - Specify a weight for the node, 1-100. The node that with highest weight is preferred.
-  - A taint on a node instructs the node to repel all pods that do not tolerate the taint.
-  -  Taint Effects are given below:
-     
+---
 
-#### The effect is one of the following:
+### Pointers Regarding Pod Scheduling
 
-##### NoSchedule
-	
-  New pods that do not match the taint are not scheduled onto that node.
-  Existing pods on the node remain.
+- **Preemption** removes existing pods from a cluster under resource pressure to allow scheduling of higher-priority pending pods.
+- The **default priority** for all pods is `0`.
 
-##### PreferNoSchedule
+#### Supported Operators for Affinity/Anti-Affinity Rules:
+These operators define relationships between node labels and the match expressions in the pod spec:
 
-  New pods that do not match the taint might be scheduled onto that node, but the scheduler tries not to.
+- `In`
+- `NotIn`
+- `Exists`
+- `DoesNotExist`
+- `Lt`
+- `Gt`
 
-  Existing pods on the node remain.
+#### Additional Scheduling Considerations:
+- **Specify a weight** for a node between **1-100**. Nodes with higher weights are preferred.
+- A **taint** on a node instructs it to repel pods that do not **tolerate** that taint.
 
-#### NoExecute
-	
+---
 
-New pods that do not match the taint cannot be scheduled onto that node.
+### Taint Effects
 
-Existing pods on the node that do not have a matching toleration are removed.
+#### `NoSchedule`
+- New pods that do **not match** the taint are **not scheduled** onto the node.
+- Existing pods on the node **remain**.
 
+#### `PreferNoSchedule`
+- New pods that do not match the taint **might be scheduled**, but the scheduler tries to avoid it.
+- Existing pods **remain**.
 
+#### `NoExecute`
+- New pods that do **not match** the taint are **not scheduled** onto the node.
+- Existing pods on the node that do **not tolerate** the taint are **evicted**.
 
-### operator
-#### Equal
-The key/value/effect parameters must match. This is the default.
-#### Exists
-The key/effect parameters must match. You must leave a blank value parameter, which matches any.
-- [Descheduler](https://github.com/kubernetes-sigs/descheduler)
+---
+
+### Toleration Operators
+
+#### `Equal`
+- The key, value, and effect **must all match**. This is the **default** behavior.
+
+#### `Exists`
+- The key and effect **must match**.
+- The value field is **left blank** and matches **any**.
+
+---
+
+### Related Resources
+- [Descheduler GitHub Repository](https://github.com/kubernetes-sigs/descheduler)

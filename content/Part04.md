@@ -11,7 +11,6 @@ weight: 20
      - emptyDIr
      - hostPath
 -  StatefulSet
--  Kubernetes IngressController 
 - Kubectl Set
 - Kubectl Patch
 
@@ -564,13 +563,13 @@ kubectl get ingressClassName
   ```
  
 - Check newlly created ingress rules
-   ```t
-   kubectl get ingress
-   ```
+```t
+kubectl get ingress
+```
 - Check more information for ingress
-    ```t
-    kubectl describe ingress name-virtual-host-ingress created
-    ```
+```t
+kubectl describe ingress name-virtual-host-ingress created
+```
 - Now check if the application is opening in browser 
 
 
@@ -584,7 +583,7 @@ Briefly describe the purpose of the issue.
 - Patch a Deployment (Update Replicas)
 
 ```bash
-  kubectl patch deployment <deployment-name> -p '{"spec": {"replicas": 3}}'
+kubectl patch deployment <deployment-name> -p '{"spec": {"replicas": 3}}'
  ```
 - Patch a Pod (Update Container Image)
 ```t

@@ -5,31 +5,31 @@
     <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <meta name="generator" content="Hugo 0.139.3">
     <meta name="generator" content="Relearn 7.2.1+16d4de84becfa2d2e6bdb2394a2f4fa411bc0007">
-    <meta name="description" content="Topics Kubernetes Probes Kubernetes Storage Secret ConfigMap emptyDIr hostPath StatefulSet Kubernetes IngressController Kubectl Set Kubectl Patch Probes The kubelet uses liveness probes to know when to restart a container. Liveness probes can be a powerful way to recover from application failures, but they should be used with caution.
+    <meta name="description" content="Topics Kubernetes Probes Kubernetes Storage Secret ConfigMap emptyDIr hostPath StatefulSet Kubectl Set Kubectl Patch Probes The kubelet uses liveness probes to know when to restart a container. Liveness probes can be a powerful way to recover from application failures, but they should be used with caution.
 Liveness Probe It checks whether the application running inside the container is still alive and functioning properly. Readiness Probe: It determines whether the application inside the container is ready to accept traffic or requests. When a readiness probe fails, Kubernetes stops sending traffic to the container until it passes the probe. This is useful during application startup or when the application needs some time to initialize before serving traffic.">
     <meta name="author" content="">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Part 4 :: Kubernetes Documentation">
-    <meta name="twitter:description" content="Topics Kubernetes Probes Kubernetes Storage Secret ConfigMap emptyDIr hostPath StatefulSet Kubernetes IngressController Kubectl Set Kubectl Patch Probes The kubelet uses liveness probes to know when to restart a container. Liveness probes can be a powerful way to recover from application failures, but they should be used with caution.
+    <meta name="twitter:description" content="Topics Kubernetes Probes Kubernetes Storage Secret ConfigMap emptyDIr hostPath StatefulSet Kubectl Set Kubectl Patch Probes The kubelet uses liveness probes to know when to restart a container. Liveness probes can be a powerful way to recover from application failures, but they should be used with caution.
 Liveness Probe It checks whether the application running inside the container is still alive and functioning properly. Readiness Probe: It determines whether the application inside the container is ready to accept traffic or requests. When a readiness probe fails, Kubernetes stops sending traffic to the container until it passes the probe. This is useful during application startup or when the application needs some time to initialize before serving traffic.">
     <meta property="og:url" content="https://khushiramsingh680.github.io/k8s/part04/index.html">
     <meta property="og:site_name" content="Kubernetes Documentation">
     <meta property="og:title" content="Part 4 :: Kubernetes Documentation">
-    <meta property="og:description" content="Topics Kubernetes Probes Kubernetes Storage Secret ConfigMap emptyDIr hostPath StatefulSet Kubernetes IngressController Kubectl Set Kubectl Patch Probes The kubelet uses liveness probes to know when to restart a container. Liveness probes can be a powerful way to recover from application failures, but they should be used with caution.
+    <meta property="og:description" content="Topics Kubernetes Probes Kubernetes Storage Secret ConfigMap emptyDIr hostPath StatefulSet Kubectl Set Kubectl Patch Probes The kubelet uses liveness probes to know when to restart a container. Liveness probes can be a powerful way to recover from application failures, but they should be used with caution.
 Liveness Probe It checks whether the application running inside the container is still alive and functioning properly. Readiness Probe: It determines whether the application inside the container is ready to accept traffic or requests. When a readiness probe fails, Kubernetes stops sending traffic to the container until it passes the probe. This is useful during application startup or when the application needs some time to initialize before serving traffic.">
     <meta property="og:locale" content="en_us">
     <meta property="og:type" content="article">
-    <meta property="article:section" content="/">
+    <meta property="article:section" content="Home">
     <meta itemprop="name" content="Part 4 :: Kubernetes Documentation">
-    <meta itemprop="description" content="Topics Kubernetes Probes Kubernetes Storage Secret ConfigMap emptyDIr hostPath StatefulSet Kubernetes IngressController Kubectl Set Kubectl Patch Probes The kubelet uses liveness probes to know when to restart a container. Liveness probes can be a powerful way to recover from application failures, but they should be used with caution.
+    <meta itemprop="description" content="Topics Kubernetes Probes Kubernetes Storage Secret ConfigMap emptyDIr hostPath StatefulSet Kubectl Set Kubectl Patch Probes The kubelet uses liveness probes to know when to restart a container. Liveness probes can be a powerful way to recover from application failures, but they should be used with caution.
 Liveness Probe It checks whether the application running inside the container is still alive and functioning properly. Readiness Probe: It determines whether the application inside the container is ready to accept traffic or requests. When a readiness probe fails, Kubernetes stops sending traffic to the container until it passes the probe. This is useful during application startup or when the application needs some time to initialize before serving traffic.">
-    <meta itemprop="wordCount" content="2510">
+    <meta itemprop="wordCount" content="2508">
     <title>Part 4 :: Kubernetes Documentation</title>
-    <link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet"></noscript>
-    <link href="../css/auto-complete.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1734364594" rel="stylesheet"></noscript>
-    <link href="../css/perfect-scrollbar.min.css?1734364594" rel="stylesheet">
-    <link href="../css/theme.min.css?1734364594" rel="stylesheet">
-    <link href="../css/format-html.min.css?1734364594" rel="stylesheet" id="R-format-style">
+    <link href="../css/fontawesome-all.min.css?1752918557" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1752918557" rel="stylesheet"></noscript>
+    <link href="../css/auto-complete.css?1752918557" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1752918557" rel="stylesheet"></noscript>
+    <link href="../css/perfect-scrollbar.min.css?1752918557" rel="stylesheet">
+    <link href="../css/theme.min.css?1752918557" rel="stylesheet">
+    <link href="../css/format-html.min.css?1752918557" rel="stylesheet" id="R-format-style">
     <script>
       window.relearn = window.relearn || {};
       window.relearn.relBasePath='..';
@@ -137,7 +137,7 @@ Liveness Probe It checks whether the application running inside the container is
             </div>
           </div>
           <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
-            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">/</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">Home</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
             itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Part 4</span><meta itemprop="position" content="2"></li>
           </ol>
           <div class="topbar-area topbar-area-end" data-area="end">
@@ -177,7 +177,6 @@ Liveness Probe It checks whether the application running inside the container is
 </ul>
 </li>
 <li>StatefulSet</li>
-<li>Kubernetes IngressController</li>
 <li>Kubectl Set</li>
 <li>Kubectl Patch</li>
 </ul>
@@ -711,15 +710,15 @@ An emptyDir volume is first created when a Pod is assigned to a Node and initial
 </li>
 <li>
 <p>Check newlly created ingress rules</p>
+</li>
+</ul>
 <div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get ingress</span></span></code></pre></div>
-</li>
-<li>
-<p>Check more information for ingress</p>
+<ul>
+<li>Check more information for ingress</li>
+</ul>
 <div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl describe ingress name<span style="color:#f92672">-</span>virtual<span style="color:#f92672">-</span>host<span style="color:#f92672">-</span>ingress created</span></span></code></pre></div>
-</li>
-<li>
-<p>Now check if the application is opening in browser</p>
-</li>
+<ul>
+<li>Now check if the application is opening in browser</li>
 </ul>
 <h2 id="kubernetes-patch-command">Kubernetes Patch command</h2>
 <h3 id="description">Description</h3>
@@ -728,7 +727,7 @@ An emptyDir volume is first created when a Pod is assigned to a Node and initial
 <ul>
 <li>Patch a Deployment (Update Replicas)</li>
 </ul>
-<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>  kubectl patch deployment &lt;deployment-name&gt; -p <span style="color:#e6db74">&#39;{&#34;spec&#34;: {&#34;replicas&#34;: 3}}&#39;</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl patch deployment &lt;deployment-name&gt; -p <span style="color:#e6db74">&#39;{&#34;spec&#34;: {&#34;replicas&#34;: 3}}&#39;</span></span></span></code></pre></div>
 <ul>
 <li>Patch a Pod (Update Container Image)</li>
 </ul>
@@ -846,7 +845,7 @@ Kubernetes Documentation
           </a>
         </div>
         <script>
-          window.index_js_url="../searchindex.en.js?1734364594";
+          window.index_js_url="../searchindex.en.js?1752918557";
         </script>
         <search><form action="../search/index.html" method="get">
           <div class="searchbox default-animation">
@@ -859,12 +858,12 @@ Kubernetes Documentation
         <script>
           var contentLangs=['en'];
         </script>
-        <script src="../js/auto-complete.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.stemmer.support.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.multi.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.en.min.js?1734364594" defer></script>
-        <script src="../js/search.js?1734364594" defer></script>
+        <script src="../js/auto-complete.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.stemmer.support.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.multi.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.en.min.js?1752918557" defer></script>
+        <script src="../js/search.js?1752918557" defer></script>
       </div>
       <div id="R-homelinks" class="default-animation homelinks">
         <ul>
@@ -875,7 +874,7 @@ Kubernetes Documentation
       <div id="R-content-wrapper" class="highlightable">
         <div id="R-shortcutmenu-home" class="R-sidebarmenu">
           <ul class="enlarge morespace collapsible-menu">
-            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes documentation</a></li>
+            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes Documentation</a></li>
             <li class="" data-nav-id="/part01/index.html"><a class="padding" href="../part01/index.html">Part 1</a></li>
             <li class="" data-nav-id="/part02/index.html"><a class="padding" href="../part02/index.html">Part 2</a></li>
             <li class="" data-nav-id="/part03/index.html"><a class="padding" href="../part03/index.html">Part 3</a></li>
@@ -949,8 +948,8 @@ Kubernetes Documentation
         </div>
       </div>
     </aside>
-    <script src="../js/clipboard.min.js?1734364594" defer></script>
-    <script src="../js/perfect-scrollbar.min.js?1734364594" defer></script>
-    <script src="../js/theme.js?1734364594" defer></script>
+    <script src="../js/clipboard.min.js?1752918557" defer></script>
+    <script src="../js/perfect-scrollbar.min.js?1752918557" defer></script>
+    <script src="../js/theme.js?1752918557" defer></script>
   </body>
 </html>

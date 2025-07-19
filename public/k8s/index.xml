@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Kubernetes documentation :: Kubernetes Documentation</title>
+    <title>Kubernetes Documentation</title>
     <link>https://khushiramsingh680.github.io/k8s/k8s/index.html</link>
-    <description>Learn by doing</description>
+    <description>An introduction to Kubernetes with hands-on tutorials and visual aids.</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <atom:link href="https://khushiramsingh680.github.io/k8s/k8s/index.xml" rel="self" type="application/rss+xml" />

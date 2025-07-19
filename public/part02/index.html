@@ -5,27 +5,31 @@
     <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <meta name="generator" content="Hugo 0.139.3">
     <meta name="generator" content="Relearn 7.2.1+16d4de84becfa2d2e6bdb2394a2f4fa411bc0007">
-    <meta name="description" content="Topics: NameSpace Create a namespace Switch from one ns to another Resource Quota Resource Limits POD Single Container pod MultiContainer pod Login to a pod Copy to a pod and from a pod(container) How to check logs from a container Environment Variables of pod initContainer Command and Argument of a pod pullSecret of a pod pod restart policy imagePull policy How to delete a pod Pod priority Pod Resources Pod Quality of Services(QOS) Advance Scheduling of pod Scheduler Nodename nodeSelector Node Affinity Taints and Tolerations Pod affinity and anti affinity Priority and PriorityClass Preemption Disruption Budget Topology and Constraints Descheduler Namespace Namespaces are a way to divide cluster resources between multiple users (via resource quota). namespaces provides a mechanism for isolating groups of resources within a single cluster Names of resources need to be unique within a namespace, but not across namespaces. To achieve multitenancy with Networkpolicy To configure RBAC Check all namespaces kubectl get nsCreate a new namespace kubectl create ns &lt;name&gt;Switch from one ns to another kubens kubens &lt;ns name&gt;To see which Kubernetes resources are and aren’t in a namespace: In a namespace kubectl api-resources --namespaced=trueNot in a namespace kubectl api-resources --namespaced=falseLearn About Resource Quota and limits">
+    <meta name="description" content="📘 Topics: 🧩 Namespace 🆕 Create a namespace 🔁 Switch from one namespace to another 📊 Set Resource Quota for a namespace 🚦 Set Resource Limits 📦 Pod 🧱 Create a Single Container pod 🧱➕ Create a Multi-Container pod 🔐 Login to a pod 📤📥 Copy to a pod and from a pod (container) 📝 Check logs from a container 🌿 Environment Variables of a pod ⏱️ initContainer usage 🧾 Command and Argument of a pod 🔑 imagePullSecret of a pod 🔁 Pod restartPolicy 🛒 Pod imagePullPolicy ❌ How to delete a pod ⚖️ Pod Priority ⚙️ Pod Resources (Requests and Limits) 🧮 Pod Quality of Service (QoS) 🧠 Advanced Scheduling of Pod 🗂️ Scheduler 🖥️ nodeName 🧩 nodeSelector 🧲 Node Affinity 🚫➕ Taints and Tolerations 🧭 Pod Affinity and Anti-Affinity 🎯 Priority and PriorityClass 🔄 Preemption 🛡️ Pod Disruption Budget (PDB) 🌐 Topology and Constraints 🔃 Descheduler 📂 Namespace Namespaces are a way to divide cluster resources between multiple users using resource quotas.
+They provide a mechanism for isolating groups of resources within a single cluster.">
     <meta name="author" content="">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Part 2 :: Kubernetes Documentation">
-    <meta name="twitter:description" content="Topics: NameSpace Create a namespace Switch from one ns to another Resource Quota Resource Limits POD Single Container pod MultiContainer pod Login to a pod Copy to a pod and from a pod(container) How to check logs from a container Environment Variables of pod initContainer Command and Argument of a pod pullSecret of a pod pod restart policy imagePull policy How to delete a pod Pod priority Pod Resources Pod Quality of Services(QOS) Advance Scheduling of pod Scheduler Nodename nodeSelector Node Affinity Taints and Tolerations Pod affinity and anti affinity Priority and PriorityClass Preemption Disruption Budget Topology and Constraints Descheduler Namespace Namespaces are a way to divide cluster resources between multiple users (via resource quota). namespaces provides a mechanism for isolating groups of resources within a single cluster Names of resources need to be unique within a namespace, but not across namespaces. To achieve multitenancy with Networkpolicy To configure RBAC Check all namespaces kubectl get nsCreate a new namespace kubectl create ns &lt;name&gt;Switch from one ns to another kubens kubens &lt;ns name&gt;To see which Kubernetes resources are and aren’t in a namespace: In a namespace kubectl api-resources --namespaced=trueNot in a namespace kubectl api-resources --namespaced=falseLearn About Resource Quota and limits">
+    <meta name="twitter:description" content="📘 Topics: 🧩 Namespace 🆕 Create a namespace 🔁 Switch from one namespace to another 📊 Set Resource Quota for a namespace 🚦 Set Resource Limits 📦 Pod 🧱 Create a Single Container pod 🧱➕ Create a Multi-Container pod 🔐 Login to a pod 📤📥 Copy to a pod and from a pod (container) 📝 Check logs from a container 🌿 Environment Variables of a pod ⏱️ initContainer usage 🧾 Command and Argument of a pod 🔑 imagePullSecret of a pod 🔁 Pod restartPolicy 🛒 Pod imagePullPolicy ❌ How to delete a pod ⚖️ Pod Priority ⚙️ Pod Resources (Requests and Limits) 🧮 Pod Quality of Service (QoS) 🧠 Advanced Scheduling of Pod 🗂️ Scheduler 🖥️ nodeName 🧩 nodeSelector 🧲 Node Affinity 🚫➕ Taints and Tolerations 🧭 Pod Affinity and Anti-Affinity 🎯 Priority and PriorityClass 🔄 Preemption 🛡️ Pod Disruption Budget (PDB) 🌐 Topology and Constraints 🔃 Descheduler 📂 Namespace Namespaces are a way to divide cluster resources between multiple users using resource quotas.
+They provide a mechanism for isolating groups of resources within a single cluster.">
     <meta property="og:url" content="https://khushiramsingh680.github.io/k8s/part02/index.html">
     <meta property="og:site_name" content="Kubernetes Documentation">
     <meta property="og:title" content="Part 2 :: Kubernetes Documentation">
-    <meta property="og:description" content="Topics: NameSpace Create a namespace Switch from one ns to another Resource Quota Resource Limits POD Single Container pod MultiContainer pod Login to a pod Copy to a pod and from a pod(container) How to check logs from a container Environment Variables of pod initContainer Command and Argument of a pod pullSecret of a pod pod restart policy imagePull policy How to delete a pod Pod priority Pod Resources Pod Quality of Services(QOS) Advance Scheduling of pod Scheduler Nodename nodeSelector Node Affinity Taints and Tolerations Pod affinity and anti affinity Priority and PriorityClass Preemption Disruption Budget Topology and Constraints Descheduler Namespace Namespaces are a way to divide cluster resources between multiple users (via resource quota). namespaces provides a mechanism for isolating groups of resources within a single cluster Names of resources need to be unique within a namespace, but not across namespaces. To achieve multitenancy with Networkpolicy To configure RBAC Check all namespaces kubectl get nsCreate a new namespace kubectl create ns &lt;name&gt;Switch from one ns to another kubens kubens &lt;ns name&gt;To see which Kubernetes resources are and aren’t in a namespace: In a namespace kubectl api-resources --namespaced=trueNot in a namespace kubectl api-resources --namespaced=falseLearn About Resource Quota and limits">
+    <meta property="og:description" content="📘 Topics: 🧩 Namespace 🆕 Create a namespace 🔁 Switch from one namespace to another 📊 Set Resource Quota for a namespace 🚦 Set Resource Limits 📦 Pod 🧱 Create a Single Container pod 🧱➕ Create a Multi-Container pod 🔐 Login to a pod 📤📥 Copy to a pod and from a pod (container) 📝 Check logs from a container 🌿 Environment Variables of a pod ⏱️ initContainer usage 🧾 Command and Argument of a pod 🔑 imagePullSecret of a pod 🔁 Pod restartPolicy 🛒 Pod imagePullPolicy ❌ How to delete a pod ⚖️ Pod Priority ⚙️ Pod Resources (Requests and Limits) 🧮 Pod Quality of Service (QoS) 🧠 Advanced Scheduling of Pod 🗂️ Scheduler 🖥️ nodeName 🧩 nodeSelector 🧲 Node Affinity 🚫➕ Taints and Tolerations 🧭 Pod Affinity and Anti-Affinity 🎯 Priority and PriorityClass 🔄 Preemption 🛡️ Pod Disruption Budget (PDB) 🌐 Topology and Constraints 🔃 Descheduler 📂 Namespace Namespaces are a way to divide cluster resources between multiple users using resource quotas.
+They provide a mechanism for isolating groups of resources within a single cluster.">
     <meta property="og:locale" content="en_us">
     <meta property="og:type" content="article">
-    <meta property="article:section" content="/">
+    <meta property="article:section" content="Home">
     <meta itemprop="name" content="Part 2 :: Kubernetes Documentation">
-    <meta itemprop="description" content="Topics: NameSpace Create a namespace Switch from one ns to another Resource Quota Resource Limits POD Single Container pod MultiContainer pod Login to a pod Copy to a pod and from a pod(container) How to check logs from a container Environment Variables of pod initContainer Command and Argument of a pod pullSecret of a pod pod restart policy imagePull policy How to delete a pod Pod priority Pod Resources Pod Quality of Services(QOS) Advance Scheduling of pod Scheduler Nodename nodeSelector Node Affinity Taints and Tolerations Pod affinity and anti affinity Priority and PriorityClass Preemption Disruption Budget Topology and Constraints Descheduler Namespace Namespaces are a way to divide cluster resources between multiple users (via resource quota). namespaces provides a mechanism for isolating groups of resources within a single cluster Names of resources need to be unique within a namespace, but not across namespaces. To achieve multitenancy with Networkpolicy To configure RBAC Check all namespaces kubectl get nsCreate a new namespace kubectl create ns &lt;name&gt;Switch from one ns to another kubens kubens &lt;ns name&gt;To see which Kubernetes resources are and aren’t in a namespace: In a namespace kubectl api-resources --namespaced=trueNot in a namespace kubectl api-resources --namespaced=falseLearn About Resource Quota and limits">
-    <meta itemprop="wordCount" content="4024">
+    <meta itemprop="description" content="📘 Topics: 🧩 Namespace 🆕 Create a namespace 🔁 Switch from one namespace to another 📊 Set Resource Quota for a namespace 🚦 Set Resource Limits 📦 Pod 🧱 Create a Single Container pod 🧱➕ Create a Multi-Container pod 🔐 Login to a pod 📤📥 Copy to a pod and from a pod (container) 📝 Check logs from a container 🌿 Environment Variables of a pod ⏱️ initContainer usage 🧾 Command and Argument of a pod 🔑 imagePullSecret of a pod 🔁 Pod restartPolicy 🛒 Pod imagePullPolicy ❌ How to delete a pod ⚖️ Pod Priority ⚙️ Pod Resources (Requests and Limits) 🧮 Pod Quality of Service (QoS) 🧠 Advanced Scheduling of Pod 🗂️ Scheduler 🖥️ nodeName 🧩 nodeSelector 🧲 Node Affinity 🚫➕ Taints and Tolerations 🧭 Pod Affinity and Anti-Affinity 🎯 Priority and PriorityClass 🔄 Preemption 🛡️ Pod Disruption Budget (PDB) 🌐 Topology and Constraints 🔃 Descheduler 📂 Namespace Namespaces are a way to divide cluster resources between multiple users using resource quotas.
+They provide a mechanism for isolating groups of resources within a single cluster.">
+    <meta itemprop="wordCount" content="3850">
     <title>Part 2 :: Kubernetes Documentation</title>
-    <link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1734364594" rel="stylesheet"></noscript>
-    <link href="../css/auto-complete.css?1734364594" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1734364594" rel="stylesheet"></noscript>
-    <link href="../css/perfect-scrollbar.min.css?1734364594" rel="stylesheet">
-    <link href="../css/theme.min.css?1734364594" rel="stylesheet">
-    <link href="../css/format-html.min.css?1734364594" rel="stylesheet" id="R-format-style">
+    <link href="../css/fontawesome-all.min.css?1752918557" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1752918557" rel="stylesheet"></noscript>
+    <link href="../css/auto-complete.css?1752918557" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1752918557" rel="stylesheet"></noscript>
+    <link href="../css/perfect-scrollbar.min.css?1752918557" rel="stylesheet">
+    <link href="../css/theme.min.css?1752918557" rel="stylesheet">
+    <link href="../css/format-html.min.css?1752918557" rel="stylesheet" id="R-format-style">
     <script>
       window.relearn = window.relearn || {};
       window.relearn.relBasePath='..';
@@ -88,11 +92,30 @@
                 <div class="topbar-content-wrapper">
 <nav class="TableOfContents">
   <ul>
-    <li><a href="#topics">Topics:</a>
+    <li><a href="#-topics">📘 Topics:</a>
       <ul>
-        <li><a href="#namespacenamespace"><a href="#namespace">NameSpace</a></a></li>
-        <li><a href="#podpod"><a href="#pod">POD</a></a></li>
-        <li><a href="#advance-scheduling-of-podadvance-scheduling-of-pod"><a href="#advance-scheduling-of-pod">Advance Scheduling of pod</a></a></li>
+        <li><a href="#-namespacenamespace">🧩 <a href="#namespace">Namespace</a></a></li>
+        <li><a href="#-podpod">📦 <a href="#pod">Pod</a></a></li>
+        <li><a href="#-advanced-scheduling-of-podadvanced-scheduling-of-pod">🧠 <a href="#advanced-scheduling-of-pod">Advanced Scheduling of Pod</a></a></li>
+        <li><a href="#-namespace">📂 Namespace</a></li>
+        <li><a href="#-key-points">🔑 Key Points</a></li>
+        <li><a href="#-view-namespaced-and-non-namespaced-resources">🔍 View Namespaced and Non-Namespaced Resources</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#-create-a-resourcequota">🧮 Create a ResourceQuota</a></li>
+    <li><a href="#-quota-impact">✅ Quota Impact</a></li>
+    <li><a href="#-check-applied-quotas">🔍 Check Applied Quotas</a>
+      <ul>
+        <li><a href="#-default-resource-limits-via-limitrange">⚙️ Default Resource Limits via LimitRange</a></li>
+      </ul>
+    </li>
+    <li><a href="#-create-a-limitrange">🔧 Create a LimitRange</a></li>
+    <li><a href="#-inspect-pod-defaults">🕵️ Inspect Pod Defaults</a>
+      <ul>
+        <li></li>
         <li><a href="#some-useful-command-in-realtimeproduction">Some useful command in realtime(Production)</a></li>
         <li><a href="#define-environment-variables-for-a-container">Define Environment Variables for a Container</a></li>
       </ul>
@@ -135,8 +158,11 @@
     <li><a href="#pod-disruptions-budget">Pod Disruptions Budget:</a>
       <ul>
         <li><a href="#use-of-pdb-with-deployment">Use of pdb with Deployment</a></li>
-        <li><a href="#pod-preemption-and-pod-distruption-budget">Pod Preemption and Pod Distruption Budget</a></li>
-        <li><a href="#operator">operator</a></li>
+        <li><a href="#pod-preemption-and-pod-disruption-budget">Pod Preemption and Pod Disruption Budget</a></li>
+        <li><a href="#pointers-regarding-pod-scheduling">Pointers Regarding Pod Scheduling</a></li>
+        <li><a href="#taint-effects">Taint Effects</a></li>
+        <li><a href="#toleration-operators">Toleration Operators</a></li>
+        <li><a href="#related-resources">Related Resources</a></li>
       </ul>
     </li>
   </ul>
@@ -146,7 +172,7 @@
             </div>
           </div>
           <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
-            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">/</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">Home</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
             itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Part 2</span><meta itemprop="position" content="2"></li>
           </ol>
           <div class="topbar-area topbar-area-end" data-area="end">
@@ -174,54 +200,64 @@
 
 <h1 id="part-2">Part 2</h1>
 
-<h2 id="topics">Topics:</h2>
-<h3 id="namespacenamespace"><a href="../part02/index.html#namespace">NameSpace</a></h3>
+<h2 id="-topics">📘 Topics:</h2>
+<h3 id="-namespacenamespace">🧩 <a href="../part02/index.html#namespace">Namespace</a></h3>
 <ul>
-<li>Create a namespace</li>
-<li>Switch from one ns to another</li>
-<li>Resource Quota</li>
-<li>Resource Limits</li>
+<li>🆕 Create a namespace</li>
+<li>🔁 Switch from one namespace to another</li>
+<li>📊 Set Resource Quota for a namespace</li>
+<li>🚦 Set Resource Limits</li>
 </ul>
-<h3 id="podpod"><a href="../part02/index.html#pod">POD</a></h3>
+<hr>
+<h3 id="-podpod">📦 <a href="../part02/index.html#pod">Pod</a></h3>
 <ul>
-<li>Single Container pod</li>
-<li>MultiContainer pod</li>
-<li>Login to a pod</li>
-<li>Copy to a pod and from a pod(container)</li>
-<li>How to check logs from a container</li>
-<li>Environment Variables of pod</li>
-<li>initContainer</li>
-<li>Command and Argument of a pod</li>
-<li>pullSecret of a pod</li>
-<li>pod restart policy</li>
-<li>imagePull policy</li>
-<li>How to delete a pod</li>
-<li>Pod priority</li>
-<li>Pod Resources</li>
-<li>Pod Quality of Services(QOS)</li>
+<li>🧱 Create a Single Container pod</li>
+<li>🧱➕ Create a Multi-Container pod</li>
+<li>🔐 Login to a pod</li>
+<li>📤📥 Copy to a pod and from a pod (container)</li>
+<li>📝 Check logs from a container</li>
+<li>🌿 Environment Variables of a pod</li>
+<li>⏱️ <code>initContainer</code> usage</li>
+<li>🧾 Command and Argument of a pod</li>
+<li>🔑 <code>imagePullSecret</code> of a pod</li>
+<li>🔁 Pod <code>restartPolicy</code></li>
+<li>🛒 Pod <code>imagePullPolicy</code></li>
+<li>❌ How to delete a pod</li>
+<li>⚖️ Pod Priority</li>
+<li>⚙️ Pod Resources (Requests and Limits)</li>
+<li>🧮 Pod Quality of Service (QoS)</li>
 </ul>
-<h3 id="advance-scheduling-of-podadvance-scheduling-of-pod"><a href="../part02/index.html#advance-scheduling-of-pod">Advance Scheduling of pod</a></h3>
+<h3 id="-advanced-scheduling-of-podadvanced-scheduling-of-pod">🧠 <a href="../part02/index.html#advanced-scheduling-of-pod">Advanced Scheduling of Pod</a></h3>
 <ul>
-<li>Scheduler</li>
-<li>Nodename</li>
-<li>nodeSelector</li>
-<li>Node Affinity</li>
-<li>Taints and Tolerations</li>
-<li>Pod affinity and anti affinity</li>
-<li>Priority and PriorityClass</li>
-<li>Preemption</li>
-<li>Disruption Budget</li>
-<li>Topology and Constraints</li>
-<li>Descheduler</li>
+<li>🗂️ Scheduler</li>
+<li>🖥️ <code>nodeName</code></li>
+<li>🧩 <code>nodeSelector</code></li>
+<li>🧲 Node Affinity</li>
+<li>🚫➕ Taints and Tolerations</li>
+<li>🧭 Pod Affinity and Anti-Affinity</li>
+<li>🎯 Priority and <code>PriorityClass</code></li>
+<li>🔄 Preemption</li>
+<li>🛡️ Pod Disruption Budget (PDB)</li>
+<li>🌐 Topology and Constraints</li>
+<li>🔃 Descheduler</li>
 </ul>
-<h4 id="namespace">Namespace</h4>
+<h3 id="-namespace">📂 Namespace</h3>
+<p>Namespaces are a way to divide cluster resources between multiple users using resource quotas.<br>
+They provide a mechanism for isolating groups of resources within a single cluster.</p>
+<h3 id="-key-points">🔑 Key Points</h3>
 <ul>
-<li>Namespaces are a way to divide cluster resources between multiple users (via resource quota).</li>
-<li>namespaces provides a mechanism for isolating groups of resources within a single cluster</li>
-<li>Names of resources need to be unique within a namespace, but not across namespaces.</li>
-<li>To achieve multitenancy with Networkpolicy</li>
-<li>To configure RBAC</li>
-<li>Check all namespaces</li>
+<li>
+<p>📛 Names of resources must be unique <strong>within</strong> a namespace, but can repeat <strong>across</strong> namespaces.</p>
+</li>
+<li>
+<p>🧱 Useful for achieving <strong>multitenancy</strong>, often in conjunction with <strong>NetworkPolicies</strong>.</p>
+</li>
+<li>
+<p>🛡️ Critical for applying <strong>RBAC (Role-Based Access Control)</strong> in a granular manner.</p>
+</li>
+<li>
+<p>Check all namespaces</p>
+</li>
 </ul>
 <div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get ns</span></span></code></pre></div>
 <ul>
@@ -233,23 +269,15 @@
 </ul>
 <div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubens
 </span></span><span style="display:flex;"><span>kubens <span style="color:#f92672">&lt;</span>ns name<span style="color:#f92672">&gt;</span></span></span></code></pre></div>
-<h4 id="to-see-which-kubernetes-resources-are-and-arent-in-a-namespace">To see which Kubernetes resources are and aren&rsquo;t in a namespace:</h4>
-<ul>
-<li>In a namespace</li>
-</ul>
-<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl api<span style="color:#f92672">-</span>resources <span style="color:#f92672">--</span>namespaced<span style="color:#f92672">=</span>true</span></span></code></pre></div>
-<ul>
-<li>Not in a namespace</li>
-</ul>
+<h3 id="-view-namespaced-and-non-namespaced-resources">🔍 View Namespaced and Non-Namespaced Resources</h3>
+<p>To see which Kubernetes resources <strong>are in a namespace</strong> and which are <strong>not</strong>, use the following commands:</p>
+<h4 id="-namespaced-resources">📦 Namespaced Resources</h4>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl api-resources --namespaced<span style="color:#f92672">=</span>true</span></span></code></pre></div>
+<h4 id="--non-namespaced-resources">📦  Non Namespaced Resources</h4>
 <div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl api<span style="color:#f92672">-</span>resources <span style="color:#f92672">--</span>namespaced<span style="color:#f92672">=</span>false</span></span></code></pre></div>
-<ul>
-<li>
-<p><a href="https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/" rel="external" target="_blank">Learn About Resource Quota and limits </a></p>
-</li>
-<li>
-<p>Configure Memory and CPU Quotas for a Namespace</p>
-</li>
-</ul>
+<h1 id="-resource-quotas">📊 Resource Quotas</h1>
+<p>Quotas control how much compute or storage a namespace can use.</p>
+<h2 id="-create-a-resourcequota">🧮 Create a ResourceQuota</h2>
 <div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ResourceQuota
@@ -262,47 +290,20 @@
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    limits.cpu: &#34;2&#34;
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    limits.memory: 2Gi
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
-<h4 id="as-per-above-example">As per above Example:</h4>
+<h2 id="-quota-impact">✅ Quota Impact</h2>
 <ul>
-<li>
-<p>The ResourceQuota places these requirements on the quota-mem-cpu-example namespace:</p>
-</li>
-<li>
-<p>For every Pod in the namespace, each container must have a memory request, memory limit, cpu request, and cpu limit.</p>
-</li>
-<li>
-<p>The memory request total for all Pods in that namespace must not exceed 1 GiB.</p>
-</li>
-<li>
-<p>The memory limit total for all Pods in that namespace must not exceed 2 GiB.</p>
-</li>
-<li>
-<p>The CPU request total for all Pods in that namespace must not exceed 1 cpu.</p>
-</li>
-<li>
-<p>The CPU limit total for all Pods in that namespace must not exceed 2 cpu.</p>
-</li>
-<li>
-<p><strong>Check applied quota</strong></p>
-</li>
+<li>Pods must define memory &amp; CPU <strong>requests</strong> and <strong>limits</strong>.</li>
+<li>Max memory requests = <code>1Gi</code></li>
+<li>Max memory limits = <code>2Gi</code></li>
+<li>Max CPU requests = <code>1 CPU</code></li>
+<li>Max CPU limits = <code>2 CPU</code></li>
 </ul>
-<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl get quota </span></span></code></pre></div>
-<ul>
-<li><strong>Create namespace using a yaml file</strong></li>
-</ul>
-<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Namespace
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: test
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    name: test
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
-<h4 id="resource-limits">Resource Limits</h4>
-<p>A Kubernetes cluster can be divided into namespaces. Once you have a namespace that has a default memory limit, and you then try to create a Pod with a container that does not specify its own memory limit, then the control plane assigns the default memory limit to that container.</p>
-<ul>
-<li>Create a LimitRange</li>
-</ul>
+<h2 id="-check-applied-quotas">🔍 Check Applied Quotas</h2>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl get quota</span></span></code></pre></div>
+<hr>
+<h3 id="-default-resource-limits-via-limitrange">⚙️ Default Resource Limits via LimitRange</h3>
+<p>LimitRanges provide default request and limit values to containers in a namespace.</p>
+<h2 id="-create-a-limitrange">🔧 Create a LimitRange</h2>
 <div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: LimitRange
@@ -316,26 +317,30 @@
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      memory: 256Mi
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    type: Container
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
+<h2 id="-inspect-pod-defaults">🕵️ Inspect Pod Defaults</h2>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>kubectl describe pod &lt;podnname&gt;</span></span></code></pre></div>
+<h4 id="-pod">📦 POD</h4>
 <ul>
-<li>Now create one pod with no resource and check if the default resource has been applied</li>
-</ul>
-<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl describe pod <span style="color:#e6db74">&lt;podname&gt;</span></span></span></code></pre></div>
-<h4 id="pod">POD</h4>
+<li>A <strong>Pod</strong> is the smallest deployable unit in Kubernetes and represents a single instance of an application.</li>
+<li>For example, to run an Nginx application, it must be deployed inside a pod.</li>
+<li>While a container is a standalone execution unit, a <strong>pod can host multiple containers</strong>, making it a logical grouping unit.</li>
+<li>Each pod is assigned a <strong>unique IP address</strong>, and containers within the same pod communicate with each other using <code>localhost</code> and different ports.</li>
+<li><strong>Inter-pod communication</strong> occurs through their respective IP addresses.</li>
+<li>To avoid <strong>port conflicts</strong>, each container within the same pod should use different port numbers.</li>
+<li>Containers within a pod can share <strong>storage volumes</strong>, making data accessible across all containers in the pod.</li>
+<li>All containers in a pod are scheduled to run on the <strong>same node</strong>—a pod <strong>cannot span across multiple nodes</strong>.</li>
+<li>You can define <strong>CPU and memory resource requests and limits</strong> for each container in the pod.</li>
+<li>If a pod has multiple containers:
 <ul>
-<li>A pod is the smallest deployable unit in Kubernetes that represents a single instance of an application.</li>
-<li>For example, if you want to run the Nginx application, you run it in a pod.</li>
-<li>A container is a single unit. However, a pod can contain more than one container. You can think of pods as a box that can hold one or more containers together.</li>
-<li>the pod gets a single unique IP address and containers running inside the pod use localhost to connect to each other on different ports.</li>
-<li>Each pod gets a unique IP address.</li>
-<li>Pods communicate with each other using the IP address.</li>
-<li>Containers inside a pod connect using localhost on different ports.</li>
-<li>Containers running inside a pod should have different port numbers to avoid port clashes.</li>
-<li>You can set CPU and memory resources for each container running inside the pod.</li>
-<li>Containers inside a pod share the same volume mount.</li>
-<li>All the containers inside a pod are scheduled on the same node; It cannot span multiple nodes.
-<ul>
-<li>If there is more than one container, during the pod startup all the main containers start in parallel. Whereas the init containers inside the pod run in sequence.</li>
-<li>Create a pod</li>
+<li>
+<p><strong>Init containers</strong> run <strong>sequentially</strong> before the main containers start.</p>
+</li>
+<li>
+<p><strong>Main containers</strong> then start <strong>in parallel</strong> once all init containers have successfully completed.</p>
+</li>
+<li>
+<p>Create a pod</p>
+</li>
 </ul>
 <div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl run pod <span style="color:#f92672">--</span>image<span style="color:#f92672">=</span>nginx</span></span></code></pre></div>
 <ul>
@@ -375,7 +380,7 @@
 </li>
 <li>Follow Pod Logs in Real-time</li>
 </ul>
-<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>  kubectl logs <span style="color:#f92672">-</span>f <span style="color:#e6db74">&lt;pod-name&gt;</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span> kubectl logs <span style="color:#f92672">-</span>f <span style="color:#e6db74">&lt;pod-name&gt;</span></span></span></code></pre></div>
 <ul>
 <li>How to check logs for a container from multiContainer pod</li>
 </ul>
@@ -407,7 +412,7 @@
 <ul>
 <li>Port forwarding on ip address not on the localhost</li>
 </ul>
-<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span> kubectl port<span style="color:#f92672">-</span>forward <span style="color:#f92672">--</span>address <span style="color:#ae81ff">0.0.0.0</span> pod<span style="color:#f92672">/</span>mypod <span style="color:#ae81ff">8888</span>:<span style="color:#ae81ff">5000</span></span></span></code></pre></div>
+<div class="highlight wrap-code"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-t" data-lang="t"><span style="display:flex;"><span>kubectl port<span style="color:#f92672">-</span>forward <span style="color:#f92672">--</span>address <span style="color:#ae81ff">0.0.0.0</span> pod<span style="color:#f92672">/</span>mypod <span style="color:#ae81ff">8888</span>:<span style="color:#ae81ff">5000</span></span></span></code></pre></div>
 <ul>
 <li>Get YAML Definition of a Running Pod:</li>
 </ul>
@@ -549,8 +554,8 @@
 </li>
 <li>
 <p>These co-located containers form a single cohesive unit.
-<a href="#R-image-323919e0c49b14498232320738b61d4f" class="lightbox-link"><img alt="MultiContainerpod" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/pod.svg" style=" height: auto; width: auto;"></a>
-<a href="javascript:history.back();" class="lightbox-back" id="R-image-323919e0c49b14498232320738b61d4f"><img alt="MultiContainerpod" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/pod.svg"></a></p>
+<a href="#R-image-e9dcd44f1073b348624e01a5a54dcfcb" class="lightbox-link"><img alt="MultiContainerpod" class="noborder lazy lightbox noshadow figure-image" loading="lazy" src="../images/pod.svg" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-e9dcd44f1073b348624e01a5a54dcfcb"><img alt="MultiContainerpod" class="noborder lazy lightbox noshadow lightbox-image" loading="lazy" src="../images/pod.svg"></a></p>
 </li>
 <li>
 <p>Here is an example for multiple container.</p>
@@ -1236,19 +1241,42 @@ An example is given below</li>
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx</span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">EOF</span></span></span></code></pre></div>
 <h3 id="pod-priorityhttpskubernetesiodocsconceptsscheduling-evictionpod-priority-preemption"><a href="https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/" rel="external" target="_blank">Pod Priority</a></h3>
-<h4 id="pod-priority-classes">Pod priority classes</h4>
+<h4 id="-pod-priority-classes">🚦 Pod Priority Classes</h4>
 <ul>
 <li>
-<p>You can assign pods a priority class, which is a non-namespaced object that defines a mapping from a name to the integer value of the priority. The higher the value, the higher the priority.</p>
+<p>You can assign <strong>pods a priority class</strong>, which is a non-namespaced object that maps a name to a 32-bit integer value.</p>
 </li>
 <li>
-<p>A priority class object can take any 32-bit integer value smaller than or equal to 1000000000 (one billion). Reserve numbers larger than one billion for critical pods that should not be preempted or evicted. By default, OpenShift Container Platform has two reserved priority classes for critical system pods to have guaranteed scheduling.</p>
+<p>The <strong>higher the priority value</strong>, the higher the scheduling preference.</p>
 </li>
 <li>
-<p>System-node-critical - This priority class has a value of 2000001000 and is used for all pods that should never be evicted from a node. Examples of pods that have this priority class are sdn-ovs, sdn, and so forth.</p>
+<p>Valid range: Any 32-bit integer <strong>≤ 1,000,000,000</strong>.</p>
 </li>
 <li>
-<p>System-cluster-critical - This priority class has a value of 2000000000 (two billion) and is used with pods that are important for the cluster. Pods with this priority class can be evicted from a node in certain circumstances. For example, pods configured with the system-node-critical priority class can take priority. However, this priority class does ensure guaranteed scheduling. Examples of pods that can have this priority class are fluentd, add-on components like descheduler, and so forth.</p>
+<p><strong>Values &gt; 1,000,000,000</strong> are <strong>reserved for critical system pods</strong> that should never be evicted or preempted.</p>
+</li>
+<li>
+<p>OpenShift provides <strong>two reserved system priority classes</strong> by default:</p>
+<ul>
+<li>
+<p>🔴 <strong>system-node-critical</strong></p>
+<ul>
+<li>Priority value: <code>2000001000</code></li>
+<li>Used for pods that <strong>must never be evicted</strong> from a node.</li>
+<li>Examples: <code>sdn-ovs</code>, <code>sdn</code>, etc.</li>
+</ul>
+</li>
+<li>
+<p>🟠 <strong>system-cluster-critical</strong></p>
+<ul>
+<li>Priority value: <code>2000000000</code></li>
+<li>Used for <strong>important cluster components</strong>.</li>
+<li>Can be evicted in special conditions (e.g., to make room for system-node-critical pods).</li>
+<li>Ensures <strong>guaranteed scheduling</strong>.</li>
+<li>Examples: <code>fluentd</code>, add-ons like <code>descheduler</code>, etc.</li>
+</ul>
+</li>
+</ul>
 </li>
 <li>
 <p>Sample priority class object</p>
@@ -1325,71 +1353,75 @@ An example is given below</li>
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: example-app
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span></span></span></code></pre></div>
-<h3 id="pod-preemption-and-pod-distruption-budget">Pod Preemption and Pod Distruption Budget</h3>
+<h3 id="pod-preemption-and-pod-disruption-budget">Pod Preemption and Pod Disruption Budget</h3>
+<h4 id="pod-preemption-and-other-scheduler-settings">Pod Preemption and Other Scheduler Settings</h4>
+<p>If you enable pod priority and preemption, consider your other scheduler settings:</p>
+<hr>
+<h4 id="pod-priority-and-pod-disruption-budget">Pod Priority and Pod Disruption Budget</h4>
 <ul>
-<li>Pod preemption and other scheduler settings
-If you enable pod priority and preemption, consider your other scheduler settings:</li>
+<li>A <strong>Pod Disruption Budget (PDB)</strong> specifies the minimum number or percentage of replicas that must be available at any time.</li>
+<li>OpenShift respects defined PDBs on a best-effort basis during pod preemption.</li>
+<li>The scheduler attempts to preempt pods <strong>without violating the PDB</strong>.</li>
+<li>If no suitable pods are found, <strong>lower-priority pods may still be preempted</strong>, even if it violates their PDB requirements.</li>
 </ul>
-<h4 id="pod-priority-and-pod-disruption-budget">Pod priority and pod disruption budget</h4>
+<hr>
+<h4 id="pod-priority-and-pod-affinity">Pod Priority and Pod Affinity</h4>
 <ul>
-<li>A pod disruption budget specifies the minimum number or percentage of replicas that must be up at a time. If you specify pod disruption budgets, OpenShift Container Platform respects them when preempting pods at a best effort level. The scheduler attempts to preempt pods without violating the pod disruption budget. If no such pods are found, lower-priority pods might be preempted despite their pod disruption budget requirements.</li>
+<li>Pod affinity requires a new pod to be scheduled on the <strong>same node</strong> as other pods with the same label.</li>
 </ul>
-<h4 id="pod-priority-and-pod-affinity">Pod priority and pod affinity</h4>
-<p>Pod affinity requires a new pod to be scheduled on the same node as other pods with the same label.</p>
-<h4 id="pointer-regarding-pod-scheduling">Pointer Regarding Pod Scheduling</h4>
+<hr>
+<h3 id="pointers-regarding-pod-scheduling">Pointers Regarding Pod Scheduling</h3>
 <ul>
-<li>
-<p>Preemption removes existing Pods from a cluster under resource pressure to make room for higher priority pending Pods</p>
-</li>
-<li>
-<p>The default priority for all pods is zero ( 0 )</p>
-</li>
-<li>
-<p>Supported Operators for Affinity</p>
-<ul>
-<li>
-<p>The operator represents the relationship between the label on the node and the set of values in the matchExpression parameters in the pod specification.</p>
-</li>
-<li>
-<p>This value can be below:</p>
-<ul>
-<li>In,</li>
-<li>NotIn,</li>
-<li>Exists</li>
-<li>DoesNotExist</li>
-<li>Lt</li>
-<li>Gt</li>
+<li><strong>Preemption</strong> removes existing pods from a cluster under resource pressure to allow scheduling of higher-priority pending pods.</li>
+<li>The <strong>default priority</strong> for all pods is <code>0</code>.</li>
 </ul>
-</li>
-</ul>
-</li>
-<li>
-<p>Specify a weight for the node, 1-100. The node that with highest weight is preferred.</p>
-</li>
-<li>
-<p>A taint on a node instructs the node to repel all pods that do not tolerate the taint.</p>
-</li>
-<li>
-<p>Taint Effects are given below:</p>
-</li>
-</ul>
-<h4 id="the-effect-is-one-of-the-following">The effect is one of the following:</h4>
-<h5 id="noschedule">NoSchedule</h5>
-<p>New pods that do not match the taint are not scheduled onto that node.
-Existing pods on the node remain.</p>
-<h5 id="prefernoschedule">PreferNoSchedule</h5>
-<p>New pods that do not match the taint might be scheduled onto that node, but the scheduler tries not to.</p>
-<p>Existing pods on the node remain.</p>
-<h4 id="noexecute">NoExecute</h4>
-<p>New pods that do not match the taint cannot be scheduled onto that node.</p>
-<p>Existing pods on the node that do not have a matching toleration are removed.</p>
-<h3 id="operator">operator</h3>
-<h4 id="equal">Equal</h4>
-<p>The key/value/effect parameters must match. This is the default.</p>
-<h4 id="exists">Exists</h4>
-<p>The key/effect parameters must match. You must leave a blank value parameter, which matches any.</p>
+<h4 id="supported-operators-for-affinityanti-affinity-rules">Supported Operators for Affinity/Anti-Affinity Rules:</h4>
+<p>These operators define relationships between node labels and the match expressions in the pod spec:</p>
 <ul>
-<li><a href="https://github.com/kubernetes-sigs/descheduler" rel="external" target="_blank">Descheduler</a></li>
+<li><code>In</code></li>
+<li><code>NotIn</code></li>
+<li><code>Exists</code></li>
+<li><code>DoesNotExist</code></li>
+<li><code>Lt</code></li>
+<li><code>Gt</code></li>
+</ul>
+<h4 id="additional-scheduling-considerations">Additional Scheduling Considerations:</h4>
+<ul>
+<li><strong>Specify a weight</strong> for a node between <strong>1-100</strong>. Nodes with higher weights are preferred.</li>
+<li>A <strong>taint</strong> on a node instructs it to repel pods that do not <strong>tolerate</strong> that taint.</li>
+</ul>
+<hr>
+<h3 id="taint-effects">Taint Effects</h3>
+<h4 id="noschedule"><code>NoSchedule</code></h4>
+<ul>
+<li>New pods that do <strong>not match</strong> the taint are <strong>not scheduled</strong> onto the node.</li>
+<li>Existing pods on the node <strong>remain</strong>.</li>
+</ul>
+<h4 id="prefernoschedule"><code>PreferNoSchedule</code></h4>
+<ul>
+<li>New pods that do not match the taint <strong>might be scheduled</strong>, but the scheduler tries to avoid it.</li>
+<li>Existing pods <strong>remain</strong>.</li>
+</ul>
+<h4 id="noexecute"><code>NoExecute</code></h4>
+<ul>
+<li>New pods that do <strong>not match</strong> the taint are <strong>not scheduled</strong> onto the node.</li>
+<li>Existing pods on the node that do <strong>not tolerate</strong> the taint are <strong>evicted</strong>.</li>
+</ul>
+<hr>
+<h3 id="toleration-operators">Toleration Operators</h3>
+<h4 id="equal"><code>Equal</code></h4>
+<ul>
+<li>The key, value, and effect <strong>must all match</strong>. This is the <strong>default</strong> behavior.</li>
+</ul>
+<h4 id="exists"><code>Exists</code></h4>
+<ul>
+<li>The key and effect <strong>must match</strong>.</li>
+<li>The value field is <strong>left blank</strong> and matches <strong>any</strong>.</li>
+</ul>
+<hr>
+<h3 id="related-resources">Related Resources</h3>
+<ul>
+<li><a href="https://github.com/kubernetes-sigs/descheduler" rel="external" target="_blank">Descheduler GitHub Repository</a></li>
 </ul>
 
   <footer class="footline">
@@ -1407,7 +1439,7 @@ Kubernetes Documentation
           </a>
         </div>
         <script>
-          window.index_js_url="../searchindex.en.js?1734364594";
+          window.index_js_url="../searchindex.en.js?1752918557";
         </script>
         <search><form action="../search/index.html" method="get">
           <div class="searchbox default-animation">
@@ -1420,12 +1452,12 @@ Kubernetes Documentation
         <script>
           var contentLangs=['en'];
         </script>
-        <script src="../js/auto-complete.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.stemmer.support.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.multi.min.js?1734364594" defer></script>
-        <script src="../js/lunr/lunr.en.min.js?1734364594" defer></script>
-        <script src="../js/search.js?1734364594" defer></script>
+        <script src="../js/auto-complete.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.stemmer.support.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.multi.min.js?1752918557" defer></script>
+        <script src="../js/lunr/lunr.en.min.js?1752918557" defer></script>
+        <script src="../js/search.js?1752918557" defer></script>
       </div>
       <div id="R-homelinks" class="default-animation homelinks">
         <ul>
@@ -1436,7 +1468,7 @@ Kubernetes Documentation
       <div id="R-content-wrapper" class="highlightable">
         <div id="R-shortcutmenu-home" class="R-sidebarmenu">
           <ul class="enlarge morespace collapsible-menu">
-            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes documentation</a></li>
+            <li class="" data-nav-id="/k8s/index.html"><a class="padding" href="../k8s/index.html">Kubernetes Documentation</a></li>
             <li class="" data-nav-id="/part01/index.html"><a class="padding" href="../part01/index.html">Part 1</a></li>
             <li class="active " data-nav-id="/part02/index.html"><a class="padding" href="../part02/index.html">Part 2</a></li>
             <li class="" data-nav-id="/part03/index.html"><a class="padding" href="../part03/index.html">Part 3</a></li>
@@ -1510,8 +1542,8 @@ Kubernetes Documentation
         </div>
       </div>
     </aside>
-    <script src="../js/clipboard.min.js?1734364594" defer></script>
-    <script src="../js/perfect-scrollbar.min.js?1734364594" defer></script>
-    <script src="../js/theme.js?1734364594" defer></script>
+    <script src="../js/clipboard.min.js?1752918557" defer></script>
+    <script src="../js/perfect-scrollbar.min.js?1752918557" defer></script>
+    <script src="../js/theme.js?1752918557" defer></script>
   </body>
 </html>
